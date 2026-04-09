@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
+    container_name: cv-assistant-dev
+    restart: always
+    expose:
+      - "4003"
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ../../.env.development
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    container_name: cv-assistant-redis-dev
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  postgres:
+    image: postgres:15
+    container_name: cv-assistant-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - ../../.env
+      - ../../.env.development
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  app_network:
+
+# docker-compose -f docker/dev/docker-compose.yml up --build -d
+# num run start:dev
