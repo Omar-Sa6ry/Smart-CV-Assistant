@@ -1,0 +1,39 @@
+generator client {
+  provider   = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("USER")
+  cvs       CV[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CV {
+  id          String   @id @default(uuid())
+  title       String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  templateId  String?
+  template    Template? @relation(fields: [templateId], references: [id])
+  content     Json?    // Stores the structured CV data
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String
+  thumbnail String?
+  config    Json     // Styling/layout configuration
+  cvs       CV[]
+}
