@@ -8,6 +8,7 @@ import {
   ThrottlerModule,
   TranslationModule,
 } from '@bts-soft/core';
+import { UserModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import {
     GraphqlModule,
     ThrottlerModule,
     TranslationModule,
+
+    UserModule,
   ],
   providers: [AppService, AppResolver],
 })

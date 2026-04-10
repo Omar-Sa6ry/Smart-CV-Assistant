@@ -20,7 +20,7 @@ services:
     container_name: cv-assistant-redis-dev
     restart: always
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - app_network
 
