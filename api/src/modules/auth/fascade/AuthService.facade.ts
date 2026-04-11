@@ -1,0 +1,152 @@
+import * as crypto from 'crypto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
+import { UserService } from 'src/modules/users/users.service';
+import { GenerateTokenFactory } from '../jwt/jwt.service';
+import { User } from 'src/modules/users/entity/user.entity';
+import { AuthResponse } from '../dto/AuthRes.dto';
+import { LoginDto } from '../inputs/Login.dto';
+import { CreateUserDto } from '../inputs/CreateUserData.dto';
+import { SendWelcomeEmailCommand } from '../command/auth.command';
+import { Role } from 'src/common/constant/enum.constant';
+import { PasswordValidator, RoleValidator } from '../chain/auth.chain';
+import { PasswordServiceAdapter } from '../adapter/password.adapter';
+import { UserProxy } from 'src/modules/users/proxy/user.proxy';
+import { PrismaService } from 'src/common/database/prisma.service';
+import { UserFactory } from 'src/modules/users/factory/user.factory';
+import {
+  RedisService,
+  NotificationService,
+} from '@bts-soft/core';
+
+@Injectable()
+export class AuthServiceFacade {
+  private proxy: UserProxy;
+
+  constructor(
+    private readonly i18n: I18nService,
+    private readonly userService: UserService,
+    private readonly tokenFactory: GenerateTokenFactory,
+    private readonly passwordAdapter: PasswordServiceAdapter,
+    private readonly redisService: RedisService,
+    private readonly notificationService: NotificationService,
+    private readonly prisma: PrismaService,
+  ) {
+    this.proxy = new UserProxy(this.i18n, this.redisService, this.prisma);
+  }
+
+  async register(createUserDto: CreateUserDto): Promise<AuthResponse> {
+    const user = await this.createUser(createUserDto);
+
+    const tokenService = await this.tokenFactory.createTokenGenerator();
+    const token = await tokenService.generate(user.email, user.id);
+
+    this.redisService.set(`user:${user.id}`, user);
+    this.redisService.set(`user:email:${user.email}`, user);
+
+    const emailCommand = new SendWelcomeEmailCommand(
+      this.notificationService,
+      user.email,
+    );
+    emailCommand.execute();
+
+    return {
+      data: {
+        user,
+        token,
+      },
+    };
+  }
+
+  async login(loginDto: LoginDto): Promise<AuthResponse> {
+    const userCacheKey = `auth:${loginDto.email}`;
+    const cachedUser = await this.redisService.get<AuthResponse>(userCacheKey);
+
+    if (cachedUser) {
+      return { ...cachedUser };
+    }
+
+    const { email, password } = loginDto;
+    const user = await this.userService.findByEmail(email);
+    if (!user || !user.data)
+      throw new BadRequestException(await this.i18n.t('user.NOT_FOUND'));
+
+    const isValid = await this.passwordAdapter.compare(
+      password,
+      user.data.password ?? '',
+    );
+    if (!isValid) throw new BadRequestException('Invalid credentials');
+
+    const tokenGenerator = await this.tokenFactory.createTokenGenerator();
+    const token = await tokenGenerator.generate(user.data.email, user.data.id);
+
+    const { id, createdAt, updatedAt, ...updateData } = user.data;
+    await this.prisma.user.update({
+      where: { id },
+      data: updateData,
+    });
+
+    this.redisService.set(`user:${user.data.id}`, user);
+    return {
+      data: { user: user.data, token },
+      message: await this.i18n.t('user.LOGIN'),
+    };
+  }
+
+  async roleBasedLogin(
+    fcmToken: string,
+    loginDto: LoginDto,
+    role: Role,
+  ): Promise<AuthResponse> {
+    const { email, password } = loginDto;
+    const user = await this.userService.findByEmail(email);
+    if (!user || !user.data)
+      throw new BadRequestException(await this.i18n.t('user.NOT_FOUND'));
+
+    const passwordValidator = new PasswordValidator(
+      this.i18n,
+      this.passwordAdapter,
+      password,
+    );
+    const roleValidator = new RoleValidator(this.i18n, role);
+
+    passwordValidator.setNext(roleValidator);
+    await passwordValidator.validate(user.data);
+
+    const tokenService = await this.tokenFactory.createTokenGenerator();
+    const token = await tokenService.generate(user.data.email, user.data.id);
+
+    const { id, createdAt, updatedAt, ...updateData } = user.data;
+    await this.prisma.user.update({
+      where: { id },
+      data: updateData,
+    });
+
+    this.redisService.set(`user:${user.data.id}`, user);
+    return {
+      data: { user: user.data, token },
+      message: await this.i18n.t('user.LOGIN'),
+    };
+  }
+
+  private async createUser(createUserDto: CreateUserDto): Promise<User> {
+    return await this.prisma.$transaction(async (tx) => {
+      await this.proxy.dataExisted(createUserDto.email);
+
+      const password = await this.passwordAdapter.hash(createUserDto.password);
+
+      const userCount = await tx.user.count();
+      const role = userCount === 0 ? Role.ADMIN : Role.USER;
+
+      const newUser = await tx.user.create({
+        data: {
+          ...createUserDto,
+          password,
+          role,
+        },
+      });
+
+      return UserFactory.fromPrisma(newUser);
+    });
+  }
+}

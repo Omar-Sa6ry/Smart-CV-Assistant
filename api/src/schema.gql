@@ -29,6 +29,19 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type AuthOutPut {
+  user: User!
+  token: String!
+}
+
+type AuthResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: AuthOutPut
+}
+
 type UserResponse {
   message: String
   success: Boolean
@@ -65,10 +78,38 @@ input EmailInput {
 type Mutation {
   updateUser(updateUserDto: UpdateUserDto!): UserResponse!
   UpdateUserRoleToAdmin(id: UserIdInput!): UserResponse!
+  register(createUserDto: CreateUserDto!): AuthResponse!
+  login(loginDto: LoginDto!): AuthResponse!
+  forgotPassword: AuthResponse!
+  resetPassword(resetPasswordDto: ResetPasswordDto!): UserResponse!
+  changePassword(changePasswordDto: ChangePasswordDto!): UserResponse!
 }
 
 input UpdateUserDto {
   firstName: String
   lastName: String
   headline: String
+}
+
+input CreateUserDto {
+  firstName: String!
+  lastName: String!
+  headline: String!
+  email: String!
+  password: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
+}
+
+input ResetPasswordDto {
+  token: String!
+  password: String!
+}
+
+input ChangePasswordDto {
+  password: String!
+  newPassword: String!
 }
