@@ -1,26 +1,22 @@
-import { UserService } from 'src/modules/users/users.service';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UpdateUserDto } from './inputs/UpdateUser.dto';
 import { Permission } from 'src/common/constant/enum.constant';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { UserResponse, UsersResponse } from './dto/UserResponse.dto';
 import { EmailInput, UserIdInput } from './inputs/user.input';
-import { UserFacadeService } from './fascade/user.fascade';
+import { UserFacade } from './facade/user.facade';
 import { User } from './entity/user.entity';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
 import { CurrentUserDto } from '@bts-soft/core';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(
-    private readonly userFacade: UserFacadeService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userFacade: UserFacade) {}
 
   @Query((returns) => UserResponse)
   @Auth([Permission.VIEW_USER])
   async getUserById(@Args('id') id: UserIdInput): Promise<UserResponse> {
-    return await this.userService.findById(id.UserId);
+    return await this.userFacade.findById(id.UserId);
   }
 
   @Query((returns) => UserResponse)
@@ -28,7 +24,7 @@ export class UserResolver {
   async getUserByEmail(
     @Args('email') email: EmailInput,
   ): Promise<UserResponse> {
-    return await this.userService.findByEmail(email.email);
+    return await this.userFacade.findByEmail(email.email);
   }
 
   @Query((returns) => UsersResponse)
@@ -37,7 +33,7 @@ export class UserResolver {
     @Args('page', { type: () => Int, nullable: true }) page?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ): Promise<UsersResponse> {
-    return await this.userService.findUsers(page, limit);
+    return await this.userFacade.findUsers(page, limit);
   }
 
   @Mutation((returns) => UserResponse)

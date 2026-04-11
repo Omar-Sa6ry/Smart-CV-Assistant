@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './users.service';
 import { UserResolver } from './users.resolver';
-import { UserFacadeService } from './fascade/user.fascade';
+import { UserFacade } from './facade/user.facade';
+import { UserProxy } from './proxy/user.proxy';
+import { CacheObserver } from './observer/user.observer';
+import { UserFactory } from './factory/user.factory';
 import { RedisModule } from '@bts-soft/core';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -10,8 +13,11 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [
     UserService,
     UserResolver,
-    UserFacadeService,
+    UserFacade,
+    UserProxy,
+    CacheObserver,
+    UserFactory,
   ],
-  exports: [UserService],
+  exports: [UserService, UserFacade],
 })
 export class UserModule {}

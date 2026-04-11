@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { RedisService } from '@bts-soft/core';
 import { IUserObserver } from '../interfaces/IUserObserver.interface';
 import { User } from 'src/modules/users/entity/user.entity';
 
+@Injectable()
 export class CacheObserver implements IUserObserver {
-  constructor(private redisService: RedisService) {}
+  constructor(private readonly redisService: RedisService) {}
 
   async onUserUpdate(user: User): Promise<void> {
     await this.redisService.set(`user:${user.id}`, user);

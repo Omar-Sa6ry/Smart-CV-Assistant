@@ -1,8 +1,11 @@
 import { UserResponse, UsersResponse } from '../dto/UserResponse.dto';
 import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/common/database/prisma.service';
-import { User as PrismaUser } from '@prisma/client';
-import { BadRequestException, NotFoundException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  Injectable,
+} from '@nestjs/common';
 import { Limit, Page } from 'src/common/constant/messages.constant';
 import { RedisService } from '@bts-soft/core';
 import { UserFactory } from '../factory/user.factory';
@@ -25,8 +28,8 @@ export class UserProxy {
     if (!user) throw new NotFoundException(await this.i18n.t('user.NOT_FOUND'));
 
     const mappedUser = UserFactory.fromPrisma(user);
-    this.redisService.set(cacheKey, mappedUser);
-    this.redisService.set(`user:email:${user.email}`, mappedUser);
+    await this.redisService.set(cacheKey, mappedUser);
+    await this.redisService.set(`user:email:${user.email}`, mappedUser);
 
     return { data: mappedUser };
   }
@@ -41,8 +44,8 @@ export class UserProxy {
     if (!user) throw new NotFoundException(await this.i18n.t('user.NOT_FOUND'));
 
     const mappedUser = UserFactory.fromPrisma(user);
-    this.redisService.set(cacheKey, mappedUser);
-    this.redisService.set(`user:id:${user.id}`, mappedUser);
+    await this.redisService.set(cacheKey, mappedUser);
+    await this.redisService.set(`user:${user.id}`, mappedUser);
 
     return { data: mappedUser };
   }
@@ -73,21 +76,17 @@ export class UserProxy {
     };
   }
 
-
-
-  async dataExisted(
-    email: string,
-  ): Promise<void> {
+  async dataExisted(email: string): Promise<void> {
     const cacheKey = `user:email:${email}`;
     const cachedUser = await this.redisService.get(cacheKey);
 
     if (cachedUser)
       throw new BadRequestException(await this.i18n.t('user.EMAIL_EXISTED'));
 
-    const emailExisted = await this.prisma.user.findUnique({ where: { email } });
+    const emailExisted = await this.prisma.user.findUnique({
+      where: { email },
+    });
     if (emailExisted)
       throw new BadRequestException(await this.i18n.t('user.EMAIL_EXISTED'));
   }
-
-
 }
