@@ -4,3 +4,5 @@ export interface IValidator {
   validate(user: User, data?: unknown): Promise<void>;
   setNext?(validator: IValidator): IValidator;
 }
+
+

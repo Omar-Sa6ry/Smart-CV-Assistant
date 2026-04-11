@@ -4,9 +4,8 @@ import { AuthService } from './auth.service';
 import { UserModule } from '../users/users.module';
 import { JwtModule } from './jwt/jwt.module';
 import { GenerateTokenFactory } from './jwt/jwt.service';
-import { AuthServiceFacade } from './fascade/AuthService.facade';
+import { AuthFacade } from './facade/auth.facade';
 import { PasswordServiceAdapter } from './adapter/password.adapter';
-import { UserProxy } from '../users/proxy/user.proxy';
 import { NotificationModule, RedisModule } from '@bts-soft/core';
 
 @Module({
@@ -14,10 +13,10 @@ import { NotificationModule, RedisModule } from '@bts-soft/core';
   providers: [
     AuthResolver,
     AuthService,
-    UserProxy,
-    AuthServiceFacade,
+    AuthFacade,
     PasswordServiceAdapter,
     GenerateTokenFactory,
   ],
+  exports: [AuthService, AuthFacade],
 })
 export class AuthModule {}

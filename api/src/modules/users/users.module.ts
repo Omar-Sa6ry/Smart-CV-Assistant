@@ -6,10 +6,10 @@ import { UserProxy } from './proxy/user.proxy';
 import { CacheObserver } from './observer/user.observer';
 import { UserFactory } from './factory/user.factory';
 import { RedisModule } from '@bts-soft/core';
-import { JwtModule } from '@nestjs/jwt';
+import { PasswordServiceAdapter } from '../auth/adapter/password.adapter';
 
 @Module({
-  imports: [RedisModule, JwtModule.register({})],
+  imports: [RedisModule],
   providers: [
     UserService,
     UserResolver,
@@ -17,7 +17,8 @@ import { JwtModule } from '@nestjs/jwt';
     UserProxy,
     CacheObserver,
     UserFactory,
+    PasswordServiceAdapter,
   ],
-  exports: [UserService, UserFacade],
+  exports: [UserService, UserProxy],
 })
 export class UserModule {}

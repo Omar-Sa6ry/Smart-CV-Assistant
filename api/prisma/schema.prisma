@@ -18,6 +18,7 @@ model User {
   resetToken        String?
   resetTokenExpiry  DateTime? @db.Timestamp()
   cvs               CV[]
+  lastLoginAt       DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 }

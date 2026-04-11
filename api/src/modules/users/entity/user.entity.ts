@@ -40,6 +40,9 @@ export class User {
   resetTokenExpiry?: Date | null;
 
   @Field(() => Date, { nullable: true })
+  lastLoginAt?: Date | null;
+
+  @Field(() => Date, { nullable: true })
   createdAt?: Date | null;
 
   @Field(() => Date, { nullable: true })

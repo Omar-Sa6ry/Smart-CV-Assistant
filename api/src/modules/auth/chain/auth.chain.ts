@@ -7,7 +7,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { IValidatorChain } from '../interfaces/IVaild.interface';
 
 abstract class AbstractValidator implements IValidatorChain {
-  private nextValidator: IValidator;
+  private nextValidator: IValidator | null = null;
 
   constructor(protected readonly i18n: I18nService) {}
 
@@ -28,19 +28,21 @@ export class PasswordValidator extends AbstractValidator {
     i18n: I18nService,
     private readonly passwordService: IPasswordStrategy,
     private readonly password: string,
+    private readonly errorMessageKey: string = 'user.OLD_IS_EQUAL_NEW',
   ) {
     super(i18n);
   }
 
-  async validate(user: User): Promise<void> {
+  async validate(user: User, data?: unknown): Promise<void> {
     const isValid = await this.passwordService.compare(
       this.password,
       user.password ?? '',
     );
-    if (!isValid)
-      throw new BadRequestException(await this.i18n.t('user.OLD_IS_EQUAL_NEW'));
+    if (!isValid) {
+      throw new BadRequestException(await this.i18n.t(this.errorMessageKey));
+    }
 
-    await super.validate(user);
+    await super.validate(user, data);
   }
 }
 
@@ -52,10 +54,12 @@ export class RoleValidator extends AbstractValidator {
     super(i18n);
   }
 
-  async validate(user: User): Promise<void> {
+  async validate(user: User, data?: unknown): Promise<void> {
     if (user.role !== this.requiredRole) {
       throw new UnauthorizedException(await this.i18n.t('user.NOT_ADMIN'));
     }
-    await super.validate(user);
+    await super.validate(user, data);
   }
 }
+
+

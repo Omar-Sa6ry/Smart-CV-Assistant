@@ -1,5 +1,4 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
 import { User } from '../users/entity/user.entity';
 import { AuthResponse } from './dto/AuthRes.dto';
 import { CreateUserDto } from './inputs/CreateUserData.dto';
@@ -9,18 +8,14 @@ import { ChangePasswordDto } from './inputs/ChangePassword.dto';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
 import { Permission } from 'src/common/constant/enum.constant';
 import { Auth } from 'src/common/decorator/auth.decorator';
-import { I18nService } from 'nestjs-i18n';
 import { UserResponse } from '../users/dto/UserResponse.dto';
-import { AuthServiceFacade } from './fascade/AuthService.facade';
 import { CurrentUserDto } from '@bts-soft/core';
+import { AuthFacade } from './facade/auth.facade';
+
 
 @Resolver(() => User)
 export class AuthResolver {
-  constructor(
-    private readonly i18n: I18nService,
-    private readonly authService: AuthService,
-    private readonly authFacade: AuthServiceFacade,
-  ) {}
+  constructor(private readonly authFacade: AuthFacade) {}
 
   @Mutation(() => AuthResponse)
   async register(
@@ -39,7 +34,7 @@ export class AuthResolver {
   async forgotPassword(
     @CurrentUser() user: CurrentUserDto,
   ): Promise<AuthResponse> {
-    return this.authService.forgotPassword(user.email);
+    return this.authFacade.forgotPassword(user.email);
   }
 
   @Mutation(() => UserResponse)
@@ -47,7 +42,7 @@ export class AuthResolver {
   async resetPassword(
     @Args('resetPasswordDto') resetPasswordDto: ResetPasswordDto,
   ): Promise<UserResponse> {
-    return this.authService.resetPassword(resetPasswordDto);
+    return this.authFacade.resetPassword(resetPasswordDto);
   }
 
   @Mutation(() => UserResponse)
@@ -56,19 +51,6 @@ export class AuthResolver {
     @CurrentUser() user: CurrentUserDto,
     @Args('changePasswordDto') changePasswordDto: ChangePasswordDto,
   ): Promise<UserResponse> {
-    return this.authService.changePassword(user?.id, changePasswordDto);
+    return this.authFacade.changePassword(user?.id, changePasswordDto);
   }
-
-  // @Mutation(() => LogoutResponse)
-  // @Auth([Permission.LOGOUT])
-  // async logout(@Context('req') req): Promise<LogoutResponse> {
-  //   const token = req.headers.authorization?.replace('Bearer ', '');
-  //   if (!token) throw new Error(await this.i18n.t('user.NO_TOKEN'));
-  //   return {
-  //     success: true,
-  //     statusCode: 200,
-  //     message: 'Logout successful',
-  //     timeStamp: new Date().toISOString().split('T')[0],
-  //   };
-  // }
 }

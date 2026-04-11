@@ -2,7 +2,8 @@ import { User } from 'src/modules/users/entity/user.entity';
 import { IPasswordResetState } from '../interfaces/IPasswordReset.interface';
 
 export class InitialResetState implements IPasswordResetState {
-  async handle(user: User, token: string): Promise<void> {
+  async handle(user: User, token?: string): Promise<void> {
+    if (!token) throw new Error('Token is required for initial reset state');
     user.resetToken = token;
     user.resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000);
   }
@@ -27,10 +28,6 @@ export class PasswordResetContext {
   }
 
   async execute(user: User, token?: string): Promise<void> {
-    if (token) {
-      await this.state.handle(user, token);
-    } else {
-      await (this.state as CompletedResetState).handle(user);
-    }
+    await this.state.handle(user, token);
   }
 }

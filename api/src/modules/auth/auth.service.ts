@@ -10,8 +10,7 @@ import { ResetPasswordDto } from './inputs/ResetPassword.dto';
 import { PasswordServiceAdapter } from './adapter/password.adapter';
 import { ChangePasswordDto } from './inputs/ChangePassword.dto';
 import { NotificationService, RedisService } from '@bts-soft/core';
-import { IPasswordStrategy } from './interfaces/IPassword.interface';
-import { SendResetPasswordEmailCommand } from './command/auth.command';
+import { CacheUserAuthCommand, SendResetPasswordEmailCommand } from './command/auth.command';
 import { PrismaService } from 'src/common/database/prisma.service';
 import { UserFactory } from '../users/factory/user.factory';
 import {
@@ -22,17 +21,14 @@ import {
 
 @Injectable()
 export class AuthService {
-  private passwordStrategy: IPasswordStrategy;
-
   constructor(
     private readonly i18n: I18nService,
     private readonly userService: UserService,
     private readonly redisService: RedisService,
     private readonly emailService: NotificationService,
     private readonly prisma: PrismaService,
-  ) {
-    this.passwordStrategy = new PasswordServiceAdapter();
-  }
+    private readonly passwordStrategy: PasswordServiceAdapter,
+  ) {}
 
   async forgotPassword(email: string): Promise<AuthResponse> {
     const user = await this.validateUserForPasswordReset(email);
@@ -43,7 +39,7 @@ export class AuthService {
 
     const resetContext = new PasswordResetContext(new InitialResetState());
     await resetContext.execute(user, token);
-    
+
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -57,7 +53,7 @@ export class AuthService {
       email,
       link,
     );
-    emailCommand.execute();
+    await emailCommand.execute();
 
     return { message: await this.i18n.t('user.SEND_MSG'), data: null };
   }
@@ -80,7 +76,7 @@ export class AuthService {
       },
     });
 
-    this.redisService.set(`user:${user.id}`, user);
+    await new CacheUserAuthCommand(this.redisService, user).execute();
 
     return {
       message: await this.i18n.t('user.UPDATE_PASSWORD'),
@@ -92,10 +88,11 @@ export class AuthService {
     id: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<UserResponse> {
-    if (changePasswordDto.password === changePasswordDto.newPassword)
+    if (changePasswordDto.password === changePasswordDto.newPassword) {
       throw new BadRequestException(
         await this.i18n.t('user.LOGISANE_PASSWORD'),
       );
+    }
 
     const user = await this.validateUserForPasswordChange(
       id,
@@ -105,11 +102,13 @@ export class AuthService {
     user.password = await this.passwordStrategy.hash(
       changePasswordDto.newPassword,
     );
-    
+
     await this.prisma.user.update({
       where: { id: user.id },
       data: { password: user.password },
     });
+
+    await new CacheUserAuthCommand(this.redisService, user).execute();
 
     return {
       message: await this.i18n.t('user.UPDATE_PASSWORD'),
@@ -122,11 +121,13 @@ export class AuthService {
   private async validateUserForPasswordReset(email: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
 
-    if (!user || !user.data)
+    if (!user || !user.data) {
       throw new BadRequestException(await this.i18n.t('user.NOT_FOUND'));
+    }
 
-    if ([Role.ADMIN].includes(user.data.role))
+    if ([Role.ADMIN].includes(user.data.role)) {
       throw new BadRequestException(await this.i18n.t('user.NOT_ADMIN'));
+    }
 
     return user.data;
   }
@@ -141,9 +142,10 @@ export class AuthService {
       },
     });
 
-    if (!user)
+    if (!user) {
       throw new BadRequestException(await this.i18n.t('user.NOT_FOUND'));
-    
+    }
+
     return UserFactory.fromPrisma(user);
   }
 
@@ -152,16 +154,19 @@ export class AuthService {
     currentPassword: string,
   ): Promise<User> {
     const user = await this.userService.findById(id);
-    if (!user || !user.data)
+    if (!user || !user.data) {
       throw new BadRequestException(await this.i18n.t('user.EMAIL_WRONG'));
+    }
 
     const isMatch = await this.passwordStrategy.compare(
       currentPassword,
       user.data.password ?? '',
     );
-    if (!isMatch)
+    if (!isMatch) {
       throw new BadRequestException(await this.i18n.t('user.OLD_IS_EQUAL_NEW'));
+    }
 
     return user.data;
   }
 }
+

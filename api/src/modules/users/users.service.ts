@@ -8,6 +8,9 @@ import { I18nService } from 'nestjs-i18n';
 import { UpdateUserDto } from './inputs/UpdateUser.dto';
 import { UserFactory } from './factory/user.factory';
 import { UserRoleContext } from './state/user.state';
+import { User } from './entity/user.entity';
+import { Role } from 'src/common/constant/enum.constant';
+import { PasswordServiceAdapter } from '../auth/adapter/password.adapter';
 
 @Injectable()
 export class UserService {
@@ -16,6 +19,7 @@ export class UserService {
     private readonly cacheObserver: CacheObserver,
     private readonly prisma: PrismaService,
     private readonly i18n: I18nService,
+    private readonly passwordStrategy: PasswordServiceAdapter,
   ) {}
 
   async findById(id: string): Promise<UserResponse> {
@@ -100,5 +104,25 @@ export class UserService {
       data: mappedUser,
       message: await this.i18n.t('user.UPDATED'),
     };
+  }
+  async createUser(createUserDto: any): Promise<User> {
+    return await this.prisma.$transaction(async (tx) => {
+      await this.proxy.dataExisted(createUserDto.email);
+
+      const password = await this.passwordStrategy.hash(createUserDto.password);
+
+      const userCount = await tx.user.count();
+      const role = userCount === 0 ? Role.ADMIN : Role.USER;
+
+      const newUser = await tx.user.create({
+        data: {
+          ...createUserDto,
+          password,
+          role,
+        },
+      });
+
+      return UserFactory.fromPrisma(newUser);
+    });
   }
 }
