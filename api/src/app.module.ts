@@ -4,6 +4,7 @@ import { AppResolver } from './app.resolver';
 import { DatabaseModule } from './common/database/database';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/users.module';
+import { OAuthModule } from './modules/oauth/oauth.module';
 import {
   ConfigModule,
   GraphqlModule,
@@ -21,6 +22,7 @@ import {
 
     UserModule,
     AuthModule,
+    OAuthModule,
   ],
   providers: [AppService, AppResolver],
 })

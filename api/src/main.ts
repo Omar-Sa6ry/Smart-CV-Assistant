@@ -1,4 +1,4 @@
-// import * as bodyParser from 'body-parser';
+import * as bodyParser from 'body-parser';
 import { json } from 'express';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { I18nValidationException } from 'nestjs-i18n';
@@ -12,7 +12,7 @@ import {
   GeneralResponseInterceptor,
   SqlInjectionInterceptor,
 } from '@bts-soft/core';
-// import { setupInterceptors, setupGraphqlUpload } from '@bts-soft/core';
+// import { setupGraphqlUpload } from '@bts-soft/core';
 
 async function bootstrap() {
   try {
@@ -20,7 +20,6 @@ async function bootstrap() {
     app.enableCors();
 
     // setupGraphqlUpload(app, 1000000, 1);
-    // setupInterceptors(app);
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -37,7 +36,7 @@ async function bootstrap() {
       new GeneralResponseInterceptor(),
     );
 
-    // app.use('/google/callback', bodyParser.raw({ type: 'application/json' }));
+    app.use('/google/callback', bodyParser.raw({ type: 'application/json' }));
     app.use(json());
 
     await app.listen(process.env.PORT || 5004);
