@@ -20,15 +20,14 @@ model User {
   lastName         String?   @db.VarChar(100)
   resetToken       String?
   resetTokenExpiry DateTime? @db.Timestamp(6)
-  cvs              CV[]
+  cvs              Cv[]
 }
 
-model CV {
+model Cv {
   id          String   @id @default(uuid())
   title       String
   userId      String
-  content     Json?
-  isPublished Boolean  @default(false)
+  isDefault Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])

@@ -1,0 +1,7 @@
+{
+  "CREATED": "CV created successfully",
+  "UPDATED": "CV updated successfully",
+  "DELETED": "CV deleted successfully",
+  "NOT_FOUND": "CV not found",
+  "NOT_FOUNDS": "CVs not found"
+}

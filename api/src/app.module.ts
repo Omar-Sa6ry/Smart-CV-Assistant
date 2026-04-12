@@ -5,12 +5,14 @@ import { DatabaseModule } from './common/database/database';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/users.module';
 import { OAuthModule } from './modules/oauth/oauth.module';
+import { CvModule } from './modules/cvBuilder/modules/cv.module';
 import {
   ConfigModule,
   GraphqlModule,
   ThrottlerModule,
   TranslationModule,
 } from '@bts-soft/core';
+
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import {
     UserModule,
     AuthModule,
     OAuthModule,
+    CvModule,
   ],
   providers: [AppService, AppResolver],
 })

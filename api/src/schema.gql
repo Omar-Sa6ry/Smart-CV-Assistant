@@ -60,16 +60,49 @@ type UsersResponse {
   pagination: PaginationInfo
 }
 
+type Cv {
+  id: String!
+  title: String!
+  isDefault: Boolean!
+  user: User
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type CvResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Cv
+}
+
+type CvsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Cv!]
+  pagination: PaginationInfo
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
   getUserByEmail(email: EmailInput!): UserResponse!
   getUsers(page: Int, limit: Int): UsersResponse!
   deleteUser(id: String!): UserResponse!
+  getUserCvs(pagination: PaginationInput!): CvsResponse!
+  getCvById(id: String!): CvResponse!
 }
 
 input EmailInput {
   email: String!
+}
+
+input PaginationInput {
+  limit: Int!
+  page: Int!
 }
 
 type Mutation {
@@ -81,6 +114,8 @@ type Mutation {
   forgotPassword: AuthResponse!
   resetPassword(resetPasswordDto: ResetPasswordDto!): UserResponse!
   changePassword(changePasswordDto: ChangePasswordDto!): UserResponse!
+  createCv(data: CreateCvInput!): CvResponse!
+  updateCv(id: String!, data: UpdateCvInput!): CvResponse!
 }
 
 input UpdateUserDto {
@@ -110,4 +145,14 @@ input ResetPasswordDto {
 input ChangePasswordDto {
   password: String!
   newPassword: String!
+}
+
+input CreateCvInput {
+  title: String!
+  isDefault: Boolean
+}
+
+input UpdateCvInput {
+  title: String
+  isDefault: Boolean
 }
