@@ -1,6 +1,7 @@
 import { UserResponse, UsersResponse } from '../dto/UserResponse.dto';
 import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/common/database/prisma.service';
+import { PrismaClient, Prisma } from '@prisma/client';
 import {
   BadRequestException,
   NotFoundException,
@@ -76,14 +77,17 @@ export class UserProxy {
     };
   }
 
-  async dataExisted(email: string): Promise<void> {
+  async dataExisted(
+    email: string,
+    tx: Prisma.TransactionClient | PrismaService = this.prisma,
+  ): Promise<void> {
     const cacheKey = `user:email:${email}`;
     const cachedUser = await this.redisService.get(cacheKey);
 
     if (cachedUser)
       throw new BadRequestException(await this.i18n.t('user.EMAIL_EXISTED'));
 
-    const emailExisted = await this.prisma.user.findUnique({
+    const emailExisted = await tx.user.findUnique({
       where: { email },
     });
     if (emailExisted)

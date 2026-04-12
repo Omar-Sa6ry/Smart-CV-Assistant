@@ -1,0 +1,92 @@
+query {
+  getUserById(id: "fb740acc-d07a-4d03-82bf-5a2d1d74b9ff") {
+    success
+    statusCode
+    message
+    data {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+query {
+  getUserByEmail(email: { email: "omaddbfrys@gmail.com" }) {
+    success
+    statusCode
+    message
+    data {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+query {
+  getUsers {
+    success
+    message
+    items {
+      id
+      firstName
+      email
+    }
+  }
+}
+
+query {
+  getUsers(page: 1, limit: 10) {
+    success
+    message
+    pagination {
+      totalPages
+      totalItems
+      currentPage
+    }
+    items {
+      id
+      firstName
+      email
+    }
+  }
+}
+
+mutation {
+  updateUser(updateUserDto: { lastName: "Ahmed sabry" }) {
+    success
+    statusCode
+    message
+    data {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+mutation {
+  UpdateUserRoleToAdmin(id: "67099476-f175-4871-9644-baca7569caed") {
+    success
+    statusCode
+    message
+    data {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+query {
+  deleteUser(id: "fb740acc-d07a-4d03-82bf-5a2d1d74b9ff") {
+    success
+    statusCode
+    message
+  }
+}

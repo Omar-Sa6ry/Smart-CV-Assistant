@@ -67,7 +67,12 @@ export class UserService {
     const mappedUser = UserFactory.fromPrisma(updatedUser);
     await this.cacheObserver.onUserUpdate(mappedUser);
 
-    return { data: mappedUser };
+    return {
+      data: mappedUser,
+      message: await this.i18n.t('user.UPDATED'),
+      success: true,
+      statusCode: 200,
+    };
   }
 
   async delete(id: string): Promise<UserResponse> {
@@ -107,7 +112,7 @@ export class UserService {
   }
   async createUser(createUserDto: any): Promise<User> {
     return await this.prisma.$transaction(async (tx) => {
-      await this.proxy.dataExisted(createUserDto.email);
+      await this.proxy.dataExisted(createUserDto.email, tx);
 
       const password = await this.passwordStrategy.hash(createUserDto.password);
 

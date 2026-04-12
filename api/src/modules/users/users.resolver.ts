@@ -3,7 +3,7 @@ import { UpdateUserDto } from './inputs/UpdateUser.dto';
 import { Permission } from 'src/common/constant/enum.constant';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { UserResponse, UsersResponse } from './dto/UserResponse.dto';
-import { EmailInput, UserIdInput } from './inputs/user.input';
+import { EmailInput } from './inputs/user.input';
 import { UserFacade } from './facade/user.facade';
 import { User } from './entity/user.entity';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
@@ -15,8 +15,10 @@ export class UserResolver {
 
   @Query((returns) => UserResponse)
   @Auth([Permission.VIEW_USER])
-  async getUserById(@Args('id') id: UserIdInput): Promise<UserResponse> {
-    return await this.userFacade.findById(id.UserId);
+  async getUserById(
+    @Args('id', { type: () => String }) id: string,
+  ): Promise<UserResponse> {
+    return await this.userFacade.findById(id);
   }
 
   @Query((returns) => UserResponse)
@@ -47,15 +49,17 @@ export class UserResolver {
 
   @Query((returns) => UserResponse)
   @Auth([Permission.DELETE_USER])
-  async deleteUser(@Args('id') id: UserIdInput): Promise<UserResponse> {
-    return await this.userFacade.deleteUser(id.UserId);
+  async deleteUser(
+    @Args('id', { type: () => String }) id: string,
+  ): Promise<UserResponse> {
+    return await this.userFacade.deleteUser(id);
   }
 
   @Mutation((returns) => UserResponse)
   @Auth([Permission.EDIT_USER_ROLE])
   async UpdateUserRoleToAdmin(
-    @Args('id') id: UserIdInput,
+    @Args('id', { type: () => String }) id: string,
   ): Promise<UserResponse> {
-    return await this.userFacade.editUserRole(id.UserId);
+    return await this.userFacade.editUserRole(id);
   }
 }

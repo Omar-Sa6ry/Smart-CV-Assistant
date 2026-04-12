@@ -13,5 +13,6 @@
   "EMAIL_WRONG": "Email is incorrect",
   "NO_TOKEN": "Authentication token is missing",
   "INSUFFICIENT_PERMISSIONS": "You do not have permission to perform this action",
-  "INVALID_TOKEN": "Invalid or expired token"
+  "INVALID_TOKEN": "Invalid or expired token",
+  "INVALID_CREDENTIALS": "Invalid credentials"
 }

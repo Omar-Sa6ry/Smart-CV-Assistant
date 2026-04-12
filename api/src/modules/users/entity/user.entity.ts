@@ -24,19 +24,10 @@ export class User {
   @EmailField()
   email: string;
 
-  @Exclude()
   password?: string | null;
-
-  @Exclude()
   googleId?: string | null;
-
-  @Exclude()
   role: Role;
-
-  @Exclude()
   resetToken?: string | null;
-
-  @Exclude()
   resetTokenExpiry?: Date | null;
 
   @Field(() => Date, { nullable: true })

@@ -6,7 +6,7 @@ import { LoginDto } from './inputs/Login.dto';
 import { ResetPasswordDto } from './inputs/ResetPassword.dto';
 import { ChangePasswordDto } from './inputs/ChangePassword.dto';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
-import { Permission } from 'src/common/constant/enum.constant';
+import { Permission, Role } from 'src/common/constant/enum.constant';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { UserResponse } from '../users/dto/UserResponse.dto';
 import { CurrentUserDto } from '@bts-soft/core';
@@ -27,6 +27,12 @@ export class AuthResolver {
   @Mutation(() => AuthResponse)
   async login(@Args('loginDto') loginDto: LoginDto): Promise<AuthResponse> {
     return this.authFacade.login(loginDto);
+  }
+
+
+  @Mutation(() => AuthResponse)
+  async loginAsAdmin(@Args('loginDto') loginDto: LoginDto): Promise<AuthResponse> {
+    return this.authFacade.roleBasedLogin(loginDto, Role.ADMIN);
   }
 
   @Mutation(() => AuthResponse)

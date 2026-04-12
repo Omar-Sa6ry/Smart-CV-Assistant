@@ -62,14 +62,10 @@ type UsersResponse {
 
 type Query {
   sayHello: String!
-  getUserById(id: UserIdInput!): UserResponse!
+  getUserById(id: String!): UserResponse!
   getUserByEmail(email: EmailInput!): UserResponse!
   getUsers(page: Int, limit: Int): UsersResponse!
-  deleteUser(id: UserIdInput!): UserResponse!
-}
-
-input UserIdInput {
-  UserId: String!
+  deleteUser(id: String!): UserResponse!
 }
 
 input EmailInput {
@@ -78,9 +74,10 @@ input EmailInput {
 
 type Mutation {
   updateUser(updateUserDto: UpdateUserDto!): UserResponse!
-  UpdateUserRoleToAdmin(id: UserIdInput!): UserResponse!
+  UpdateUserRoleToAdmin(id: String!): UserResponse!
   register(createUserDto: CreateUserDto!): AuthResponse!
   login(loginDto: LoginDto!): AuthResponse!
+  loginAsAdmin(loginDto: LoginDto!): AuthResponse!
   forgotPassword: AuthResponse!
   resetPassword(resetPasswordDto: ResetPasswordDto!): UserResponse!
   changePassword(changePasswordDto: ChangePasswordDto!): UserResponse!

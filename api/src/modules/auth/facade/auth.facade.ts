@@ -51,18 +51,21 @@ export class AuthFacade {
   async login(loginDto: LoginDto): Promise<AuthResponse> {
     const user = await this.validateUserExistence(loginDto.email);
 
-    const validator = new PasswordValidator(
-      this.i18n,
-      this.passwordAdapter,
+    const isValid = await this.passwordAdapter.compare(
       loginDto.password,
+      user.password!,
     );
+    if (!isValid)
+      throw new BadRequestException(
+        await this.i18n.t('user.INVALID_CREDENTIALS'),
+      );
 
     const postAuthCommands: ICommand[] = [
       new UpdateLastLoginCommand(this.prisma, user.id),
       new CacheUserAuthCommand(this.redisService, user),
     ];
 
-    return this.authenticate(user, postAuthCommands, validator);
+    return this.authenticate(user, postAuthCommands);
   }
 
   async roleBasedLogin(loginDto: LoginDto, role: Role): Promise<AuthResponse> {
@@ -75,15 +78,15 @@ export class AuthFacade {
     );
     const roleValidator = new RoleValidator(this.i18n, role);
     passwordValidator.setNext(roleValidator);
+    await passwordValidator.validate(user);
 
     const postAuthCommands: ICommand[] = [
       new UpdateLastLoginCommand(this.prisma, user.id),
       new CacheUserAuthCommand(this.redisService, user),
     ];
 
-    return this.authenticate(user, postAuthCommands, passwordValidator);
+    return this.authenticate(user, postAuthCommands);
   }
-
 
   async forgotPassword(email: string): Promise<AuthResponse> {
     return this.authService.forgotPassword(email);
@@ -105,10 +108,7 @@ export class AuthFacade {
   private async authenticate(
     user: User,
     commands: ICommand[],
-    validator?: IValidator,
   ): Promise<AuthResponse> {
-    if (validator) await validator.validate(user);
-
     const tokenGenerator = await this.tokenFactory.createTokenGenerator();
     const token = await tokenGenerator.generate(user.email, user.id);
 
