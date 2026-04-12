@@ -3,12 +3,19 @@ import { json } from 'express';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { I18nValidationException } from 'nestjs-i18n';
 import { AppModule } from './app.module';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  GeneralResponseInterceptor,
+  SqlInjectionInterceptor,
+} from '@bts-soft/core';
 // import { setupInterceptors, setupGraphqlUpload } from '@bts-soft/core';
 
 async function bootstrap() {
   try {
-
     const app = await NestFactory.create(AppModule);
     app.enableCors();
 
@@ -24,10 +31,14 @@ async function bootstrap() {
       }),
     );
 
+    app.useGlobalInterceptors(
+      new ClassSerializerInterceptor(new Reflector()),
+      new SqlInjectionInterceptor(),
+      new GeneralResponseInterceptor(),
+    );
+
     // app.use('/google/callback', bodyParser.raw({ type: 'application/json' }));
     app.use(json());
-
-
 
     await app.listen(process.env.PORT || 5004);
   } catch (error) {
