@@ -7,7 +7,9 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class UserFactory {
   static fromPrisma(user: PrismaUser): UserEntity {
-    return plainToInstance(UserEntity, user);
+    return plainToInstance(UserEntity, user, {
+      excludeExtraneousValues: false,
+    });
   }
 
   static fromPrismaArray(users: PrismaUser[]): UserEntity[] {

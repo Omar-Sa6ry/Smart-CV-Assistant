@@ -63,6 +63,7 @@ type UsersResponse {
 type Cv {
   id: String!
   title: String!
+  summary: String!
   isDefault: Boolean!
   user: User
   createdAt: DateTime
@@ -92,7 +93,7 @@ type Query {
   getUserByEmail(email: EmailInput!): UserResponse!
   getUsers(page: Int, limit: Int): UsersResponse!
   deleteUser(id: String!): UserResponse!
-  getUserCvs(pagination: PaginationInput!): CvsResponse!
+  getUserCvs(pagination: PaginationInput): CvsResponse!
   getCvById(id: String!): CvResponse!
 }
 
@@ -101,8 +102,8 @@ input EmailInput {
 }
 
 input PaginationInput {
-  limit: Int!
-  page: Int!
+  limit: Int
+  page: Int
 }
 
 type Mutation {
@@ -116,6 +117,7 @@ type Mutation {
   changePassword(changePasswordDto: ChangePasswordDto!): UserResponse!
   createCv(data: CreateCvInput!): CvResponse!
   updateCv(id: String!, data: UpdateCvInput!): CvResponse!
+  deleteCv(id: String!): CvResponse
 }
 
 input UpdateUserDto {
@@ -149,10 +151,12 @@ input ChangePasswordDto {
 
 input CreateCvInput {
   title: String!
+  summary: String!
   isDefault: Boolean
 }
 
 input UpdateCvInput {
   title: String
+  summary: String
   isDefault: Boolean
 }

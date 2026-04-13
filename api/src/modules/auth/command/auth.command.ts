@@ -53,7 +53,9 @@ export class UpdateLastLoginCommand implements ICommand {
   ) {}
 
   async execute(): Promise<void> {
-    await this.prisma.user.update({
+    if (!this.userId) return;
+
+    await this.prisma.user.updateMany({
       where: { id: this.userId },
       data: { lastLoginAt: new Date() },
     });

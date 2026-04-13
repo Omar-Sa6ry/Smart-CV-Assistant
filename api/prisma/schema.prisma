@@ -25,10 +25,13 @@ model User {
 
 model Cv {
   id          String   @id @default(uuid())
-  title       String
   userId      String
+  title       String
+  summary         String
   isDefault Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
+
+  @@map("CV")
 }

@@ -27,7 +27,8 @@ export class CvResolver {
   @Auth([Permission.GET_USERS_CV])
   async getUserCvs(
     @CurrentUser() user: CurrentUserDto,
-    @Args('pagination') pagination: PaginationInput,
+    @Args('pagination', { type: () => PaginationInput, nullable: true })
+    pagination?: PaginationInput,
   ): Promise<CvsResponse> {
     return this.cvService.getUserCvs(user.id, pagination);
   }
@@ -42,12 +43,21 @@ export class CvResolver {
   }
 
   @Mutation(() => CvResponse)
-  @Auth([Permission.DELETE_CV])
+  @Auth([Permission.UPDATE_CV])
   async updateCv(
     @CurrentUser() user: CurrentUserDto,
     @Args('id') id: string,
     @Args('data') data: UpdateCvInput,
   ): Promise<CvResponse> {
     return this.cvService.updateCv(id, user.id, data);
+  }
+
+  @Mutation(() => CvResponse, { nullable: true })
+  @Auth([Permission.DELETE_CV])
+  async deleteCv(
+    @CurrentUser() user: CurrentUserDto,
+    @Args('id') id: string,
+  ): Promise<CvResponse | null> {
+    return this.cvService.deleteCv(id, user.id);
   }
 }
