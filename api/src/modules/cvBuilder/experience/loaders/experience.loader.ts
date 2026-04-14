@@ -2,7 +2,7 @@ import DataLoader from 'dataloader';
 import { Injectable, Scope } from '@nestjs/common';
 import { PrismaService } from 'src/common/database/prisma.service';
 import { User } from 'src/modules/users/entity/user.entity';
-import { Cv } from '../models/cv.model';
+import { Cv } from '../../cv/models/cv.model';
 import { Experience } from '../models/experience.model';
 
 @Injectable({ scope: Scope.REQUEST })

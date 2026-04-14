@@ -4,16 +4,16 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/common/database/prisma.service';
-import { CreateExperienceInput } from '../inputs/createExperience.input';
-import { UpdateExperienceInput } from '../inputs/updateExperience.input';
+import { CreateExperienceInput } from './inputs/createExperience.input';
+import { UpdateExperienceInput } from './inputs/updateExperience.input';
 import { I18nService } from 'nestjs-i18n';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
-import { ExperienceBuilderFactory } from '../builder/experience-builder.factory';
-import { ExperienceFactory } from '../factory/experience.factory';
+import { ExperienceBuilderFactory } from './builder/experience-builder.factory';
+import { ExperienceFactory } from './factory/experience.factory';
 import {
   ExperienceResponse,
   ExperiencesResponse,
-} from '../dtos/experienceResponse.dto';
+} from './dtos/experienceResponse.dto';
 
 @Injectable()
 export class ExperienceService {

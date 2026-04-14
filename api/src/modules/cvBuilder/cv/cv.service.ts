@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/common/database/prisma.service';
-import { CreateCvInput } from '../inputs/createCv.Input';
-import { UpdateCvInput } from '../inputs/updateCv.Input';
-import { CvResponse, CvsResponse } from '../dtos/cvResponse.dto';
+import { CreateCvInput } from './inputs/createCv.Input';
+import { UpdateCvInput } from './inputs/updateCv.Input';
+import { CvResponse, CvsResponse } from './dtos/cvResponse.dto';
 import { UserService } from 'src/modules/users/users.service';
 import { I18nService } from 'nestjs-i18n';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
-import { CvBuilderFactory } from '../builder/cv-builder.factory';
-import { ModernPdfStrategy } from '../strategies/modern-pdf.strategy';
-import { ClassicPdfStrategy } from '../strategies/classic-pdf.strategy';
-import { ICvExportStrategy } from '../strategies/export-strategy.interface';
-import { CvFactory } from '../factory/cv.factory';
+import { CvBuilderFactory } from './builder/cv-builder.factory';
+import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
+import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
+import { ICvExportStrategy } from './strategies/export-strategy.interface';
+import { CvFactory } from './factory/cv.factory';
 
 @Injectable()
 export class CvService {

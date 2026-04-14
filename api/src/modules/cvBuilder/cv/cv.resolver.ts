@@ -1,17 +1,17 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
-import { CvService } from '../services/cv.service';
-import { Cv } from '../models/cv.model';
-import { CvResponse, CvsResponse } from '../dtos/cvResponse.dto';
-import { CreateCvInput } from '../inputs/createCv.Input';
-import { UpdateCvInput } from '../inputs/updateCv.Input';
+import { CvService } from './cv.service';
+import { Cv } from './models/cv.model';
+import { CvResponse, CvsResponse } from './dtos/cvResponse.dto';
+import { CreateCvInput } from './inputs/createCv.Input';
+import { UpdateCvInput } from './inputs/updateCv.Input';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
 import { CurrentUserDto } from '@bts-soft/core';
 import { Permission } from 'src/common/constant/enum.constant';
-import { ExperienceLoader } from '../loaders/experience.loader';
+import { ExperienceLoader } from '../experience/loaders/experience.loader';
 import { User } from 'src/modules/users/entity/user.entity';
-import { Experience } from '../models/experience.model';
+import { Experience } from '../experience/models/experience.model';
 
 @Resolver(() => Cv)
 export class CvResolver {

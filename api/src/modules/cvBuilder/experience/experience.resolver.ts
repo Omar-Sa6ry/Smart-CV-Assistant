@@ -6,22 +6,22 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { ExperienceService } from '../services/experience.service';
-import { Experience } from '../models/experience.model';
+import { ExperienceService } from './experience.service';
+import { Experience } from './models/experience.model';
 import {
   ExperienceResponse,
   ExperiencesResponse,
-} from '../dtos/experienceResponse.dto';
-import { CreateExperienceInput } from '../inputs/createExperience.input';
-import { UpdateExperienceInput } from '../inputs/updateExperience.input';
+} from './dtos/experienceResponse.dto';
+import { CreateExperienceInput } from './inputs/createExperience.input';
+import { UpdateExperienceInput } from './inputs/updateExperience.input';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
 import { CurrentUserDto } from '@bts-soft/core';
 import { Permission } from 'src/common/constant/enum.constant';
-import { ExperienceLoader } from '../loaders/experience.loader';
+import { ExperienceLoader } from './loaders/experience.loader';
 import { User } from 'src/modules/users/entity/user.entity';
-import { Cv } from '../models/cv.model';
+import { Cv } from '../cv/models/cv.model';
 
 @Resolver(() => Experience)
 export class ExperienceResolver {

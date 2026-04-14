@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Type } from 'class-transformer';
-import { Experience } from './experience.model';
+import { Experience } from '../../experience/models/experience.model';
 
 @ObjectType()
 export class Cv {

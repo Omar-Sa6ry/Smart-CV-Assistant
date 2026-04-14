@@ -1,4 +1,4 @@
-import { ICvComponent } from '../interfaces/ICvComponent.intrface';
+import { ICvComponent } from '../interfaces/ICvComponent.interface';
 
 export class CvItem implements ICvComponent {
   constructor(

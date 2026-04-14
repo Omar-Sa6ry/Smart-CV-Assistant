@@ -5,8 +5,8 @@ import { DatabaseModule } from './common/database/database';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/users.module';
 import { OAuthModule } from './modules/oauth/oauth.module';
-import { CvModule } from './modules/cvBuilder/modules/cv.module';
-import { ExperienceModule } from './modules/cvBuilder/modules/experience.module';
+import { CvModule } from './modules/cvBuilder/cv/cv.module';
+import { ExperienceModule } from './modules/cvBuilder/experience/experience.module';
 import {
   ConfigModule,
   GraphqlModule,
