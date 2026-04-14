@@ -2,6 +2,7 @@
   "CREATED": "CV created successfully",
   "UPDATED": "CV updated successfully",
   "DELETED": "CV deleted successfully",
+  "NOT_PERMISSION": "You do not have permission to add experience to this CV",
   "NOT_FOUND": "CV not found",
   "NOT_FOUNDS": "CVs not found"
 }

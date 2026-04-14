@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { CvService } from '../services/cv.service';
 import { Cv } from '../models/cv.model';
 import { CvResponse, CvsResponse } from '../dtos/cvResponse.dto';
@@ -9,10 +9,16 @@ import { Auth } from 'src/common/decorator/auth.decorator';
 import { CurrentUser } from 'src/common/decorator/currentUser.decorator';
 import { CurrentUserDto } from '@bts-soft/core';
 import { Permission } from 'src/common/constant/enum.constant';
+import { ExperienceLoader } from '../loaders/experience.loader';
+import { User } from 'src/modules/users/entity/user.entity';
+import { Experience } from '../models/experience.model';
 
 @Resolver(() => Cv)
 export class CvResolver {
-  constructor(private readonly cvService: CvService) {}
+  constructor(
+    private readonly cvService: CvService,
+    private readonly experienceLoader: ExperienceLoader,
+  ) {}
 
   @Mutation(() => CvResponse)
   @Auth([Permission.CREATE_CV])
@@ -59,5 +65,15 @@ export class CvResolver {
     @Args('id') id: string,
   ): Promise<CvResponse | null> {
     return this.cvService.deleteCv(id, user.id);
+  }
+
+  @ResolveField(() => User, { name: 'user', nullable: true })
+  async getUser(@Parent() cv: Cv): Promise<User | null> {
+    return this.experienceLoader.userLoader.load(cv.userId);
+  }
+
+  @ResolveField(() => [Experience], { name: 'experiences', nullable: true })
+  async getExperiences(@Parent() cv: Cv): Promise<Experience[]> {
+    return this.experienceLoader.experiencesByCvIdLoader.load(cv.id);
   }
 }

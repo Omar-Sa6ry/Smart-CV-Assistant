@@ -5,9 +5,10 @@ import { UserModule } from 'src/modules/users/users.module';
 import { CvBuilderFactory } from '../builder/cv-builder.factory';
 import { ClassicPdfStrategy } from '../strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from '../strategies/modern-pdf.strategy';
+import { ExperienceModule } from './experience.module';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, ExperienceModule],
   providers: [
     CvService,
     CvResolver,

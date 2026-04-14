@@ -6,13 +6,13 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/users/users.module';
 import { OAuthModule } from './modules/oauth/oauth.module';
 import { CvModule } from './modules/cvBuilder/modules/cv.module';
+import { ExperienceModule } from './modules/cvBuilder/modules/experience.module';
 import {
   ConfigModule,
   GraphqlModule,
   ThrottlerModule,
   TranslationModule,
 } from '@bts-soft/core';
-
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import {
     AuthModule,
     OAuthModule,
     CvModule,
+    ExperienceModule,
   ],
   providers: [AppService, AppResolver],
 })

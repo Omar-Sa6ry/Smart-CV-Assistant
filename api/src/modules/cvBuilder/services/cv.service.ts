@@ -89,12 +89,11 @@ export class CvService {
   async getById(cvId: string, userId?: string): Promise<CvResponse> {
     const cv = await this.prisma.cv.findUnique({
       where: { id: cvId },
-      include: { user: true },
+      include: { user: true, experiences: true },
     });
 
-    if (!cv || (userId && cv.userId !== userId)) {
+    if (!cv || (userId && cv.userId !== userId))
       throw new NotFoundException(await this.i18n.t('cv.NOT_FOUND'));
-    }
 
     return { data: CvFactory.fromPrisma(cv) };
   }
