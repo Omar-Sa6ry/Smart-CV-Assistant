@@ -32,7 +32,7 @@ export class ExperienceService {
     userId: string,
     data: CreateExperienceInput,
   ): Promise<ExperienceResponse> {
-    await this.cvService.getById(data.cvId);
+    await this.cvService.getById(data.cvId, userId);
 
     const builder = this.builderFactory.create();
     const experienceData = builder

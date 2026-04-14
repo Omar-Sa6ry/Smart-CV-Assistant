@@ -32,7 +32,7 @@ export class EducationService {
     userId: string,
     data: CreateEducationInput,
   ): Promise<EducationResponse> {
-    await this.cvService.getById(data.cvId);
+    await this.cvService.getById(data.cvId, userId);
 
     const builder = this.builderFactory.create();
     const educationData = builder

@@ -3,6 +3,7 @@ import { User } from 'src/modules/users/entity/user.entity';
 import { Type } from 'class-transformer';
 import { Experience } from '../../experience/models/experience.model';
 import { Education } from '../../education/models/education.model';
+import { Certification } from '../../certification/models/certification.model';
 
 @ObjectType()
 export class Cv {
@@ -31,6 +32,10 @@ export class Cv {
   @Field(() => [Education], { nullable: true })
   @Type(() => Education)
   educations?: Education[] | null;
+
+  @Field(() => [Certification], { nullable: true })
+  @Type(() => Certification)
+  certifications?: Certification[] | null;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | null;

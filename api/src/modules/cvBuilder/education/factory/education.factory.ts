@@ -11,9 +11,10 @@ type PrismaEducationWithRelations = PrismaEducation & {
 @Injectable()
 export class EducationFactory {
   static fromPrisma(education: PrismaEducationWithRelations): Education {
+    const { gpa, ...rest } = education;
     const data = {
-      ...education,
-      gpa: education.gpa ? Number(education.gpa) : null,
+      ...rest,
+      gpa: (gpa !== undefined && gpa !== null) ? Number(gpa) : null,
     };
     return plainToInstance(Education, data, {
       excludeExtraneousValues: false,

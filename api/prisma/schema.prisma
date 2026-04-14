@@ -38,6 +38,7 @@ model User {
   cvs              Cv[]
   experiences      Experience[]
   educations       Education[]
+  certifications  Certification[]
 }
 
 model Cv {
@@ -51,6 +52,7 @@ model Cv {
   user        User     @relation(fields: [userId], references: [id])
   experiences Experience[]
   educations  Education[]
+  certifications Certification[]
 
   @@map("CV")
 }
@@ -91,6 +93,22 @@ model Education {
   degree         Degree 
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Certification {
+  id                  String   @id @default(uuid())
+  userId              String
+  cvId                String
+  name                String   @db.VarChar(255)
+  issuingOrganization String   @db.VarChar(255)
+  credentialId        String?  @db.VarChar(100)
+  credentialUrl       String?  @db.VarChar(250)
+  issueDate           DateTime
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)

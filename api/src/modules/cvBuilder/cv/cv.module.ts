@@ -7,12 +7,14 @@ import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
 import { ExperienceModule } from '../experience/experience.module';
 import { EducationModule } from '../education/education.module';
+import { CertificationModule } from '../certification/certification.module';
 
 @Module({
   imports: [
     UserModule,
     forwardRef(() => ExperienceModule),
     forwardRef(() => EducationModule),
+    forwardRef(() => CertificationModule),
   ],
   providers: [
     CvService,

@@ -113,6 +113,19 @@ enum Degree {
   ungraduated
 }
 
+type Certification {
+  id: String!
+  name: String!
+  issuingOrganization: String!
+  credentialId: String
+  credentialUrl: String
+  issueDate: DateTime!
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+  cv: Cv
+}
+
 type Cv {
   id: String!
   title: String!
@@ -121,6 +134,7 @@ type Cv {
   user: User
   experiences: [Experience!]
   educations: [Education!]
+  certifications: [Certification!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -176,6 +190,23 @@ type EducationsResponse {
   pagination: PaginationInfo
 }
 
+type CertificationResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Certification
+}
+
+type CertificationsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Certification!]
+  pagination: PaginationInfo
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -190,6 +221,9 @@ type Query {
   getEducationsByCvId(cvId: String!, pagination: PaginationInput): EducationsResponse!
   getEducationsByUserId(pagination: PaginationInput): EducationsResponse!
   getEducationById(id: String!): EducationResponse!
+  getCertificationsByUserId(pagination: PaginationInput): CertificationsResponse!
+  getCertificationsByCvId(cvId: String!, pagination: PaginationInput): CertificationsResponse!
+  getCertificationById(id: String!): CertificationResponse!
 }
 
 input EmailInput {
@@ -219,6 +253,9 @@ type Mutation {
   createEducation(data: CreateEducationInput!): EducationResponse!
   updateEducation(id: String!, data: UpdateEducationInput!): EducationResponse!
   deleteEducation(id: String!): EducationResponse
+  createCertification(data: CreateCertificationInput!): CertificationResponse!
+  updateCertification(id: String!, data: UpdateCertificationInput!): CertificationResponse!
+  deleteCertification(id: String!): CertificationResponse
 }
 
 input UpdateUserDto {
@@ -314,4 +351,22 @@ input UpdateEducationInput {
   isCurrent: Boolean = false
   startDate: DateTime
   endDate: DateTime
+}
+
+input CreateCertificationInput {
+  cvId: String!
+  name: String!
+  issuingOrganization: String!
+  credentialId: String
+  credentialUrl: String
+  issueDate: DateTime!
+}
+
+input UpdateCertificationInput {
+  cvId: String
+  name: String
+  issuingOrganization: String
+  credentialId: String
+  credentialUrl: String
+  issueDate: DateTime
 }

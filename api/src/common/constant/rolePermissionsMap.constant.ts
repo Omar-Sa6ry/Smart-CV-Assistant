@@ -30,6 +30,12 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.GET_EXPERIENCE,
     Permission.UPDATE_EXPERIENCE,
     Permission.DELETE_EXPERIENCE,
+
+    // Certificate
+    Permission.CREATE_CERTIFICATION,
+    Permission.GET_CERTIFICATION,
+    Permission.UPDATE_CERTIFICATION,
+    Permission.DELETE_CERTIFICATION,
   ],
 
   [Role.USER]: [
@@ -58,5 +64,11 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.GET_EXPERIENCE,
     Permission.UPDATE_EXPERIENCE,
     Permission.DELETE_EXPERIENCE,
+
+    // Certificate
+    Permission.CREATE_CERTIFICATION,
+    Permission.GET_CERTIFICATION,
+    Permission.UPDATE_CERTIFICATION,
+    Permission.DELETE_CERTIFICATION,
   ],
 };
