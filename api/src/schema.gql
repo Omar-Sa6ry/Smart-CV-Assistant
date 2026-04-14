@@ -126,6 +126,24 @@ type Certification {
   cv: Cv
 }
 
+type Project {
+  id: String!
+  name: String!
+  description: String
+  descriptionBullets: [String!]!
+  technologiesUsed: String
+  projectUrl: String
+  isPersonalProject: Boolean!
+  startDate: DateTime
+  endDate: DateTime
+  isTeamProject: Boolean!
+  teamSize: Int!
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+  cv: Cv
+}
+
 type Cv {
   id: String!
   title: String!
@@ -135,6 +153,7 @@ type Cv {
   experiences: [Experience!]
   educations: [Education!]
   certifications: [Certification!]
+  projects: [Project!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -207,6 +226,23 @@ type CertificationsResponse {
   pagination: PaginationInfo
 }
 
+type ProjectResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Project
+}
+
+type ProjectsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Project!]
+  pagination: PaginationInfo
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -224,6 +260,9 @@ type Query {
   getCertificationsByUserId(pagination: PaginationInput): CertificationsResponse!
   getCertificationsByCvId(cvId: String!, pagination: PaginationInput): CertificationsResponse!
   getCertificationById(id: String!): CertificationResponse!
+  getProjectsByUserId(pagination: PaginationInput): ProjectsResponse!
+  getProjectsByCvId(cvId: String!, pagination: PaginationInput): ProjectsResponse!
+  getProjectById(id: String!): ProjectResponse!
 }
 
 input EmailInput {
@@ -256,6 +295,9 @@ type Mutation {
   createCertification(data: CreateCertificationInput!): CertificationResponse!
   updateCertification(id: String!, data: UpdateCertificationInput!): CertificationResponse!
   deleteCertification(id: String!): CertificationResponse
+  createProject(data: CreateProjectInput!): ProjectResponse!
+  updateProject(id: String!, data: UpdateProjectInput!): ProjectResponse!
+  deleteProject(id: String!): ProjectResponse
 }
 
 input UpdateUserDto {
@@ -369,4 +411,30 @@ input UpdateCertificationInput {
   credentialId: String
   credentialUrl: String
   issueDate: DateTime
+}
+
+input CreateProjectInput {
+  cvId: String!
+  name: String!
+  description: String
+  technologiesUsed: String
+  projectUrl: String
+  isPersonalProject: Boolean! = true
+  startDate: DateTime
+  endDate: DateTime
+  isTeamProject: Boolean! = false
+  teamSize: Int! = 1
+}
+
+input UpdateProjectInput {
+  cvId: String
+  name: String
+  description: String
+  technologiesUsed: String
+  projectUrl: String
+  isPersonalProject: Boolean = true
+  startDate: DateTime
+  endDate: DateTime
+  isTeamProject: Boolean = false
+  teamSize: Int = 1
 }

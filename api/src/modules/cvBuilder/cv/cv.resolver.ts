@@ -16,6 +16,8 @@ import { EducationLoader } from '../education/loaders/education.loader';
 import { Education } from '../education/models/education.model';
 import { CertificationLoader } from '../certification/loaders/certification.loader';
 import { Certification } from '../certification/models/certification.model';
+import { ProjectLoader } from '../project/loaders/project.loader';
+import { Project } from '../project/models/project.model';
 
 @Resolver(() => Cv)
 export class CvResolver {
@@ -24,6 +26,7 @@ export class CvResolver {
     private readonly experienceLoader: ExperienceLoader,
     private readonly educationLoader: EducationLoader,
     private readonly certificationLoader: CertificationLoader,
+    private readonly projectLoader: ProjectLoader,
   ) {}
 
   @Mutation(() => CvResponse)
@@ -91,5 +94,10 @@ export class CvResolver {
   @ResolveField(() => [Certification], { name: 'certifications', nullable: true })
   async getCertifications(@Parent() cv: Cv): Promise<Certification[]> {
     return this.certificationLoader.certsByCvIdLoader.load(cv.id);
+  }
+
+  @ResolveField(() => [Project], { name: 'projects', nullable: true })
+  async getProjects(@Parent() cv: Cv): Promise<Project[]> {
+    return this.projectLoader.projectsByCvIdLoader.load(cv.id);
   }
 }

@@ -39,6 +39,7 @@ model User {
   experiences      Experience[]
   educations       Education[]
   certifications  Certification[]
+  projects        Project[]
 }
 
 model Cv {
@@ -53,6 +54,7 @@ model Cv {
   experiences Experience[]
   educations  Education[]
   certifications Certification[]
+  projects       Project[]
 
   @@map("CV")
 }
@@ -109,6 +111,26 @@ model Certification {
   issueDate           DateTime
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id               String    @id @default(uuid())
+  userId           String
+  cvId             String
+  name             String    @db.VarChar(150)
+  description      String?   @db.VarChar(250)
+  technologiesUsed String?   @db.Text
+  projectUrl       String?   @db.VarChar(500)
+  isPersonalProject Boolean   @default(true)
+  startDate        DateTime?
+  endDate          DateTime?
+  isTeamProject    Boolean   @default(false)
+  teamSize         Int       @default(1)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)

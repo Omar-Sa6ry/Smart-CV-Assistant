@@ -8,6 +8,7 @@ import { OAuthModule } from './modules/oauth/oauth.module';
 import { CvModule } from './modules/cvBuilder/cv/cv.module';
 import { ExperienceModule } from './modules/cvBuilder/experience/experience.module';
 import { EducationModule } from './modules/cvBuilder/education/education.module';
+import { ProjectModule } from './modules/cvBuilder/project/project.module';
 import {
   ConfigModule,
   GraphqlModule,
@@ -29,6 +30,7 @@ import {
     CvModule,
     ExperienceModule,
     EducationModule,
+    ProjectModule,
   ],
   providers: [AppService, AppResolver],
 })
