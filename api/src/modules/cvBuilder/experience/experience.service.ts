@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from 'src/common/database/prisma.service';
 import { CreateExperienceInput } from './inputs/createExperience.input';
@@ -14,11 +16,14 @@ import {
   ExperienceResponse,
   ExperiencesResponse,
 } from './dtos/experienceResponse.dto';
+import { CvService } from '../cv/cv.service';
 
 @Injectable()
 export class ExperienceService {
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => CvService))
+    private readonly cvService: CvService,
     private readonly i18n: I18nService,
     private readonly builderFactory: ExperienceBuilderFactory,
   ) {}
@@ -27,12 +32,7 @@ export class ExperienceService {
     userId: string,
     data: CreateExperienceInput,
   ): Promise<ExperienceResponse> {
-    const cv = await this.prisma.cv.findUnique({
-      where: { id: data.cvId },
-    });
-
-    if (!cv || cv.userId !== userId)
-      throw new ForbiddenException(await this.i18n.t('cv.NOT_PERMISSION'));
+    await this.cvService.getById(data.cvId);
 
     const builder = this.builderFactory.create();
     const experienceData = builder
@@ -146,6 +146,8 @@ export class ExperienceService {
   ): Promise<ExperienceResponse> {
     await this.getExperienceById(userId, id);
 
+    if (data.cvId) await this.cvService.getById(data.cvId);
+
     const updated = await this.prisma.experience.update({
       where: { id },
       data: {
@@ -158,6 +160,7 @@ export class ExperienceService {
         isCurrentJob: data.isCurrentJob,
         description: data.description,
         achievements: data.achievements,
+        cvId: data.cvId,
         employmentType: data.employmentType,
       },
       include: { cv: true, user: true },

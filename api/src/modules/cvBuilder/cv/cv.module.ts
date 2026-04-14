@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CvResolver } from './cv.resolver';
 import { UserModule } from 'src/modules/users/users.module';
@@ -6,9 +6,14 @@ import { CvBuilderFactory } from './builder/cv-builder.factory';
 import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
 import { ExperienceModule } from '../experience/experience.module';
+import { EducationModule } from '../education/education.module';
 
 @Module({
-  imports: [UserModule, ExperienceModule],
+  imports: [
+    UserModule,
+    forwardRef(() => ExperienceModule),
+    forwardRef(() => EducationModule),
+  ],
   providers: [
     CvService,
     CvResolver,

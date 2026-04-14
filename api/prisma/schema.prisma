@@ -14,6 +14,13 @@ enum EmploymentType {
   freelance
 }
 
+enum Degree {
+  diploma
+  bachelor
+  master
+  ungraduated
+}
+
 model User {
   id               String    @id @default(uuid())
   email            String    @unique @db.VarChar(100)
@@ -30,6 +37,7 @@ model User {
   resetTokenExpiry DateTime? @db.Timestamp(6)
   cvs              Cv[]
   experiences      Experience[]
+  educations       Education[]
 }
 
 model Cv {
@@ -42,6 +50,7 @@ model Cv {
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
   experiences Experience[]
+  educations  Education[]
 
   @@map("CV")
 }
@@ -60,6 +69,26 @@ model Experience {
   description    String        @db.VarChar(255)
   achievements   String?        @db.Text
   employmentType EmploymentType @default(full_time)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id             String         @id @default(uuid())
+  userId         String
+  cvId           String
+  institution       String         @db.VarChar(75)
+  title    String         @db.VarChar(150)
+  location       String?        @db.VarChar(255)
+  startDate      DateTime
+  endDate        DateTime?
+  isCurrent      Boolean        @default(false)
+  gpa            Decimal?       @db.Decimal(3, 2)
+  description    String         @db.VarChar(500)
+  degree         Degree 
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 

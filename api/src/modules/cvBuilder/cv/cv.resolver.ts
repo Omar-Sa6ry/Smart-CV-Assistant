@@ -12,12 +12,15 @@ import { Permission } from 'src/common/constant/enum.constant';
 import { ExperienceLoader } from '../experience/loaders/experience.loader';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Experience } from '../experience/models/experience.model';
+import { EducationLoader } from '../education/loaders/education.loader';
+import { Education } from '../education/models/education.model';
 
 @Resolver(() => Cv)
 export class CvResolver {
   constructor(
     private readonly cvService: CvService,
     private readonly experienceLoader: ExperienceLoader,
+    private readonly educationLoader: EducationLoader,
   ) {}
 
   @Mutation(() => CvResponse)
@@ -75,5 +78,10 @@ export class CvResolver {
   @ResolveField(() => [Experience], { name: 'experiences', nullable: true })
   async getExperiences(@Parent() cv: Cv): Promise<Experience[]> {
     return this.experienceLoader.experiencesByCvIdLoader.load(cv.id);
+  }
+
+  @ResolveField(() => [Education], { name: 'educations', nullable: true })
+  async getEducations(@Parent() cv: Cv): Promise<Education[]> {
+    return this.educationLoader.educationsByCvIdLoader.load(cv.id);
   }
 }

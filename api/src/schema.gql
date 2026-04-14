@@ -88,6 +88,31 @@ enum EmploymentType {
   freelance
 }
 
+type Education {
+  id: String!
+  institution: String!
+  title: String!
+  location: String
+  description: String
+  degree: Degree!
+  gpa: Float
+  isCurrent: Boolean!
+  startDate: DateTime!
+  endDate: DateTime
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+  cv: Cv
+}
+
+"""Education degree levels"""
+enum Degree {
+  diploma
+  bachelor
+  master
+  ungraduated
+}
+
 type Cv {
   id: String!
   title: String!
@@ -95,6 +120,7 @@ type Cv {
   isDefault: Boolean!
   user: User
   experiences: [Experience!]
+  educations: [Education!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -133,6 +159,23 @@ type ExperiencesResponse {
   pagination: PaginationInfo
 }
 
+type EducationResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Education
+}
+
+type EducationsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Education!]
+  pagination: PaginationInfo
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -144,6 +187,9 @@ type Query {
   getExperiencesByCvId(cvId: String!, pagination: PaginationInput): ExperiencesResponse!
   getExperiencesByUserId(pagination: PaginationInput): ExperiencesResponse!
   getExperienceById(id: String!): ExperienceResponse!
+  getEducationsByCvId(cvId: String!, pagination: PaginationInput): EducationsResponse!
+  getEducationsByUserId(pagination: PaginationInput): EducationsResponse!
+  getEducationById(id: String!): EducationResponse!
 }
 
 input EmailInput {
@@ -170,6 +216,9 @@ type Mutation {
   createExperience(data: CreateExperienceInput!): ExperienceResponse!
   updateExperience(id: String!, data: UpdateExperienceInput!): ExperienceResponse!
   deleteExperience(id: String!): ExperienceResponse
+  createEducation(data: CreateEducationInput!): EducationResponse!
+  updateEducation(id: String!, data: UpdateEducationInput!): EducationResponse!
+  deleteEducation(id: String!): EducationResponse
 }
 
 input UpdateUserDto {
@@ -228,6 +277,7 @@ input CreateExperienceInput {
 }
 
 input UpdateExperienceInput {
+  cvId: String
   jobTitle: String
   companyName: String
   companyWebsite: String
@@ -238,4 +288,30 @@ input UpdateExperienceInput {
   description: String
   achievements: String
   employmentType: EmploymentType
+}
+
+input CreateEducationInput {
+  cvId: String!
+  institution: String!
+  title: String!
+  location: String
+  description: String
+  degree: Degree!
+  gpa: Float
+  isCurrent: Boolean! = false
+  startDate: DateTime!
+  endDate: DateTime
+}
+
+input UpdateEducationInput {
+  cvId: String
+  institution: String
+  title: String
+  location: String
+  description: String
+  degree: Degree
+  gpa: Float
+  isCurrent: Boolean = false
+  startDate: DateTime
+  endDate: DateTime
 }

@@ -7,6 +7,7 @@ import { UserModule } from './modules/users/users.module';
 import { OAuthModule } from './modules/oauth/oauth.module';
 import { CvModule } from './modules/cvBuilder/cv/cv.module';
 import { ExperienceModule } from './modules/cvBuilder/experience/experience.module';
+import { EducationModule } from './modules/cvBuilder/education/education.module';
 import {
   ConfigModule,
   GraphqlModule,
@@ -27,6 +28,7 @@ import {
     OAuthModule,
     CvModule,
     ExperienceModule,
+    EducationModule,
   ],
   providers: [AppService, AppResolver],
 })

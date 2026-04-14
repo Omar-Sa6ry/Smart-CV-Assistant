@@ -89,7 +89,7 @@ export class CvService {
   async getById(cvId: string, userId?: string): Promise<CvResponse> {
     const cv = await this.prisma.cv.findUnique({
       where: { id: cvId },
-      include: { user: true, experiences: true },
+      include: { user: true, experiences: true, educations: true },
     });
 
     if (!cv || (userId && cv.userId !== userId))

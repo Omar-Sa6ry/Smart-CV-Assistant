@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Type } from 'class-transformer';
 import { Experience } from '../../experience/models/experience.model';
+import { Education } from '../../education/models/education.model';
 
 @ObjectType()
 export class Cv {
@@ -26,6 +27,10 @@ export class Cv {
   @Field(() => [Experience], { nullable: true })
   @Type(() => Experience)
   experiences?: Experience[] | null;
+
+  @Field(() => [Education], { nullable: true })
+  @Type(() => Education)
+  educations?: Education[] | null;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | null;
