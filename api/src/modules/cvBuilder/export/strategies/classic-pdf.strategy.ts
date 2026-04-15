@@ -159,20 +159,20 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
             <h1>{{user.firstName}} {{user.lastName}}  ({{user.headline}})</h1>
             <div class="contact-info">
               {{#if user.city}}{{user.city}}, {{user.country}}{{/if}}
-              {{#if user.phoneNumber}} | <a href="tel:{{user.phoneNumber}}">{{user.phoneNumber}}</a>{{/if}}
+              {{#if phone}} | <a href="tel:{{phone}}">{{phone}}</a>{{/if}}
               {{#if user.email}} | <a href="mailto:{{user.email}}">{{user.email}}</a>{{/if}}
             </div>
             <div class="links">
-               {{#if user.linkedin}}
-                 <a href="{{user.linkedin}}" target="_blank">LinkedIn</a>
+               {{#if linkedin}}
+                 <a href="{{linkedin}}" target="_blank">LinkedIn</a>
                {{/if}}
-               {{#if user.github}}
-                 {{#if user.linkedin}} | {{/if}}
-                 <a href="{{user.github}}" target="_blank">GitHub</a>
+               {{#if github}}
+                 {{#if linkedin}} | {{/if}}
+                 <a href="{{github}}" target="_blank">GitHub</a>
                {{/if}}
-               {{#if user.portfolio}}
-                 {{#if user.linkedin}} | {{else}}{{#if user.github}} | {{/if}}{{/if}}
-                 <a href="{{user.portfolio}}" target="_blank">Portfolio</a>
+               {{#if portfolio}}
+                 {{#if linkedin}} | {{else}}{{#if github}} | {{/if}}{{/if}}
+                 <a href="{{portfolio}}" target="_blank">Portfolio</a>
                {{/if}}
             </div>
           </div>

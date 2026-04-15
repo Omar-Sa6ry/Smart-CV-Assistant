@@ -51,6 +51,9 @@ export class ProjectService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: ProjectFactory.fromPrisma(project),
       statusCode: 201,
@@ -68,7 +71,6 @@ export class ProjectService {
     const [projects, total] = await this.prisma.$transaction([
       this.prisma.project.findMany({
         where: { userId },
-        include: { cv: true, user: true },
         orderBy: { startDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -99,7 +101,6 @@ export class ProjectService {
     const [projects, total] = await this.prisma.$transaction([
       this.prisma.project.findMany({
         where: { cvId, userId },
-        include: { cv: true, user: true },
         orderBy: { startDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -155,6 +156,9 @@ export class ProjectService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
+
     return {
       data: ProjectFactory.fromPrisma(updated),
       message: await this.i18n.t('project.UPDATED'),
@@ -162,8 +166,12 @@ export class ProjectService {
   }
 
   async deleteProject(userId: string, id: string): Promise<ProjectResponse> {
-    await this.getProjectById(userId, id);
+    const projectRes = await this.getProjectById(userId, id);
     await this.prisma.project.delete({ where: { id } });
+
+    const cvId = (projectRes.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,

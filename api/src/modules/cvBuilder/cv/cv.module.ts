@@ -9,10 +9,12 @@ import { CertificationModule } from '../certification/certification.module';
 import { ProjectModule } from '../project/project.module';
 import { LanguageModule } from '../language/language.module';
 import { SkillModule } from '../skill/skill.module';
+import { RedisModule } from '@bts-soft/core';
 
 @Module({
   imports: [
     UserModule,
+    RedisModule,
     forwardRef(() => ExperienceModule),
     forwardRef(() => EducationModule),
     forwardRef(() => CertificationModule),
@@ -20,11 +22,7 @@ import { SkillModule } from '../skill/skill.module';
     forwardRef(() => LanguageModule),
     forwardRef(() => SkillModule),
   ],
-  providers: [
-    CvService,
-    CvResolver,
-    CvBuilderFactory,
-  ],
+  providers: [CvService, CvResolver, CvBuilderFactory],
   exports: [CvService],
 })
 export class CvModule {}

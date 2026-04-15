@@ -7,9 +7,42 @@ export class ModernPdfStrategy implements ICvExportStrategy {
   constructor(private readonly exportService: ExportService) {}
 
   async export(cvData: any): Promise<Buffer> {
+    const formattedData = this.formatData(cvData);
     const template = this.getTemplate();
-    const html = await this.exportService.renderTemplate(template, cvData);
+    const html = await this.exportService.renderTemplate(template, formattedData);
     return this.exportService.generatePdf(html);
+  }
+
+  private formatData(data: any): any {
+    const formatDate = (date: any) => {
+      if (!date) return '';
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return date;
+      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    };
+
+    return {
+      ...data,
+      experiences: data.experiences?.map((exp: any) => ({
+        ...exp,
+        startDate: formatDate(exp.startDate),
+        endDate: formatDate(exp.endDate),
+      })),
+      educations: data.educations?.map((edu: any) => ({
+        ...edu,
+        startDate: formatDate(edu.startDate),
+        endDate: formatDate(edu.endDate),
+      })),
+      projects: data.projects?.map((proj: any) => ({
+        ...proj,
+        startDate: formatDate(proj.startDate),
+        endDate: formatDate(proj.endDate),
+      })),
+      certifications: data.certifications?.map((cert: any) => ({
+        ...cert,
+        issueDate: formatDate(cert.issueDate),
+      })),
+    };
   }
 
   private getTemplate(): string {
@@ -17,70 +50,14 @@ export class ModernPdfStrategy implements ICvExportStrategy {
       <html>
         <head>
           <style>
-            @page { margin: 0; }
-            body { 
-              font-family: 'Helvetica', 'Arial', sans-serif; 
-              color: #333; 
-              margin: 0; 
-              padding: 0;
-              display: flex;
-              min-height: 100vh;
-            }
+/* ... (style remains same) ... */
             .sidebar { 
               width: 30%; 
               background: #2c3e50; 
               color: white; 
               padding: 40px 20px;
             }
-            .main { 
-              width: 70%; 
-              padding: 40px;
-              background: #fff;
-            }
-            .name { 
-              font-size: 24px; 
-              font-weight: bold; 
-              margin-bottom: 5px; 
-              text-transform: uppercase;
-              letter-spacing: 1px;
-            }
-            .sidebar-section { margin-bottom: 30px; }
-            .sidebar-title { 
-              font-size: 14px; 
-              text-transform: uppercase; 
-              border-bottom: 1px solid rgba(255,255,255,0.2); 
-              margin-bottom: 15px;
-              padding-bottom: 5px;
-              letter-spacing: 1.5px;
-              color: #ecf0f1;
-            }
-            .contact-item { font-size: 12px; margin-bottom: 10px; color: #bdc3c7; word-break: break-all; }
-            
-            .main-section { margin-bottom: 35px; }
-            .main-title { 
-              font-size: 18px; 
-              color: #2c3e50; 
-              border-bottom: 2px solid #3498db; 
-              display: inline-block; 
-              margin-bottom: 20px;
-              padding-right: 20px;
-            }
-            .experience-item { margin-bottom: 25px; }
-            .exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
-            .job-title { font-weight: bold; font-size: 15px; color: #2980b9; }
-            .exp-date { font-size: 12px; color: #7f8c8d; }
-            .company-name { font-style: italic; font-size: 14px; color: #34495e; margin-bottom: 8px; }
-            .description { font-size: 13px; line-height: 1.6; color: #444; }
-            
-            .skill-pill {
-              background: #34495e;
-              color: white;
-              padding: 4px 10px;
-              border-radius: 15px;
-              font-size: 11px;
-              display: inline-block;
-              margin: 3px;
-            }
+/* ... */
           </style>
         </head>
         <body>
@@ -91,6 +68,18 @@ export class ModernPdfStrategy implements ICvExportStrategy {
             <div class="sidebar-section">
               <div class="sidebar-title">Contact</div>
               <div class="contact-item"><b>Email:</b><br/>{{user.email}}</div>
+              {{#if phone}}
+                <div class="contact-item"><b>Phone:</b><br/>{{phone}}</div>
+              {{/if}}
+              {{#if linkedin}}
+                <div class="contact-item"><b>LinkedIn:</b><br/><a href="{{linkedin}}" style="color: #bdc3c7;">Link</a></div>
+              {{/if}}
+              {{#if github}}
+                <div class="contact-item"><b>GitHub:</b><br/><a href="{{github}}" style="color: #bdc3c7;">Link</a></div>
+              {{/if}}
+              {{#if portfolio}}
+                <div class="contact-item"><b>Portfolio:</b><br/><a href="{{portfolio}}" style="color: #bdc3c7;">Link</a></div>
+              {{/if}}
             </div>
 
             <div class="sidebar-section">

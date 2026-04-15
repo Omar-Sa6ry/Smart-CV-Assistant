@@ -54,6 +54,9 @@ export class EducationService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: EducationFactory.fromPrisma(education),
       statusCode: 201,
@@ -71,7 +74,6 @@ export class EducationService {
     const [educations, total] = await this.prisma.$transaction([
       this.prisma.education.findMany({
         where: { userId },
-        include: { cv: true, user: true },
         orderBy: { startDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -102,7 +104,6 @@ export class EducationService {
     const [educations, total] = await this.prisma.$transaction([
       this.prisma.education.findMany({
         where: { cvId, userId },
-        include: { cv: true, user: true },
         orderBy: { startDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -132,7 +133,9 @@ export class EducationService {
     });
 
     if (!education || education.userId !== userId) {
-      throw new NotFoundException(await this.i18n.t('education.NOT_FOUND'));
+      throw new ForbiddenException(
+        await this.i18n.t('education.NOT_PERMISSION'),
+      );
     }
 
     return { data: EducationFactory.fromPrisma(education) };
@@ -164,6 +167,9 @@ export class EducationService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
+
     return {
       data: EducationFactory.fromPrisma(updated),
       message: await this.i18n.t('education.UPDATED'),
@@ -174,8 +180,12 @@ export class EducationService {
     userId: string,
     id: string,
   ): Promise<EducationResponse> {
-    await this.getEducationById(userId, id);
+    const educationRes = await this.getEducationById(userId, id);
     await this.prisma.education.delete({ where: { id } });
+
+    const cvId = (educationRes.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,

@@ -68,6 +68,9 @@ export class SkillService {
       include: { keyword: true },
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: SkillFactory.fromPrisma(skill),
       statusCode: 201,
@@ -128,6 +131,9 @@ export class SkillService {
       include: { cv: true, user: true, keyword: true },
     });
 
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
+
     return {
       data: SkillFactory.fromPrisma(updated),
       message: await this.i18n.t('skill.UPDATED'),
@@ -135,8 +141,12 @@ export class SkillService {
   }
 
   async deleteSkill(userId: string, id: string): Promise<SkillResponse> {
-    await this.getSkillById(userId, id);
+    const skillRes = await this.getSkillById(userId, id);
     await this.prisma.skill.delete({ where: { id } });
+
+    const cvId = (skillRes.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,

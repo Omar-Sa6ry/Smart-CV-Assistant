@@ -47,6 +47,9 @@ export class LanguageService {
       data: languageData as any,
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: LanguageFactory.fromPrisma(language),
       statusCode: 201,
@@ -110,6 +113,9 @@ export class LanguageService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
+
     return {
       data: LanguageFactory.fromPrisma(updated),
       message: await this.i18n.t('language.UPDATED'),
@@ -117,8 +123,12 @@ export class LanguageService {
   }
 
   async deleteLanguage(userId: string, id: string): Promise<LanguageResponse> {
-    await this.getLanguageById(userId, id);
+    const languageRes = await this.getLanguageById(userId, id);
     await this.prisma.language.delete({ where: { id } });
+
+    const cvId = (languageRes.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,

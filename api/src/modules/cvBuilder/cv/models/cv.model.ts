@@ -21,6 +21,18 @@ export class Cv {
   @Field(() => String)
   summary: string;
 
+  @Field(() => String, { nullable: true })
+  phone?: string;
+
+  @Field(() => String, { nullable: true })
+  linkedin?: string | null;
+
+  @Field(() => String, { nullable: true })
+  github?: string | null;
+
+  @Field(() => String, { nullable: true })
+  portfolio?: string | null;
+
   @Field(() => Boolean)
   isDefault: boolean;
 

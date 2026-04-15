@@ -33,6 +33,38 @@ export class StandardCvBuilder implements ICvBuilder {
     return this;
   }
 
+  setIsPhone(phone: string): this {
+    this.cv.phone = phone;
+    return this;
+  }
+
+  setGithub(github?: string): this {
+    if (github) {
+      this.cv.github = github;
+    }
+    return this;
+  }
+
+  setPortfolio(portfolio?: string): this {
+    if (portfolio) {
+      this.cv.portfolio = portfolio;
+    }
+    return this;
+  }
+
+  setLinkedin(linkedin?: string): this {
+    if (linkedin) {
+      this.cv.linkedin = linkedin;
+    }
+    return this;
+  }
+
+  setPhone(phone?: string): this {
+    if (phone) {
+      this.cv.phone = phone;
+    }
+    return this;
+  }
   build(): Partial<Cv> {
     const result = { ...this.cv };
     this.reset();

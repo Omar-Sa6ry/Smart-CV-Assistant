@@ -55,6 +55,9 @@ export class ExperienceService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: ExperienceFactory.fromPrisma(experience),
       statusCode: 201,
@@ -103,7 +106,6 @@ export class ExperienceService {
     const [experiences, total] = await this.prisma.$transaction([
       this.prisma.experience.findMany({
         where: { userId },
-        include: { cv: true, user: true },
         orderBy: { startDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -129,7 +131,6 @@ export class ExperienceService {
   ): Promise<ExperienceResponse> {
     const experience = await this.prisma.experience.findUnique({
       where: { id },
-      include: { cv: true, user: true },
     });
 
     if (!experience || experience.userId !== userId) {
@@ -144,15 +145,15 @@ export class ExperienceService {
     id: string,
     data: UpdateExperienceInput,
   ): Promise<ExperienceResponse> {
-    await this.getExperienceById(userId, id);
+    const experience = await this.getExperienceById(userId, id);
 
     if (data.cvId) await this.cvService.getById(data.cvId);
 
     const updated = await this.prisma.experience.update({
       where: { id },
       data: {
-        jobTitle: data.jobTitle,
         companyName: data.companyName,
+        jobTitle: data.jobTitle,
         companyWebsite: data.companyWebsite,
         location: data.location,
         startDate: data.startDate,
@@ -163,12 +164,13 @@ export class ExperienceService {
         cvId: data.cvId,
         employmentType: data.employmentType,
       },
-      include: { cv: true, user: true },
     });
+
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
 
     return {
       data: ExperienceFactory.fromPrisma(updated),
-      message: await this.i18n.t('experience.UPDATED'),
     };
   }
 
@@ -176,11 +178,15 @@ export class ExperienceService {
     userId: string,
     id: string,
   ): Promise<ExperienceResponse> {
-    await this.getExperienceById(userId, id);
+    const experience = await this.getExperienceById(userId, id);
 
     await this.prisma.experience.delete({
       where: { id },
     });
+
+    const cvId = (experience.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,

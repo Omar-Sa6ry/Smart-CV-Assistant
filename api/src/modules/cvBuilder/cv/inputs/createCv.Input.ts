@@ -1,11 +1,35 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 @InputType()
 export class CreateCvInput {
   @Field(() => String)
   @IsString()
   title: string;
+
+  @Field(() => String)
+  @IsPhoneNumber('EG')
+  phone: string;
+
+  @Field(() => String, { nullable: true })
+  @IsUrl()
+  linkedin?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsUrl()
+  github?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsUrl()
+  portfolio?: string;
 
   @Field()
   @IsString()

@@ -21,6 +21,29 @@ enum Degree {
   ungraduated
 }
 
+enum Proficiency {
+  basic
+  conversational
+  professional
+  fluent
+  native
+}
+
+enum SkillCategory {
+  technical
+  soft
+  tool
+  methodology
+  programming_language
+}
+
+enum SkillProficiency {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
 model User {
   id               String    @id @default(uuid())
   email            String    @unique @db.VarChar(100)
@@ -49,6 +72,10 @@ model Cv {
   userId      String
   title       String
   summary         String
+  portfolio String?        @db.VarChar(250)
+  linkedin String?        @db.VarChar(250)
+  github String?        @db.VarChar(250)
+  phone String?        @db.VarChar(11)
   isDefault Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -140,13 +167,7 @@ model Project {
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
 }
 
-enum Proficiency {
-  basic
-  conversational
-  professional
-  fluent
-  native
-}
+
 
 model Language {
   id          String      @id @default(uuid())
@@ -159,21 +180,6 @@ model Language {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
-}
-
-enum SkillCategory {
-  technical
-  soft
-  tool
-  methodology
-  programming_language
-}
-
-enum SkillProficiency {
-  beginner
-  intermediate
-  advanced
-  expert
 }
 
 model SkillKeyword {

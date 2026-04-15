@@ -58,6 +58,9 @@ export class CertificationService {
       include: { cv: true, user: true },
     });
 
+    const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.cvService.invalidateCache(data.cvId, cvData.data);
+
     return {
       data: CertificationFactory.fromPrisma(cert),
       statusCode: 201,
@@ -76,7 +79,6 @@ export class CertificationService {
     const [certs, total] = await this.prisma.$transaction([
       this.prisma.certification.findMany({
         where: { cvId, userId },
-        include: { cv: true, user: true },
         orderBy: { issueDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -106,7 +108,6 @@ export class CertificationService {
     const [certs, total] = await this.prisma.$transaction([
       this.prisma.certification.findMany({
         where: { userId },
-        include: { cv: true, user: true },
         orderBy: { issueDate: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -157,9 +158,13 @@ export class CertificationService {
         credentialId: data.credentialId,
         credentialUrl: data.credentialUrl,
         issueDate: data.issueDate,
+        cvId: data.cvId,
       },
       include: { cv: true, user: true },
     });
+
+    const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.cvService.invalidateCache(updated.cvId, cvData.data);
 
     return {
       data: CertificationFactory.fromPrisma(updated),
@@ -171,8 +176,12 @@ export class CertificationService {
     userId: string,
     id: string,
   ): Promise<CertificationResponse> {
-    await this.getCertificationById(userId, id);
+    const certRes = await this.getCertificationById(userId, id);
     await this.prisma.certification.delete({ where: { id } });
+
+    const cvId = (certRes.data as any).cvId;
+    const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {
       data: null,
