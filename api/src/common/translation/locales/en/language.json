@@ -1,0 +1,8 @@
+{
+  "CREATED": "Language record created successfully",
+  "UPDATED": "Language record updated successfully",
+  "DELETED": "Language record deleted successfully",
+  "NOT_FOUND": "Language record not found",
+  "NOT_FOUNDS": "Language records not found",
+  "EXISTED": "Language is already added to this CV"
+}

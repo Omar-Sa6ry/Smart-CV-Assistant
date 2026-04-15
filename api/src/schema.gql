@@ -144,6 +144,25 @@ type Project {
   cv: Cv
 }
 
+type Language {
+  id: String!
+  name: String!
+  proficiency: Proficiency!
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+  cv: Cv
+}
+
+"""Language proficiency levels"""
+enum Proficiency {
+  basic
+  conversational
+  professional
+  fluent
+  native
+}
+
 type Cv {
   id: String!
   title: String!
@@ -154,6 +173,7 @@ type Cv {
   educations: [Education!]
   certifications: [Certification!]
   projects: [Project!]
+  languages: [Language!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -243,6 +263,23 @@ type ProjectsResponse {
   pagination: PaginationInfo
 }
 
+type LanguageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Language
+}
+
+type LanguagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Language!]
+  pagination: PaginationInfo
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -263,6 +300,9 @@ type Query {
   getProjectsByUserId(pagination: PaginationInput): ProjectsResponse!
   getProjectsByCvId(cvId: String!, pagination: PaginationInput): ProjectsResponse!
   getProjectById(id: String!): ProjectResponse!
+  getLanguagesByUserId: LanguagesResponse!
+  getLanguagesByCvId(cvId: String!): LanguagesResponse!
+  getLanguageById(id: String!): LanguageResponse!
 }
 
 input EmailInput {
@@ -298,6 +338,9 @@ type Mutation {
   createProject(data: CreateProjectInput!): ProjectResponse!
   updateProject(id: String!, data: UpdateProjectInput!): ProjectResponse!
   deleteProject(id: String!): ProjectResponse
+  createLanguage(data: CreateLanguageInput!): LanguageResponse!
+  updateLanguage(id: String!, data: UpdateLanguageInput!): LanguageResponse!
+  deleteLanguage(id: String!): LanguageResponse
 }
 
 input UpdateUserDto {
@@ -437,4 +480,15 @@ input UpdateProjectInput {
   endDate: DateTime
   isTeamProject: Boolean = false
   teamSize: Int = 1
+}
+
+input CreateLanguageInput {
+  cvId: String!
+  name: String!
+  proficiency: Proficiency! = professional
+}
+
+input UpdateLanguageInput {
+  name: String
+  proficiency: Proficiency = professional
 }

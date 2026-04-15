@@ -5,18 +5,20 @@ import { plainToInstance } from 'class-transformer';
 import { ExperienceFactory } from '../../experience/factory/experience.factory';
 import { EducationFactory } from '../../education/factory/education.factory';
 import { ProjectFactory } from '../../project/factory/project.factory';
+import { LanguageFactory } from '../../language/factory/language.factory';
 
 type PrismaCvWithRelations = PrismaCv & { 
   user?: PrismaUser | null;
   experiences?: any[];
   educations?: any[];
   projects?: any[];
+  languages?: any[];
 };
 
 @Injectable()
 export class CvFactory {
   static fromPrisma(cv: PrismaCvWithRelations): Cv {
-    const { experiences, educations, projects, ...rest } = cv;
+    const { experiences, educations, projects, languages, ...rest } = cv;
     const data: any = { ...rest };
     
     if (experiences) {
@@ -29,6 +31,10 @@ export class CvFactory {
 
     if (projects) {
       data.projects = ProjectFactory.fromPrismaArray(projects);
+    }
+
+    if (languages) {
+      data.languages = LanguageFactory.fromPrismaArray(languages);
     }
 
     return plainToInstance(Cv, data, {

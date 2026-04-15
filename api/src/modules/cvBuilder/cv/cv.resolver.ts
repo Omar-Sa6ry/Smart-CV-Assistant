@@ -18,6 +18,8 @@ import { CertificationLoader } from '../certification/loaders/certification.load
 import { Certification } from '../certification/models/certification.model';
 import { ProjectLoader } from '../project/loaders/project.loader';
 import { Project } from '../project/models/project.model';
+import { LanguageLoader } from '../language/loaders/language.loader';
+import { Language } from '../language/models/language.model';
 
 @Resolver(() => Cv)
 export class CvResolver {
@@ -27,6 +29,7 @@ export class CvResolver {
     private readonly educationLoader: EducationLoader,
     private readonly certificationLoader: CertificationLoader,
     private readonly projectLoader: ProjectLoader,
+    private readonly languageLoader: LanguageLoader,
   ) {}
 
   @Mutation(() => CvResponse)
@@ -99,5 +102,10 @@ export class CvResolver {
   @ResolveField(() => [Project], { name: 'projects', nullable: true })
   async getProjects(@Parent() cv: Cv): Promise<Project[]> {
     return this.projectLoader.projectsByCvIdLoader.load(cv.id);
+  }
+
+  @ResolveField(() => [Language], { name: 'languages', nullable: true })
+  async getLanguages(@Parent() cv: Cv): Promise<Language[]> {
+    return this.languageLoader.languagesByCvIdLoader.load(cv.id);
   }
 }

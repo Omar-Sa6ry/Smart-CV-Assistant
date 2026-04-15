@@ -9,6 +9,7 @@ import { CvModule } from './modules/cvBuilder/cv/cv.module';
 import { ExperienceModule } from './modules/cvBuilder/experience/experience.module';
 import { EducationModule } from './modules/cvBuilder/education/education.module';
 import { ProjectModule } from './modules/cvBuilder/project/project.module';
+import { LanguageModule } from './modules/cvBuilder/language/language.module';
 import {
   ConfigModule,
   GraphqlModule,
@@ -31,6 +32,7 @@ import {
     ExperienceModule,
     EducationModule,
     ProjectModule,
+    LanguageModule,
   ],
   providers: [AppService, AppResolver],
 })

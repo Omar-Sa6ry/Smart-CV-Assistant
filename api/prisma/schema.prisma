@@ -40,6 +40,7 @@ model User {
   educations       Education[]
   certifications  Certification[]
   projects        Project[]
+  languages       Language[]
 }
 
 model Cv {
@@ -55,6 +56,7 @@ model Cv {
   educations  Education[]
   certifications Certification[]
   projects       Project[]
+  languages      Language[]
 
   @@map("CV")
 }
@@ -131,6 +133,27 @@ model Project {
   teamSize         Int       @default(1)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+enum Proficiency {
+  basic
+  conversational
+  professional
+  fluent
+  native
+}
+
+model Language {
+  id          String      @id @default(uuid())
+  userId      String
+  cvId        String
+  name        String      @db.VarChar(100)
+  proficiency Proficiency @default(professional)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
