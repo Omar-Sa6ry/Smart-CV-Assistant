@@ -11,6 +11,7 @@ import { EducationModule } from './modules/cvBuilder/education/education.module'
 import { ProjectModule } from './modules/cvBuilder/project/project.module';
 import { LanguageModule } from './modules/cvBuilder/language/language.module';
 import { SkillModule } from './modules/cvBuilder/skill/skill.module';
+import { ExportModule } from './modules/cvBuilder/export/export.module';
 import {
   ConfigModule,
   GraphqlModule,
@@ -35,6 +36,7 @@ import {
     ProjectModule,
     LanguageModule,
     SkillModule,
+    ExportModule,
   ],
   providers: [AppService, AppResolver],
 })

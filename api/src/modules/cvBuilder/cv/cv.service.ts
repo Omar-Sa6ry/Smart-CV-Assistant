@@ -7,9 +7,6 @@ import { UserService } from 'src/modules/users/users.service';
 import { I18nService } from 'nestjs-i18n';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
 import { CvBuilderFactory } from './builder/cv-builder.factory';
-import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
-import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
-import { ICvExportStrategy } from './strategies/export-strategy.interface';
 import { CvFactory } from './factory/cv.factory';
 
 @Injectable()
@@ -19,8 +16,6 @@ export class CvService {
     private readonly i18n: I18nService,
     private readonly userService: UserService,
     private readonly builderFactory: CvBuilderFactory,
-    private readonly classicStrategy: ClassicPdfStrategy,
-    private readonly modernStrategy: ModernPdfStrategy,
   ) {}
 
   async createCv(userId: string, data: CreateCvInput): Promise<CvResponse> {
@@ -89,7 +84,19 @@ export class CvService {
   async getById(cvId: string, userId?: string): Promise<CvResponse> {
     const cv = await this.prisma.cv.findUnique({
       where: { id: cvId },
-      include: { user: true, experiences: true, educations: true, certifications: true },
+      include: {
+        user: true,
+        experiences: true,
+        educations: true,
+        certifications: true,
+        projects: true,
+        languages: true,
+        skills: {
+          include: {
+            keyword: true,
+          },
+        },
+      },
     });
 
     if (!cv || (userId && cv.userId !== userId))
@@ -141,18 +148,5 @@ export class CvService {
       data: null,
       message: await this.i18n.t('cv.DELETED'),
     };
-  }
-
-  async exportCv(
-    cvId: string,
-    format: 'classic' | 'modern' = 'classic',
-  ): Promise<any> {
-    const cvResponse = await this.getById(cvId);
-    if (!cvResponse.data) throw new NotFoundException('CV not found');
-
-    const strategy: ICvExportStrategy =
-      format === 'modern' ? this.modernStrategy : this.classicStrategy;
-
-    return strategy.export(cvResponse.data);
   }
 }

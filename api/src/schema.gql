@@ -344,6 +344,15 @@ type SkillKeywordsResponse {
   items: [SkillKeyword!]
 }
 
+type ExportCvResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  fileContent: String
+  fileName: String
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -371,6 +380,7 @@ type Query {
   getSkillsByCvId(cvId: String!): SkillsResponse!
   getSkillById(id: String!): SkillResponse!
   searchSkillKeywords(data: SearchSkillKeywordInput!, pagination: PaginationInput): SkillKeywordsResponse!
+  exportCv(id: String!, format: String! = "classic"): ExportCvResponse!
 }
 
 input EmailInput {
