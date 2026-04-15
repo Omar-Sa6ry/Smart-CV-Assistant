@@ -2,14 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Type } from 'class-transformer';
 import { Cv } from '../../cv/models/cv.model';
-
-export enum EmploymentType {
-  full_time = 'full_time',
-  part_time = 'part_time',
-  contract = 'contract',
-  internship = 'internship',
-  freelance = 'freelance',
-}
+import { EmploymentType } from '@prisma/client';
 
 registerEnumType(EmploymentType, {
   name: 'EmploymentType',

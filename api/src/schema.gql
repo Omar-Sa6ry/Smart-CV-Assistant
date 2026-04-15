@@ -174,11 +174,15 @@ type SkillKeyword {
 
 """Categories for skill keywords"""
 enum SkillCategory {
-  technical
-  soft
-  tool
-  methodology
   programming_language
+  backend_database
+  devops_infrastructure
+  security
+  software_tools
+  frontend
+  soft_skills
+  methodology
+  technical
 }
 
 type Skill {
@@ -205,6 +209,11 @@ type Cv {
   id: String!
   title: String!
   summary: String!
+  phone: String
+  location: String
+  linkedin: String
+  github: String
+  portfolio: String
   isDefault: Boolean!
   user: User
   experiences: [Experience!]
@@ -406,6 +415,7 @@ type Mutation {
   resetPassword(resetPasswordDto: ResetPasswordDto!): UserResponse!
   changePassword(changePasswordDto: ChangePasswordDto!): UserResponse!
   createCv(data: CreateCvInput!): CvResponse!
+  createFullCv(data: CreateFullCvInput!): CvResponse!
   updateCv(id: String!, data: UpdateCvInput!): CvResponse!
   deleteCv(id: String!): CvResponse
   createExperience(data: CreateExperienceInput!): ExperienceResponse!
@@ -459,12 +469,95 @@ input ChangePasswordDto {
 
 input CreateCvInput {
   title: String!
+  location: String
+  phone: String!
+  linkedin: String
+  github: String
+  portfolio: String
   summary: String!
   isDefault: Boolean
 }
 
+input CreateFullCvInput {
+  title: String!
+  location: String
+  phone: String!
+  linkedin: String
+  github: String
+  portfolio: String
+  summary: String!
+  isDefault: Boolean
+  experiences: [ExperienceNestedInput!]
+  educations: [EducationNestedInput!]
+  projects: [ProjectNestedInput!]
+  certifications: [CertificationNestedInput!]
+  languages: [LanguageNestedInput!]
+  skills: [SkillNestedInput!]
+}
+
+input ExperienceNestedInput {
+  jobTitle: String!
+  companyName: String!
+  companyWebsite: String
+  location: String
+  startDate: DateTime!
+  endDate: DateTime
+  isCurrentJob: Boolean
+  description: String!
+  achievements: String
+  employmentType: EmploymentType!
+}
+
+input EducationNestedInput {
+  institution: String!
+  title: String!
+  location: String
+  description: String
+  degree: Degree!
+  gpa: Float
+  isCurrent: Boolean! = false
+  startDate: DateTime!
+  endDate: DateTime
+}
+
+input ProjectNestedInput {
+  name: String!
+  description: String
+  technologiesUsed: String
+  projectUrl: String
+  isPersonalProject: Boolean! = true
+  startDate: DateTime
+  endDate: DateTime
+  isTeamProject: Boolean! = false
+  teamSize: Int! = 1
+}
+
+input CertificationNestedInput {
+  name: String!
+  issuingOrganization: String!
+  credentialId: String
+  credentialUrl: String
+  issueDate: DateTime!
+}
+
+input LanguageNestedInput {
+  name: String!
+  proficiency: Proficiency! = professional
+}
+
+input SkillNestedInput {
+  name: String!
+  proficiency: SkillProficiency! = intermediate
+  yearsOfExperience: Int
+}
+
 input UpdateCvInput {
   title: String
+  location: String
+  phone: String
+  linkedin: String
+  github: String
+  portfolio: String
   summary: String
   isDefault: Boolean
 }

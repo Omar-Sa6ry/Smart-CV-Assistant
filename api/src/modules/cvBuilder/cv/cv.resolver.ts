@@ -1,8 +1,16 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CvService } from './cv.service';
 import { Cv } from './models/cv.model';
 import { CvResponse, CvsResponse } from './dtos/cvResponse.dto';
 import { CreateCvInput } from './inputs/createCv.Input';
+import { CreateFullCvInput } from './inputs/createFullCv.input';
 import { UpdateCvInput } from './inputs/updateCv.Input';
 import { PaginationInput } from 'src/common/inputs/pagination.input';
 import { Auth } from 'src/common/decorator/auth.decorator';
@@ -42,6 +50,15 @@ export class CvResolver {
     @Args('data') data: CreateCvInput,
   ): Promise<CvResponse> {
     return this.cvService.createCv(user.id, data);
+  }
+
+  @Mutation(() => CvResponse)
+  @Auth([Permission.CREATE_CV])
+  async createFullCv(
+    @CurrentUser() user: CurrentUserDto,
+    @Args('data') data: CreateFullCvInput,
+  ): Promise<CvResponse> {
+    return this.cvService.createFullCv(user.id, data);
   }
 
   @Query(() => CvsResponse)
@@ -97,7 +114,10 @@ export class CvResolver {
     return this.educationLoader.educationsByCvIdLoader.load(cv.id);
   }
 
-  @ResolveField(() => [Certification], { name: 'certifications', nullable: true })
+  @ResolveField(() => [Certification], {
+    name: 'certifications',
+    nullable: true,
+  })
   async getCertifications(@Parent() cv: Cv): Promise<Certification[]> {
     return this.certificationLoader.certsByCvIdLoader.load(cv.id);
   }

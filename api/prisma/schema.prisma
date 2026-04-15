@@ -30,11 +30,15 @@ enum Proficiency {
 }
 
 enum SkillCategory {
-  technical
-  soft
-  tool
-  methodology
   programming_language
+  backend_database
+  devops_infrastructure
+  security
+  software_tools
+  frontend
+  soft_skills
+  methodology
+  technical
 }
 
 enum SkillProficiency {

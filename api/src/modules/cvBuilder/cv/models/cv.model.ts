@@ -25,6 +25,9 @@ export class Cv {
   phone?: string;
 
   @Field(() => String, { nullable: true })
+  location?: string;
+
+  @Field(() => String, { nullable: true })
   linkedin?: string | null;
 
   @Field(() => String, { nullable: true })

@@ -1,6 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength, MinLength, IsDate, IsUrl } from 'class-validator';
-import { EmploymentType } from '../models/experience.model';
+import { EmploymentType } from '@prisma/client';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDate,
+  IsUrl,
+} from 'class-validator';
 
 @InputType()
 export class CreateExperienceInput {

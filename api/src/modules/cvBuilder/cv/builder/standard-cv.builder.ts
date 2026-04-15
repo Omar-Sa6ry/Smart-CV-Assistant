@@ -65,6 +65,14 @@ export class StandardCvBuilder implements ICvBuilder {
     }
     return this;
   }
+
+  setLocation(location?: string): this {
+    if (location) {
+      this.cv.location = location;
+    }
+    return this;
+  }
+
   build(): Partial<Cv> {
     const result = { ...this.cv };
     this.reset();

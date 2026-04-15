@@ -15,6 +15,11 @@ export class CreateCvInput {
   @IsString()
   title: string;
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  location?: string;
+
   @Field(() => String)
   @IsPhoneNumber('EG')
   phone: string;
