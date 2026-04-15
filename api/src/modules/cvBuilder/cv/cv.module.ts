@@ -10,6 +10,7 @@ import { EducationModule } from '../education/education.module';
 import { CertificationModule } from '../certification/certification.module';
 import { ProjectModule } from '../project/project.module';
 import { LanguageModule } from '../language/language.module';
+import { SkillModule } from '../skill/skill.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LanguageModule } from '../language/language.module';
     forwardRef(() => CertificationModule),
     forwardRef(() => ProjectModule),
     forwardRef(() => LanguageModule),
+    forwardRef(() => SkillModule),
   ],
   providers: [
     CvService,

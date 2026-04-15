@@ -41,6 +41,7 @@ model User {
   certifications  Certification[]
   projects        Project[]
   languages       Language[]
+  skills          Skill[]
 }
 
 model Cv {
@@ -57,6 +58,7 @@ model Cv {
   certifications Certification[]
   projects       Project[]
   languages      Language[]
+  skills         Skill[]
 
   @@map("CV")
 }
@@ -157,4 +159,45 @@ model Language {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+enum SkillCategory {
+  technical
+  soft
+  tool
+  methodology
+  programming_language
+}
+
+enum SkillProficiency {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
+model SkillKeyword {
+  id              String        @id @default(uuid())
+  name            String        @unique @db.VarChar(100)
+  category        SkillCategory @default(technical)
+  popularityScore Int           @default(0)
+  isVerified      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  skills          Skill[]
+}
+
+model Skill {
+  id             String           @id @default(uuid())
+  userId         String
+  cvId           String
+  keywordId      String?
+  name           String           @db.VarChar(100)
+  proficiency    SkillProficiency @default(intermediate)
+  yearsOfExperience Int?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cv      Cv            @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  keyword SkillKeyword? @relation(fields: [keywordId], references: [id], onDelete: SetNull)
 }

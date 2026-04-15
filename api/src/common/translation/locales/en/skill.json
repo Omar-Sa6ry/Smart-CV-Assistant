@@ -1,0 +1,8 @@
+{
+  "CREATED": "Skill record created successfully",
+  "UPDATED": "Skill record updated successfully",
+  "DELETED": "Skill record deleted successfully",
+  "NOT_FOUND": "Skill record not found",
+  "NOT_FOUNDS": "Skill records not found",
+  "EXISTED": "Skill is already added to this CV"
+}

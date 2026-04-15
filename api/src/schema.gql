@@ -163,6 +163,44 @@ enum Proficiency {
   native
 }
 
+type SkillKeyword {
+  id: String!
+  name: String!
+  category: SkillCategory!
+  popularityScore: Int!
+  isVerified: Boolean!
+  createdAt: DateTime!
+}
+
+"""Categories for skill keywords"""
+enum SkillCategory {
+  technical
+  soft
+  tool
+  methodology
+  programming_language
+}
+
+type Skill {
+  id: String!
+  name: String!
+  proficiency: SkillProficiency!
+  yearsOfExperience: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User
+  cv: Cv
+  keyword: SkillKeyword
+}
+
+"""Skill proficiency levels"""
+enum SkillProficiency {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
 type Cv {
   id: String!
   title: String!
@@ -174,6 +212,7 @@ type Cv {
   certifications: [Certification!]
   projects: [Project!]
   languages: [Language!]
+  skills: [Skill!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -280,6 +319,31 @@ type LanguagesResponse {
   pagination: PaginationInfo
 }
 
+type SkillResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Skill
+}
+
+type SkillsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Skill!]
+  pagination: PaginationInfo
+}
+
+type SkillKeywordsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [SkillKeyword!]
+}
+
 type Query {
   sayHello: String!
   getUserById(id: String!): UserResponse!
@@ -303,6 +367,10 @@ type Query {
   getLanguagesByUserId: LanguagesResponse!
   getLanguagesByCvId(cvId: String!): LanguagesResponse!
   getLanguageById(id: String!): LanguageResponse!
+  getSkillsByUserId: SkillsResponse!
+  getSkillsByCvId(cvId: String!): SkillsResponse!
+  getSkillById(id: String!): SkillResponse!
+  searchSkillKeywords(data: SearchSkillKeywordInput!, pagination: PaginationInput): SkillKeywordsResponse!
 }
 
 input EmailInput {
@@ -312,6 +380,10 @@ input EmailInput {
 input PaginationInput {
   limit: Int
   page: Int
+}
+
+input SearchSkillKeywordInput {
+  query: String!
 }
 
 type Mutation {
@@ -341,6 +413,9 @@ type Mutation {
   createLanguage(data: CreateLanguageInput!): LanguageResponse!
   updateLanguage(id: String!, data: UpdateLanguageInput!): LanguageResponse!
   deleteLanguage(id: String!): LanguageResponse
+  createSkill(data: CreateSkillInput!): SkillResponse!
+  updateSkill(id: String!, data: UpdateSkillInput!): SkillResponse!
+  deleteSkill(id: String!): SkillResponse
 }
 
 input UpdateUserDto {
@@ -491,4 +566,18 @@ input CreateLanguageInput {
 input UpdateLanguageInput {
   name: String
   proficiency: Proficiency = professional
+}
+
+input CreateSkillInput {
+  cvId: String!
+  name: String!
+  proficiency: SkillProficiency! = intermediate
+  yearsOfExperience: Int
+}
+
+input UpdateSkillInput {
+  cvId: String
+  name: String
+  proficiency: SkillProficiency = intermediate
+  yearsOfExperience: Int
 }

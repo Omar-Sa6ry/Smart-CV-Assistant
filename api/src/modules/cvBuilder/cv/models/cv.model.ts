@@ -6,6 +6,7 @@ import { Education } from '../../education/models/education.model';
 import { Certification } from '../../certification/models/certification.model';
 import { Project } from '../../project/models/project.model';
 import { Language } from '../../language/models/language.model';
+import { Skill } from '../../skill/models/skill.model';
 
 @ObjectType()
 export class Cv {
@@ -46,6 +47,10 @@ export class Cv {
   @Field(() => [Language], { nullable: true })
   @Type(() => Language)
   languages?: Language[] | null;
+
+  @Field(() => [Skill], { nullable: true })
+  @Type(() => Skill)
+  skills?: Skill[] | null;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | null;

@@ -48,6 +48,12 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.DELETE_LANGUAGE,
     Permission.CREATE_LANGUAGE,
     Permission.UPDATE_LANGUAGE,
+
+    // Skill
+    Permission.GET_SKILL,
+    Permission.CREATE_SKILL,
+    Permission.DELETE_SKILL,
+    Permission.UPDATE_SKILL,
   ],
 
   [Role.USER]: [
@@ -94,5 +100,11 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.DELETE_LANGUAGE,
     Permission.CREATE_LANGUAGE,
     Permission.UPDATE_LANGUAGE,
+
+    // Skill
+    Permission.GET_SKILL,
+    Permission.CREATE_SKILL,
+    Permission.DELETE_SKILL,
+    Permission.UPDATE_SKILL,
   ],
 };
