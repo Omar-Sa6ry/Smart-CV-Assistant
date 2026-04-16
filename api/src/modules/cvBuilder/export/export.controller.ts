@@ -43,7 +43,7 @@ export class ExportController {
 
     res.set({
       'Content-Type': contentType,
-      'Content-Disposition': `inline; filename="${fileName}"`,
+      'Content-Disposition': `attachment; filename="${fileName}"`,
       'Content-Length': (buffer as Buffer).length,
     });
 

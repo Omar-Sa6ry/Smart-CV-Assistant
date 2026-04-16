@@ -3,12 +3,20 @@ import { Expose } from 'class-transformer';
 import { BaseResponse } from '@bts-soft/core';
 
 @ObjectType()
-export class ExportCvResponse extends BaseResponse {
+export class ExportCvData {
   @Field(() => String, { nullable: true })
-  @Expose()
-  fileContent?: string; // Base64
+  fileContent?: string;
 
   @Field(() => String, { nullable: true })
-  @Expose()
   fileName?: string;
+
+  @Field(() => String, { nullable: true })
+  downloadUrl?: string;
+}
+
+@ObjectType()
+export class ExportCvResponse extends BaseResponse {
+  @Field(() => ExportCvData, { nullable: true })
+  @Expose()
+  data?: ExportCvData;
 }

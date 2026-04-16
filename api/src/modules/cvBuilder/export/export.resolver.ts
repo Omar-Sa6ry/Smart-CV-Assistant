@@ -38,10 +38,14 @@ export class ExportResolver {
 
     const buffer = await strategy.export(cvResponse.data);
     const fileName = `CV_${id}.${(format === 'word' || format === 'modern_word') ? 'docx' : 'pdf'}`;
+    const downloadUrl = `/cv-export/${id}?format=${format}`;
 
     return {
-      fileContent: (buffer as Buffer).toString('base64'),
-      fileName,
+      data: {
+        fileContent: (buffer as Buffer).toString('base64'),
+        fileName,
+        downloadUrl,
+      },
       success: true,
       statusCode: 200,
     };

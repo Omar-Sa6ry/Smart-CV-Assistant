@@ -360,13 +360,18 @@ type SkillKeywordsResponse {
   items: [SkillKeyword!]
 }
 
+type ExportCvData {
+  fileContent: String
+  fileName: String
+  downloadUrl: String
+}
+
 type ExportCvResponse {
   message: String
   success: Boolean
   timeStamp: String
   statusCode: Float
-  fileContent: String
-  fileName: String
+  data: ExportCvData
 }
 
 type Query {
