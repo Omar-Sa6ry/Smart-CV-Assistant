@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsString, IsUUID, MaxLength, IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { SkillProficiency } from '@prisma/client';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsString, IsUUID, MaxLength, IsEnum } from 'class-validator';
+import { SkillProficiency, SkillCategory } from '@prisma/client';
 
 @InputType()
 export class CreateSkillInput {
@@ -13,13 +13,15 @@ export class CreateSkillInput {
   @MaxLength(100)
   name: string;
 
-  @Field(() => SkillProficiency, { defaultValue: SkillProficiency.intermediate })
+  @Field(() => SkillCategory, {
+    defaultValue: SkillCategory.technical,
+  })
+  @IsEnum(SkillCategory)
+  category: SkillCategory;
+
+  @Field(() => SkillProficiency, {
+    defaultValue: SkillProficiency.intermediate,
+  })
   @IsEnum(SkillProficiency)
   proficiency: SkillProficiency;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  yearsOfExperience?: number;
 }

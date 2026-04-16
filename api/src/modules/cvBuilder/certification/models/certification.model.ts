@@ -20,8 +20,8 @@ export class Certification {
   @Field(() => String, { nullable: true })
   credentialId?: string | null;
 
-  @Field(() => String, { nullable: true })
-  credentialUrl?: string | null;
+  @Field(() => String)
+  credentialUrl: string;
 
   @Field(() => Date)
   issueDate: Date;

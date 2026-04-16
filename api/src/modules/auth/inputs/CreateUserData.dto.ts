@@ -9,9 +9,6 @@ export class CreateUserDto {
   @CapitalTextField('Last name')
   lastName: string;
 
-  @CapitalTextField('Headline')
-  headline: string;
-
   @EmailField()
   email: string;
 

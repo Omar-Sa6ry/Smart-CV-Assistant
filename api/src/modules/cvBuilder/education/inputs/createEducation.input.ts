@@ -34,11 +34,10 @@ export class CreateEducationInput {
   @MaxLength(255)
   location?: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
-  @MaxLength(500)
-  description?: string;
+  @MaxLength(1000)
+  description: string;
 
   @Field(() => Degree)
   @IsEnum(Degree)

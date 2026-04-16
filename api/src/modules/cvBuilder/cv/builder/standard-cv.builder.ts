@@ -59,17 +59,18 @@ export class StandardCvBuilder implements ICvBuilder {
     return this;
   }
 
-  setPhone(phone?: string): this {
-    if (phone) {
-      this.cv.phone = phone;
-    }
+  setPhone(phone: string): this {
+    this.cv.phone = phone;
     return this;
   }
 
-  setLocation(location?: string): this {
-    if (location) {
-      this.cv.location = location;
-    }
+  setHeadline(headline: string): this {
+    this.cv.headline = headline;
+    return this;
+  }
+
+  setLocation(location: string): this {
+    this.cv.location = location;
     return this;
   }
 

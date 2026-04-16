@@ -1,6 +1,6 @@
-import { ISkillBuilder } from "../interfaces/iskill.interface";
-import { Skill } from "../models/skill.model";
-import { SkillProficiency } from "@prisma/client";
+import { ISkillBuilder } from '../interfaces/iskill.interface';
+import { Skill } from '../models/skill.model';
+import { SkillProficiency } from '@prisma/client';
 
 export class StandardSkillBuilder implements ISkillBuilder {
   private skill: Partial<Skill>;
@@ -21,11 +21,6 @@ export class StandardSkillBuilder implements ISkillBuilder {
 
   setProficiency(proficiency: SkillProficiency): this {
     this.skill.proficiency = proficiency;
-    return this;
-  }
-
-  setYearsOfExperience(years?: number): this {
-    this.skill.yearsOfExperience = years;
     return this;
   }
 

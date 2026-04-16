@@ -21,11 +21,14 @@ export class Cv {
   @Field(() => String)
   summary: string;
 
-  @Field(() => String, { nullable: true })
-  phone?: string;
+  @Field(() => String)
+  headline: string;
 
-  @Field(() => String, { nullable: true })
-  location?: string;
+  @Field(() => String)
+  phone: string;
+
+  @Field(() => String)
+  location: string;
 
   @Field(() => String, { nullable: true })
   linkedin?: string | null;

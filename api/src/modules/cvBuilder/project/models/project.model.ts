@@ -14,32 +14,20 @@ export class Project {
   @Field(() => String)
   name: string;
 
-  @Field(() => String, { nullable: true })
-  description?: string | null;
+  @Field(() => String)
+  description: string;
 
   @Field(() => [String], { nullable: true })
   descriptionBullets?: string[];
 
-  @Field(() => String, { nullable: true })
-  technologiesUsed?: string | null;
-
-  @Field(() => String, { nullable: true })
-  projectUrl?: string | null;
-
-  @Field(() => Boolean)
-  isPersonalProject: boolean;
+  @Field(() => String)
+  projectUrl: string;
 
   @Field(() => Date, { nullable: true })
   startDate?: Date | null;
 
   @Field(() => Date, { nullable: true })
   endDate?: Date | null;
-
-  @Field(() => Boolean)
-  isTeamProject: boolean;
-
-  @Field(() => Int)
-  teamSize: number;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | null;

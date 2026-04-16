@@ -32,9 +32,6 @@ export class Experience {
   @Field(() => [String], { nullable: true })
   descriptionBullets?: string[];
 
-  @Field(() => String, { nullable: true })
-  achievements?: string | null;
-
   @Field(() => String)
   location: string;
 

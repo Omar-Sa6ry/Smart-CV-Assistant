@@ -1,5 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsOptional, IsUUID, IsDate, MaxLength, IsUrl } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsDate,
+  MaxLength,
+  IsUrl,
+} from 'class-validator';
 
 @InputType()
 export class CreateCertificationInput {
@@ -23,11 +30,10 @@ export class CreateCertificationInput {
   @MaxLength(100)
   credentialId?: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsUrl()
   @MaxLength(250)
-  credentialUrl?: string;
+  credentialUrl: string;
 
   @Field(() => Date)
   @IsDate()

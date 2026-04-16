@@ -37,7 +37,6 @@ export class OAuthService {
         firstName: userData.firstName,
         lastName: userData.lastName,
         role: role,
-        headline:"Junior Developer"
       },
     });
 

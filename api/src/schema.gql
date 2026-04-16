@@ -67,7 +67,6 @@ type Experience {
   companyWebsite: String!
   description: String!
   descriptionBullets: [String!]!
-  achievements: String
   location: String!
   isCurrentJob: Boolean!
   employmentType: EmploymentType!
@@ -93,7 +92,7 @@ type Education {
   institution: String!
   title: String!
   location: String
-  description: String
+  description: String!
   degree: Degree!
   gpa: Float
   isCurrent: Boolean!
@@ -118,7 +117,7 @@ type Certification {
   name: String!
   issuingOrganization: String!
   credentialId: String
-  credentialUrl: String
+  credentialUrl: String!
   issueDate: DateTime!
   createdAt: DateTime
   updatedAt: DateTime
@@ -129,15 +128,11 @@ type Certification {
 type Project {
   id: String!
   name: String!
-  description: String
+  description: String!
   descriptionBullets: [String!]!
-  technologiesUsed: String
-  projectUrl: String
-  isPersonalProject: Boolean!
+  projectUrl: String!
   startDate: DateTime
   endDate: DateTime
-  isTeamProject: Boolean!
-  teamSize: Int!
   createdAt: DateTime
   updatedAt: DateTime
   user: User
@@ -175,14 +170,25 @@ type SkillKeyword {
 """Skill categories"""
 enum SkillCategory {
   programming_language
-  backend_database
+  frontend
+  backend
+  mobile
+  game_development
+  embedded_systems
+  technical
+  database_storage
+  data_science_analytics
+  ai_machine_learning
+  cloud_computing
   devops_infrastructure
+  networking
+  testing_qa
+  architecture_design
   security
   software_tools
-  frontend
-  soft_skills
   methodology
-  technical
+  soft_skills
+  domain_knowledge
 }
 
 type Skill {
@@ -190,7 +196,6 @@ type Skill {
   name: String!
   category: SkillCategory!
   proficiency: SkillProficiency!
-  yearsOfExperience: Int
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User
@@ -210,8 +215,9 @@ type Cv {
   id: String!
   title: String!
   summary: String!
-  phone: String
-  location: String
+  headline: String!
+  phone: String!
+  location: String!
   linkedin: String
   github: String
   portfolio: String
@@ -448,7 +454,6 @@ input UpdateUserDto {
 input CreateUserDto {
   firstName: String!
   lastName: String!
-  headline: String!
   email: String!
   password: String!
 }
@@ -470,7 +475,8 @@ input ChangePasswordDto {
 
 input CreateCvInput {
   title: String!
-  location: String
+  headline: String!
+  location: String!
   phone: String!
   linkedin: String
   github: String
@@ -481,39 +487,39 @@ input CreateCvInput {
 
 input CreateFullCvInput {
   title: String!
-  location: String
+  headline: String!
+  location: String!
   phone: String!
   linkedin: String
   github: String
   portfolio: String
   summary: String!
   isDefault: Boolean
-  experiences: [ExperienceNestedInput!]
-  educations: [EducationNestedInput!]
-  projects: [ProjectNestedInput!]
-  certifications: [CertificationNestedInput!]
-  languages: [LanguageNestedInput!]
-  skills: [SkillNestedInput!]
+  experiences: [CreateExperienceNestedInput!]
+  educations: [CreateEducationNestedInput!]
+  projects: [CreateProjectNestedInput!]
+  certifications: [CreateCertificationNestedInput!]
+  languages: [CreateLanguageNestedInput!]
+  skills: [CreateSkillNestedInput!]
 }
 
-input ExperienceNestedInput {
+input CreateExperienceNestedInput {
   jobTitle: String!
   companyName: String!
-  companyWebsite: String
-  location: String
+  companyWebsite: String!
+  location: String!
   startDate: DateTime!
   endDate: DateTime
   isCurrentJob: Boolean
   description: String!
-  achievements: String
   employmentType: EmploymentType!
 }
 
-input EducationNestedInput {
+input CreateEducationNestedInput {
   institution: String!
   title: String!
   location: String
-  description: String
+  description: String!
   degree: Degree!
   gpa: Float
   isCurrent: Boolean! = false
@@ -521,40 +527,36 @@ input EducationNestedInput {
   endDate: DateTime
 }
 
-input ProjectNestedInput {
+input CreateProjectNestedInput {
   name: String!
-  description: String
-  technologiesUsed: String
-  projectUrl: String
-  isPersonalProject: Boolean! = true
+  description: String!
+  projectUrl: String!
   startDate: DateTime
   endDate: DateTime
-  isTeamProject: Boolean! = false
-  teamSize: Int! = 1
 }
 
-input CertificationNestedInput {
+input CreateCertificationNestedInput {
   name: String!
   issuingOrganization: String!
   credentialId: String
-  credentialUrl: String
+  credentialUrl: String!
   issueDate: DateTime!
 }
 
-input LanguageNestedInput {
+input CreateLanguageNestedInput {
   name: String!
   proficiency: Proficiency! = professional
 }
 
-input SkillNestedInput {
+input CreateSkillNestedInput {
   name: String!
   category: SkillCategory! = technical
   proficiency: SkillProficiency! = intermediate
-  yearsOfExperience: Int
 }
 
 input UpdateCvInput {
   title: String
+  headline: String
   location: String
   phone: String
   linkedin: String
@@ -568,13 +570,12 @@ input CreateExperienceInput {
   cvId: String!
   jobTitle: String!
   companyName: String!
-  companyWebsite: String
-  location: String
+  companyWebsite: String!
+  location: String!
   startDate: DateTime!
   endDate: DateTime
   isCurrentJob: Boolean
   description: String!
-  achievements: String
   employmentType: EmploymentType!
 }
 
@@ -588,7 +589,6 @@ input UpdateExperienceInput {
   endDate: DateTime
   isCurrentJob: Boolean
   description: String
-  achievements: String
   employmentType: EmploymentType
 }
 
@@ -597,7 +597,7 @@ input CreateEducationInput {
   institution: String!
   title: String!
   location: String
-  description: String
+  description: String!
   degree: Degree!
   gpa: Float
   isCurrent: Boolean! = false
@@ -623,7 +623,7 @@ input CreateCertificationInput {
   name: String!
   issuingOrganization: String!
   credentialId: String
-  credentialUrl: String
+  credentialUrl: String!
   issueDate: DateTime!
 }
 
@@ -639,27 +639,19 @@ input UpdateCertificationInput {
 input CreateProjectInput {
   cvId: String!
   name: String!
-  description: String
-  technologiesUsed: String
-  projectUrl: String
-  isPersonalProject: Boolean! = true
+  description: String!
+  projectUrl: String!
   startDate: DateTime
   endDate: DateTime
-  isTeamProject: Boolean! = false
-  teamSize: Int! = 1
 }
 
 input UpdateProjectInput {
   cvId: String
   name: String
   description: String
-  technologiesUsed: String
   projectUrl: String
-  isPersonalProject: Boolean = true
   startDate: DateTime
   endDate: DateTime
-  isTeamProject: Boolean = false
-  teamSize: Int = 1
 }
 
 input CreateLanguageInput {
@@ -676,13 +668,13 @@ input UpdateLanguageInput {
 input CreateSkillInput {
   cvId: String!
   name: String!
+  category: SkillCategory! = technical
   proficiency: SkillProficiency! = intermediate
-  yearsOfExperience: Int
 }
 
 input UpdateSkillInput {
   cvId: String
   name: String
+  category: SkillCategory = technical
   proficiency: SkillProficiency = intermediate
-  yearsOfExperience: Int
 }

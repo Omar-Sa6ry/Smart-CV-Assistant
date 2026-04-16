@@ -15,7 +15,7 @@ export class WordExportStrategy implements ICvExportStrategy {
             alignment: AlignmentType.CENTER,
           }),
           new Paragraph({
-            text: `${cvData.user?.email || ''} | ${cvData.user?.headline || ''}`,
+            text: `${cvData.user?.email || ''} | ${cvData.headline || ''}`,
             alignment: AlignmentType.CENTER,
             spacing: { after: 400 },
           }),
@@ -149,9 +149,6 @@ export class WordExportStrategy implements ICvExportStrategy {
         }),
         new Paragraph({
           text: project.description,
-        }),
-        new Paragraph({
-          text: `Stack: ${project.technologiesUsed}`,
           spacing: { after: 200 },
         }),
       );

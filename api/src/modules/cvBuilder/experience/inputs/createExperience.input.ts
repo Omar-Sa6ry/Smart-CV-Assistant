@@ -29,17 +29,16 @@ export class CreateExperienceInput {
   @MaxLength(150)
   companyName: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
+  @IsString()
   @IsUrl()
   @MaxLength(250)
-  companyWebsite?: string;
+  companyWebsite: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
   @MaxLength(255)
-  location?: string;
+  location: string;
 
   @Field(() => Date)
   @IsDate()
@@ -57,13 +56,8 @@ export class CreateExperienceInput {
 
   @Field(() => String)
   @IsString()
-  @MaxLength(255)
+  @MaxLength(2000)
   description: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  achievements?: string;
 
   @Field(() => EmploymentType)
   @IsEnum(EmploymentType)

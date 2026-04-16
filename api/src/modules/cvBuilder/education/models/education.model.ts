@@ -26,8 +26,8 @@ export class Education {
   @Field(() => String, { nullable: true })
   location?: string | null;
 
-  @Field(() => String, { nullable: true })
-  description?: string | null;
+  @Field(() => String)
+  description: string;
 
   @Field(() => Degree)
   degree: Degree;

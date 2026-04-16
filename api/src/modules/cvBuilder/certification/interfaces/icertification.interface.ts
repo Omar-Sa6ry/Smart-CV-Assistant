@@ -5,7 +5,7 @@ export interface ICertificationBuilder {
   setName(name: string): this;
   setIssuingOrganization(org: string): this;
   setCredentialId(id?: string): this;
-  setCredentialUrl(url?: string): this;
+  setCredentialUrl(url: string): this;
   setIssueDate(date: Date): this;
   setUser(userId: string): this;
   setCv(cvId: string): this;

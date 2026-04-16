@@ -23,12 +23,12 @@ export class StandardExperienceBuilder implements IExperienceBuilder {
     return this;
   }
 
-  setCompanyWebsite(companyWebsite?: string): this {
+  setCompanyWebsite(companyWebsite: string): this {
     this.experience.companyWebsite = companyWebsite;
     return this;
   }
 
-  setLocation(location?: string): this {
+  setLocation(location: string): this {
     this.experience.location = location;
     return this;
   }
@@ -50,11 +50,6 @@ export class StandardExperienceBuilder implements IExperienceBuilder {
 
   setDescription(description: string): this {
     this.experience.description = description;
-    return this;
-  }
-
-  setAchievements(achievements?: string): this {
-    this.experience.achievements = achievements;
     return this;
   }
 

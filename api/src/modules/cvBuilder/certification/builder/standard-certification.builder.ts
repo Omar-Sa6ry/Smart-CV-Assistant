@@ -28,7 +28,7 @@ export class StandardCertificationBuilder implements ICertificationBuilder {
     return this;
   }
 
-  setCredentialUrl(url?: string): this {
+  setCredentialUrl(url: string): this {
     this.certification.credentialUrl = url;
     return this;
   }

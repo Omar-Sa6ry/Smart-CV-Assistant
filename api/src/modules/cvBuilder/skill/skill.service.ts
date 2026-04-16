@@ -57,7 +57,6 @@ export class SkillService {
     const skillData = builder
       .setName(data.name)
       .setProficiency(data.proficiency)
-      .setYearsOfExperience(data.yearsOfExperience)
       .setUser(userId)
       .setCv(data.cvId)
       .setKeyword(keyword.id)
@@ -126,7 +125,6 @@ export class SkillService {
       data: {
         name: data.name,
         proficiency: data.proficiency,
-        yearsOfExperience: data.yearsOfExperience,
       },
       include: { cv: true, user: true, keyword: true },
     });

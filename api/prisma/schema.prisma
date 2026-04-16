@@ -31,14 +31,25 @@ enum Proficiency {
 
 enum SkillCategory {
   programming_language
-  backend_database
+  frontend
+  backend
+  mobile
+  game_development
+  embedded_systems
+  technical
+  database_storage
+  data_science_analytics
+  ai_machine_learning
+  cloud_computing
   devops_infrastructure
+  networking
+  testing_qa
+  architecture_design
   security
   software_tools
-  frontend
-  soft_skills
   methodology
-  technical
+  soft_skills
+  domain_knowledge
 }
 
 enum SkillProficiency {
@@ -57,7 +68,6 @@ model User {
   updatedAt        DateTime  @updatedAt
   firstName        String?   @db.VarChar(100)
   googleId         String?   @unique
-  headline         String?   @db.VarChar(200)
   lastLoginAt      DateTime?
   lastName         String?   @db.VarChar(100)
   resetToken       String?
@@ -74,14 +84,15 @@ model User {
 model Cv {
   id          String   @id @default(uuid())
   userId      String
-  title       String
-  summary         String
-  portfolio String?        @db.VarChar(250)
-  linkedin String?        @db.VarChar(250)
-  github String?        @db.VarChar(250)
-  phone String?        @db.VarChar(11)
-  location String?     @db.VarChar(255)
-  isDefault Boolean  @default(false)
+  title       String   @db.VarChar(100)
+  headline    String   @db.VarChar(100)
+  summary     String   @db.VarChar(2000)
+  portfolio   String?  @db.VarChar(500)
+  linkedin    String?  @db.VarChar(500)
+  github      String?  @db.VarChar(500)
+  phone       String   @db.VarChar(20)
+  location    String   @db.VarChar(255)
+  isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
@@ -101,13 +112,12 @@ model Experience {
   cvId           String
   jobTitle       String         @db.VarChar(75)
   companyName    String         @db.VarChar(150)
-  companyWebsite String?        @db.VarChar(250)
-  location       String?        @db.VarChar(255)
+  companyWebsite String        @db.VarChar(250)
+  location       String        @db.VarChar(255)
   startDate      DateTime
   endDate        DateTime?
   isCurrentJob   Boolean        @default(false)
-  description    String        @db.VarChar(255)
-  achievements   String?        @db.Text
+  description    String        @db.VarChar(2000)
   employmentType EmploymentType @default(full_time)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -127,7 +137,7 @@ model Education {
   endDate        DateTime?
   isCurrent      Boolean        @default(false)
   gpa            Decimal?       @db.Decimal(3, 2)
-  description    String         @db.VarChar(500)
+  description    String         @db.VarChar(1000)
   degree         Degree 
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -143,7 +153,7 @@ model Certification {
   name                String   @db.VarChar(255)
   issuingOrganization String   @db.VarChar(255)
   credentialId        String?  @db.VarChar(100)
-  credentialUrl       String?  @db.VarChar(250)
+  credentialUrl       String  @db.VarChar(250)
   issueDate           DateTime
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -157,14 +167,10 @@ model Project {
   userId           String
   cvId             String
   name             String    @db.VarChar(150)
-  description      String?   @db.VarChar(250)
-  technologiesUsed String?   @db.Text
-  projectUrl       String?   @db.VarChar(500)
-  isPersonalProject Boolean   @default(true)
+  description      String   @db.VarChar(2000)
+  projectUrl       String   @db.VarChar(500)
   startDate        DateTime?
   endDate          DateTime?
-  isTeamProject    Boolean   @default(false)
-  teamSize         Int       @default(1)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -205,7 +211,6 @@ model Skill {
   name           String           @db.VarChar(100)
   category       SkillCategory    @default(technical)
   proficiency    SkillProficiency @default(intermediate)
-  yearsOfExperience Int?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 

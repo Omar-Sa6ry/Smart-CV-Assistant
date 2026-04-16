@@ -1,268 +1,74 @@
-import { Field, InputType, Float, Int } from '@nestjs/graphql';
 import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-  IsDate,
-  IsUrl,
-  IsInt,
-  Min,
-  Max,
-} from 'class-validator';
+  Field,
+  InputType,
+  PickType,
+  PartialType,
+  OmitType,
+} from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import { CreateCvInput } from './createCv.Input';
-import {
-  EmploymentType,
-  Degree,
-  Proficiency,
-  SkillProficiency,
-  SkillCategory,
-} from '@prisma/client';
-import '../../experience/models/experience.model';
-import '../../education/models/education.model';
-import '../../language/models/language.model';
-import '../../skill/models/skill.model';
+import { CreateExperienceInput } from '../../experience/inputs/createExperience.input';
+import { CreateEducationInput } from '../../education/inputs/createEducation.input';
+import { CreateProjectInput } from '../../project/inputs/createProject.input';
+import { CreateCertificationInput } from '../../certification/inputs/createCertification.input';
+import { CreateLanguageInput } from '../../language/inputs/createLanguage.input';
+import { CreateSkillInput } from '../../skill/inputs/createSkill.input';
 
 @InputType()
-export class ExperienceNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MinLength(3)
-  @MaxLength(75)
-  jobTitle: string;
-
-  @Field(() => String)
-  @IsString()
-  @MinLength(2)
-  @MaxLength(150)
-  companyName: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsUrl()
-  @MaxLength(250)
-  companyWebsite?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  location?: string;
-
-  @Field(() => Date)
-  @IsDate()
-  startDate: Date;
-
-  @Field(() => Date, { nullable: true })
-  @IsOptional()
-  @IsDate()
-  endDate?: Date;
-
-  @Field(() => Boolean, { nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isCurrentJob?: boolean;
-
-  @Field(() => String)
-  @IsString()
-  @MaxLength(255)
-  description: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  achievements?: string;
-
-  @Field(() => EmploymentType)
-  @IsEnum(EmploymentType)
-  employmentType: EmploymentType;
-}
+export class CreateExperienceNestedInput extends OmitType(
+  CreateExperienceInput,
+  ['cvId'],
+) {}
 
 @InputType()
-export class EducationNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MaxLength(75)
-  institution: string;
-
-  @Field(() => String)
-  @IsString()
-  @MaxLength(150)
-  title: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  location?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  description?: string;
-
-  @Field(() => Degree)
-  @IsEnum(Degree)
-  degree: Degree;
-
-  @Field(() => Float, { nullable: true })
-  @IsOptional()
-  @Min(0)
-  @Max(4)
-  gpa?: number;
-
-  @Field(() => Boolean, { defaultValue: false })
-  @IsBoolean()
-  @IsOptional()
-  isCurrent?: boolean;
-
-  @Field(() => Date)
-  @IsDate()
-  startDate: Date;
-
-  @Field(() => Date, { nullable: true })
-  @IsOptional()
-  @IsDate()
-  endDate?: Date;
-}
+export class CreateEducationNestedInput extends OmitType(CreateEducationInput, [
+  'cvId',
+]) {}
 
 @InputType()
-export class ProjectNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MaxLength(150)
-  name: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(250)
-  description?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  technologiesUsed?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  projectUrl?: string;
-
-  @Field(() => Boolean, { defaultValue: true })
-  @IsBoolean()
-  isPersonalProject: boolean;
-
-  @Field(() => Date, { nullable: true })
-  @IsOptional()
-  @IsDate()
-  startDate?: Date;
-
-  @Field(() => Date, { nullable: true })
-  @IsOptional()
-  @IsDate()
-  endDate?: Date;
-
-  @Field(() => Boolean, { defaultValue: false })
-  @IsBoolean()
-  isTeamProject: boolean;
-
-  @Field(() => Int, { defaultValue: 1 })
-  @IsInt()
-  @Min(1)
-  teamSize: number;
-}
+export class CreateProjectNestedInput extends OmitType(CreateProjectInput, [
+  'cvId',
+]) {}
 
 @InputType()
-export class CertificationNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MaxLength(255)
-  name: string;
-
-  @Field(() => String)
-  @IsString()
-  @MaxLength(255)
-  issuingOrganization: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  credentialId?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsUrl()
-  @MaxLength(250)
-  credentialUrl?: string;
-
-  @Field(() => Date)
-  @IsDate()
-  issueDate: Date;
-}
+export class CreateCertificationNestedInput extends OmitType(
+  CreateCertificationInput,
+  ['cvId'],
+) {}
 
 @InputType()
-export class LanguageNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MaxLength(100)
-  name: string;
-
-  @Field(() => Proficiency, { defaultValue: Proficiency.professional })
-  @IsEnum(Proficiency)
-  proficiency: Proficiency;
-}
+export class CreateLanguageNestedInput extends OmitType(CreateLanguageInput, [
+  'cvId',
+]) {}
 
 @InputType()
-export class SkillNestedInput {
-  @Field(() => String)
-  @IsString()
-  @MaxLength(100)
-  name: string;
-
-  @Field(() => SkillCategory, { defaultValue: SkillCategory.technical })
-  @IsEnum(SkillCategory)
-  category: SkillCategory;
-
-  @Field(() => SkillProficiency, { defaultValue: SkillProficiency.intermediate })
-  @IsEnum(SkillProficiency)
-  proficiency: SkillProficiency;
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  yearsOfExperience?: number;
-}
+export class CreateSkillNestedInput extends OmitType(CreateSkillInput, [
+  'cvId',
+]) {}
 
 @InputType()
 export class CreateFullCvInput extends CreateCvInput {
-  @Field(() => [ExperienceNestedInput], { nullable: true })
+  @Field(() => [CreateExperienceNestedInput], { nullable: true })
   @IsOptional()
-  experiences?: ExperienceNestedInput[];
+  experiences?: CreateExperienceNestedInput[];
 
-  @Field(() => [EducationNestedInput], { nullable: true })
+  @Field(() => [CreateEducationNestedInput], { nullable: true })
   @IsOptional()
-  educations?: EducationNestedInput[];
+  educations?: CreateEducationNestedInput[];
 
-  @Field(() => [ProjectNestedInput], { nullable: true })
+  @Field(() => [CreateProjectNestedInput], { nullable: true })
   @IsOptional()
-  projects?: ProjectNestedInput[];
+  projects?: CreateProjectNestedInput[];
 
-  @Field(() => [CertificationNestedInput], { nullable: true })
+  @Field(() => [CreateCertificationNestedInput], { nullable: true })
   @IsOptional()
-  certifications?: CertificationNestedInput[];
+  certifications?: CreateCertificationNestedInput[];
 
-  @Field(() => [LanguageNestedInput], { nullable: true })
+  @Field(() => [CreateLanguageNestedInput], { nullable: true })
   @IsOptional()
-  languages?: LanguageNestedInput[];
+  languages?: CreateLanguageNestedInput[];
 
-  @Field(() => [SkillNestedInput], { nullable: true })
+  @Field(() => [CreateSkillNestedInput], { nullable: true })
   @IsOptional()
-  skills?: SkillNestedInput[];
+  skills?: CreateSkillNestedInput[];
 }

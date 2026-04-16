@@ -44,7 +44,6 @@ export class ExperienceService {
       .setEndDate(data.endDate)
       .setIsCurrentJob(data.isCurrentJob || false)
       .setDescription(data.description)
-      .setAchievements(data.achievements)
       .setEmploymentType(data.employmentType)
       .setUser(userId)
       .setCv(data.cvId)
@@ -160,7 +159,6 @@ export class ExperienceService {
         endDate: data.endDate,
         isCurrentJob: data.isCurrentJob,
         description: data.description,
-        achievements: data.achievements,
         cvId: data.cvId,
         employmentType: data.employmentType,
       },

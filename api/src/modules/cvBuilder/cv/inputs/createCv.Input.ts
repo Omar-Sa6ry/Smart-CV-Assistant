@@ -15,10 +15,13 @@ export class CreateCvInput {
   @IsString()
   title: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
-  location?: string;
+  headline: string;
+
+  @Field(() => String)
+  @IsString()
+  location: string;
 
   @Field(() => String)
   @IsPhoneNumber('EG')
@@ -42,8 +45,8 @@ export class CreateCvInput {
     message:
       'Professional summary is too short. Please write at least 50 characters.',
   })
-  @MaxLength(1000, {
-    message: 'Professional summary cannot exceed 1000 characters.',
+  @MaxLength(2000, {
+    message: 'Professional summary cannot exceed 2000 characters.',
   })
   summary: string;
 

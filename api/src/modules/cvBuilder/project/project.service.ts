@@ -35,13 +35,9 @@ export class ProjectService {
     const projectData = builder
       .setName(data.name)
       .setDescription(data.description)
-      .setTechnologiesUsed(data.technologiesUsed)
       .setProjectUrl(data.projectUrl)
-      .setIsPersonalProject(data.isPersonalProject)
       .setStartDate(data.startDate)
       .setEndDate(data.endDate)
-      .setIsTeamProject(data.isTeamProject)
-      .setTeamSize(data.teamSize)
       .setUser(userId)
       .setCv(data.cvId)
       .build();
@@ -145,13 +141,9 @@ export class ProjectService {
       data: {
         name: data.name,
         description: data.description,
-        technologiesUsed: data.technologiesUsed,
         projectUrl: data.projectUrl,
-        isPersonalProject: data.isPersonalProject,
         startDate: data.startDate,
         endDate: data.endDate,
-        isTeamProject: data.isTeamProject,
-        teamSize: data.teamSize,
       },
       include: { cv: true, user: true },
     });

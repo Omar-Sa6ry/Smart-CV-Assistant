@@ -33,9 +33,6 @@ export class Skill {
   @Field(() => SkillProficiency)
   proficiency: SkillProficiency;
 
-  @Field(() => Int, { nullable: true })
-  yearsOfExperience?: number | null;
-
   @Field(() => Date)
   createdAt: Date;
 

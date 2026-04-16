@@ -38,6 +38,7 @@ export class CvService {
       .setPortfolio(data?.portfolio)
       .setGithub(data?.github)
       .setLocation(data?.location)
+      .setHeadline(data?.headline)
       .build();
 
     const cv = await this.prisma.$transaction(async (tx) => {
@@ -67,7 +68,7 @@ export class CvService {
     userId: string,
     data: CreateFullCvInput,
   ): Promise<CvResponse> {
-    const user = await this.validateUser(userId);
+    await this.validateUser(userId);
     const cvFields = this.buildCvFields(userId, data);
 
     const cvWithRelations = await this.prisma.$transaction(async (tx) => {
@@ -79,12 +80,14 @@ export class CvService {
 
       const cvId = createdCv.id;
 
-      await this.processExperiences(tx, userId, cvId, data.experiences);
-      await this.processEducations(tx, userId, cvId, data.educations);
-      await this.processProjects(tx, userId, cvId, data.projects);
-      await this.processCertifications(tx, userId, cvId, data.certifications);
-      await this.processLanguages(tx, userId, cvId, data.languages);
-      await this.processSkills(tx, userId, cvId, data.skills);
+      await Promise.all([
+        this.processExperiences(tx, userId, cvId, data.experiences),
+        this.processEducations(tx, userId, cvId, data.educations),
+        this.processSkills(tx, userId, cvId, data.skills),
+        this.processProjects(tx, userId, cvId, data.projects),
+        this.processCertifications(tx, userId, cvId, data.certifications),
+        this.processLanguages(tx, userId, cvId, data.languages),
+      ]);
 
       return this.fetchFullCv(tx, cvId);
     });
@@ -179,6 +182,7 @@ export class CvService {
           ...(data.phone && { phone: data.phone }),
           ...(data.summary && { summary: data.summary }),
           ...(data.location && { location: data.location }),
+          ...(data.headline && { headline: data.headline }),
           ...(data.isDefault !== undefined && { isDefault: data.isDefault }),
         },
       });
@@ -234,6 +238,7 @@ export class CvService {
       .setPortfolio(data?.portfolio)
       .setGithub(data?.github)
       .setLocation(data?.location)
+      .setHeadline(data.headline)
       .build();
   }
 
@@ -370,7 +375,6 @@ export class CvService {
           name: skillData.name,
           category: skillData.category,
           proficiency: skillData.proficiency,
-          yearsOfExperience: skillData.yearsOfExperience,
           userId,
           cvId,
           keywordId: keyword.id,

@@ -1,5 +1,12 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsString, IsOptional, IsUUID, IsDate, MaxLength, IsBoolean, IsInt, Min } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsDate,
+  MaxLength,
+  IsBoolean,
+} from 'class-validator';
 
 @InputType()
 export class CreateProjectInput {
@@ -12,26 +19,15 @@ export class CreateProjectInput {
   @MaxLength(150)
   name: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
-  @MaxLength(250)
-  description?: string;
+  @MaxLength(2000)
+  description: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  technologiesUsed?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
   @MaxLength(500)
-  projectUrl?: string;
-
-  @Field(() => Boolean, { defaultValue: true })
-  @IsBoolean()
-  isPersonalProject: boolean;
+  projectUrl: string;
 
   @Field(() => Date, { nullable: true })
   @IsOptional()
@@ -42,13 +38,4 @@ export class CreateProjectInput {
   @IsOptional()
   @IsDate()
   endDate?: Date;
-
-  @Field(() => Boolean, { defaultValue: false })
-  @IsBoolean()
-  isTeamProject: boolean;
-
-  @Field(() => Int, { defaultValue: 1 })
-  @IsInt()
-  @Min(1)
-  teamSize: number;
 }

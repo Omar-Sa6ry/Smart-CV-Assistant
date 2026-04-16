@@ -63,7 +63,7 @@ export class ModernPdfStrategy implements ICvExportStrategy {
         <body>
           <div class="sidebar">
             <div class="name">{{user.firstName}}<br/>{{user.lastName}}</div>
-            <p style="font-size: 13px; color: #3498db; margin-bottom: 40px;">{{user.headline}}</p>
+            <p style="font-size: 13px; color: #3498db; margin-bottom: 40px;">{{headline}}</p>
             
             <div class="sidebar-section">
               <div class="sidebar-title">Contact</div>
@@ -162,7 +162,6 @@ export class ModernPdfStrategy implements ICvExportStrategy {
                   <div class="exp-date">{{startDate}} - {{endDate}}</div>
                 </div>
                 <p class="description">{{description}}</p>
-                <div class="description" style="font-size: 11px; margin-top: 5px;"><b>Stack:</b> {{technologiesUsed}}</div>
               </div>
               {{/each}}
             </div>
