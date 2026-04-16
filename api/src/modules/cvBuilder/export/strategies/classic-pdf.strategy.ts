@@ -54,16 +54,75 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       domain_knowledge: 'Domain Knowledge',
     };
 
+    let experiences = (data.experiences ?? []).map((exp: any) => ({
+      ...exp,
+      startDate: formatDate(exp.startDate),
+      endDate: formatDate(exp.endDate),
+      employmentType: exp.employmentType ? exp.employmentType.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '',
+      bullets: splitToBullets(exp.description),
+      sortDate: exp.startDate ? new Date(exp.startDate).getTime() : 0,
+    }));
+
+    let projects = (data.projects ?? []).map((proj: any, i: number) => ({
+      ...proj,
+      index: i + 1,
+      startDate: formatDate(proj.startDate),
+      endDate: formatDate(proj.endDate),
+      bullets: splitToBullets(proj.description),
+      sortDate: proj.startDate ? new Date(proj.startDate).getTime() : 0,
+    }));
+
+    // SMART TRUNCATION LOGIC (Target 1.5 Pages)
+    const MAX_ESTIMATED_LINES = 75;
+    
+    const calculateLines = () => {
+      let count = 6; // Header + Profile Title
+      if (data.summary) count += Math.ceil(data.summary.length / 110) + 1;
+      
+      const getSectionLines = (items: any[], hasBullets = true) => {
+        if (!items.length) return 0;
+        let sCount = 2; // Section title
+        items.forEach(item => {
+          sCount += 1.5; // Header line
+          if (hasBullets) sCount += (item.bullets?.length || 0) * 1.1;
+        });
+        return sCount;
+      };
+
+      count += getSectionLines(experiences);
+      count += getSectionLines(projects);
+      if (data.educations?.length) count += 2 + (data.educations.length * 2.5);
+      if (data.skills?.length) count += 8; // Technical skills block
+      return count;
+    };
+
+    let currentLines = calculateLines();
+    
+    // Priority: Truncate older bullets first, but keep at least 2 per entry.
+    if (currentLines > MAX_ESTIMATED_LINES) {
+      const itemsToTrim = [
+        ...experiences.map((_, i) => ({ type: 'exp', index: i, date: experiences[i].sortDate })),
+        ...projects.map((_, i) => ({ type: 'proj', index: i, date: projects[i].sortDate }))
+      ].sort((a, b) => a.date - b.date); // Oldest first
+
+      let trimIdx = 0;
+      while (currentLines > MAX_ESTIMATED_LINES && trimIdx < itemsToTrim.length) {
+        const tr = itemsToTrim[trimIdx];
+        const target = tr.type === 'exp' ? experiences[tr.index] : projects[tr.index];
+        
+        if (target.bullets && target.bullets.length > 2) {
+          target.bullets.pop();
+          currentLines = calculateLines();
+        } else {
+          trimIdx++;
+        }
+      }
+    }
+
     return {
       ...data,
       location: data.location || (data.user?.city ? `${data.user.city}, ${data.user.country}` : ''),
-      experiences: (data.experiences ?? []).map((exp: any) => ({
-        ...exp,
-        startDate: formatDate(exp.startDate),
-        endDate: formatDate(exp.endDate),
-        employmentType: exp.employmentType ? exp.employmentType.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '',
-        bullets: splitToBullets(exp.description),
-      })),
+      experiences,
       educations: (data.educations ?? []).map((edu: any) => {
         const degree = edu.degree ? edu.degree.charAt(0).toUpperCase() + edu.degree.slice(1) : '';
         const degreeDisplay = (edu.title && edu.title.toLowerCase().includes(degree.toLowerCase())) ? '' : degree;
@@ -77,13 +136,7 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
           gpa: edu.gpa ? Number(edu.gpa).toFixed(2) : null,
         };
       }),
-      projects: (data.projects ?? []).map((proj: any, i: number) => ({
-        ...proj,
-        index: i + 1,
-        startDate: formatDate(proj.startDate),
-        endDate: formatDate(proj.endDate),
-        bullets: splitToBullets(proj.description),
-      })),
+      projects: projects.map((p, i) => ({ ...p, index: i + 1 })),
       certifications: (data.certifications ?? []).map((cert: any) => ({
         ...cert,
         issueDate: formatDate(cert.issueDate),
@@ -147,7 +200,7 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       * { box-sizing: border-box; }
       body {
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 10.5px;
+        font-size: 7.5pt;
         color: #000;
         line-height: 1.35;
         margin: 0;
@@ -157,18 +210,18 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       /* ── HEADER ─────────────────────────────── */
       header { text-align: center; margin-bottom: 8px; }
       h1 {
-        font-size: 18px;
+        font-size: 15pt;
         font-weight: bold;
         margin: 0;
         display: inline-block;
       }
       .hdr-headline {
-        font-size: 16px;
+        font-size: 13pt;
         font-weight: bold;
         display: inline-block;
         margin-left: 8px;
       }
-      .hdr-row { font-size: 10.5px; margin-top: 3px; }
+      .hdr-row { font-size: 7.5pt; margin-top: 3px; }
 
       /* ── LINKS ──────────────────────────────── */
       a { color: #000; text-decoration: none; }
@@ -177,7 +230,7 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       /* ── SECTION ────────────────────────────── */
       section { margin-top: 12px; }
       h2 {
-        font-size: 13px;
+        font-size: 10pt;
         font-weight: bold;
         border-bottom: 1.2px solid #000;
         padding-bottom: 1px;
@@ -197,7 +250,7 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
         min-height: 14px;
       }
       h3 {
-        font-size: 11px;
+        font-size: 9pt;
         font-weight: bold;
         margin: 0;
         padding-right: 160px; /* Increased padding to protect standard job titles */
@@ -208,7 +261,7 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
         top: 0;
         white-space: nowrap;
         font-weight: bold;
-        font-size: 10.5px;
+        font-size: 7.5pt;
         text-align: right;
       }
 
