@@ -172,7 +172,7 @@ type SkillKeyword {
   createdAt: DateTime!
 }
 
-"""Categories for skill keywords"""
+"""Skill categories"""
 enum SkillCategory {
   programming_language
   backend_database
@@ -188,6 +188,7 @@ enum SkillCategory {
 type Skill {
   id: String!
   name: String!
+  category: SkillCategory!
   proficiency: SkillProficiency!
   yearsOfExperience: Int
   createdAt: DateTime!
@@ -547,6 +548,7 @@ input LanguageNestedInput {
 
 input SkillNestedInput {
   name: String!
+  category: SkillCategory! = technical
   proficiency: SkillProficiency! = intermediate
   yearsOfExperience: Int
 }

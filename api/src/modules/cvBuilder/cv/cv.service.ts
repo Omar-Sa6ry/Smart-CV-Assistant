@@ -37,6 +37,7 @@ export class CvService {
       .setLinkedin(data?.linkedin)
       .setPortfolio(data?.portfolio)
       .setGithub(data?.github)
+      .setLocation(data?.location)
       .build();
 
     const cv = await this.prisma.$transaction(async (tx) => {
@@ -232,6 +233,7 @@ export class CvService {
       .setLinkedin(data?.linkedin)
       .setPortfolio(data?.portfolio)
       .setGithub(data?.github)
+      .setLocation(data?.location)
       .build();
   }
 
@@ -366,6 +368,7 @@ export class CvService {
       await tx.skill.create({
         data: {
           name: skillData.name,
+          category: skillData.category,
           proficiency: skillData.proficiency,
           yearsOfExperience: skillData.yearsOfExperience,
           userId,

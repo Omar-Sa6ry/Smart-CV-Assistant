@@ -2,12 +2,17 @@ import { Field, ObjectType, registerEnumType, Int } from '@nestjs/graphql';
 import { User } from 'src/modules/users/entity/user.entity';
 import { Type } from 'class-transformer';
 import { Cv } from '../../cv/models/cv.model';
-import { SkillProficiency } from '@prisma/client';
+import { SkillProficiency, SkillCategory } from '@prisma/client';
 import { SkillKeyword } from './skill-keyword.model';
 
 registerEnumType(SkillProficiency, {
   name: 'SkillProficiency',
   description: 'Skill proficiency levels',
+});
+
+registerEnumType(SkillCategory, {
+  name: 'SkillCategory',
+  description: 'Skill categories',
 });
 
 @ObjectType()
@@ -21,6 +26,9 @@ export class Skill {
 
   @Field(() => String)
   name: string;
+
+  @Field(() => SkillCategory)
+  category: SkillCategory;
 
   @Field(() => SkillProficiency)
   proficiency: SkillProficiency;

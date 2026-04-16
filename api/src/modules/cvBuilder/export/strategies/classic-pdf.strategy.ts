@@ -21,272 +21,366 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
+    /**
+     * Splits one or more text fields into bullet-ready sentence array.
+     * Splits on newlines or ". " followed by a capital letter.
+     */
+    const splitToBullets = (...texts: (string | undefined | null)[]): string[] => {
+      const bullets: string[] = [];
+      texts.forEach(text => {
+        if (!text) return;
+        const parts = text
+          .split(/\n|(?<=\.\s*)(?=[A-Z])/)
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+        bullets.push(...parts);
+      });
+      return bullets;
+    };
+
+    // Canonical display names for skill categories (matches reference image)
+    const categoryDisplayName: Record<string, string> = {
+      programming_language: 'Programming Languages',
+      backend_database: 'Backend & Databases/ORMs',
+      devops_infrastructure: 'DevOps & Infrastructure',
+      security: 'Security',
+      software_tools: 'Software & Tools',
+      frontend: 'Frontend (Basics)',
+      soft_skills: 'Soft Skills',
+      methodology: 'Methodology',
+      technical: 'Other',
+    };
+
     return {
       ...data,
-      experiences: data.experiences?.map((exp: any) => ({
+      // Prefer explicit CV location, fall back to user city/country
+      location: data.location || (data.user?.city ? `${data.user.city}, ${data.user.country}` : ''),
+      experiences: (data.experiences ?? []).map((exp: any) => ({
         ...exp,
         startDate: formatDate(exp.startDate),
         endDate: formatDate(exp.endDate),
+        // Merge description + achievements into bullets
+        bullets: splitToBullets(exp.description, exp.achievements),
       })),
-      educations: data.educations?.map((edu: any) => ({
+      educations: (data.educations ?? []).map((edu: any) => ({
         ...edu,
+        // Prisma model uses `title` for field of study
+        fieldOfStudy: edu.title,
         startDate: formatDate(edu.startDate),
         endDate: formatDate(edu.endDate),
       })),
-      projects: data.projects?.map((proj: any) => ({
+      projects: (data.projects ?? []).map((proj: any, i: number) => ({
         ...proj,
+        index: i + 1,
         startDate: formatDate(proj.startDate),
         endDate: formatDate(proj.endDate),
+        bullets: splitToBullets(proj.description),
       })),
-      certifications: data.certifications?.map((cert: any) => ({
+      certifications: (data.certifications ?? []).map((cert: any) => ({
         ...cert,
         issueDate: formatDate(cert.issueDate),
       })),
-      groupedSkills: this.groupSkills(data.skills),
+      groupedSkills: this.groupSkills(data.skills ?? [], categoryDisplayName),
     };
   }
 
-  private groupSkills(skills: any[]): any[] {
-    if (!skills) return [];
-    const groups: { [key: string]: string[] } = {};
-    
+  private groupSkills(
+    skills: any[],
+    categoryMap: Record<string, string>,
+  ): { name: string; items: string }[] {
+    // Fixed order matching the reference image
+    const ORDER = [
+      'Programming Languages',
+      'Backend & Databases/ORMs',
+      'DevOps & Infrastructure',
+      'Security',
+      'Software & Tools',
+      'Frontend (Basics)',
+      'Soft Skills',
+      'Methodology',
+      'Other',
+    ];
+
+    const groups: Record<string, string[]> = {};
     skills.forEach(skill => {
-      const category = skill.keyword?.category || 'General';
-      const catName = category.charAt(0).toUpperCase() + category.slice(1).replace('_', ' ');
-      
-      if (!groups[catName]) groups[catName] = [];
-      groups[catName].push(skill.name);
+      const raw = skill.category ?? 'technical';
+      const label = categoryMap[raw] ?? raw;
+      if (!groups[label]) groups[label] = [];
+      groups[label].push(skill.name);
     });
 
-    return Object.entries(groups).map(([name, items]) => ({
-      name,
-      items: items.join(', ')
-    }));
+    const result: { name: string; items: string }[] = [];
+    ORDER.forEach(cat => {
+      if (groups[cat]?.length) result.push({ name: cat, items: groups[cat].join(', ') });
+    });
+    // Append any category not in the fixed order
+    Object.keys(groups).forEach(cat => {
+      if (!ORDER.includes(cat)) result.push({ name: cat, items: groups[cat].join(', ') });
+    });
+
+    return result;
   }
 
   private getTemplate(): string {
     return `
-      <html>
-        <head>
-          <style>
-            @page { 
-              margin: 15mm; 
-              size: A4;
-            }
-            body { 
-              font-family: 'Arial', sans-serif; 
-              color: #000; 
-              line-height: 1.3; 
-              margin: 0;
-              padding: 0;
-              font-size: 11px;
-            }
-            .header { 
-              text-align: center; 
-              margin-bottom: 15px;
-            }
-            .header h1 { 
-              margin: 0; 
-              font-size: 20px;
-              font-weight: bold;
-            }
-            .header .headline {
-              font-size: 14px;
-              margin-top: 5px;
-            }
-            .contact-info { 
-              font-size: 11px; 
-              margin-top: 8px;
-            }
-            .links {
-              font-size: 10px;
-              margin-top: 5px;
-              text-decoration: underline;
-            }
-            .section { 
-              margin-top: 12px; 
-            }
-            .section-title { 
-              font-weight: bold; 
-              text-transform: capitalize; 
-              border-bottom: 1px solid #000; 
-              margin-bottom: 6px;
-              font-size: 13px;
-              width: 100%;
-            }
-            .summary {
-              text-align: justify;
-              margin-bottom: 10px;
-            }
-            .item { 
-              margin-bottom: 10px; 
-            }
-            .item-header { 
-              display: flex; 
-              justify-content: space-between; 
-              font-weight: bold; 
-              font-size: 11px;
-            }
-            .item-sub {
-              font-style: italic;
-              margin-bottom: 4px;
-            }
-            .description { 
-              margin-top: 3px; 
-              padding-left: 15px;
-            }
-            .description ul {
-              margin: 0;
-              padding-left: 5px;
-            }
-            .description li {
-              margin-bottom: 2px;
-            }
-            .skills-category {
-              margin-bottom: 4px;
-            }
-            .skills-category b {
-              font-weight: bold;
-            }
-            a {
-              color: #000;
-              text-decoration: underline;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>{{user.firstName}} {{user.lastName}}  ({{user.headline}})</h1>
-            <div class="contact-info">
-              {{#if user.city}}{{user.city}}, {{user.country}}{{/if}}
-              {{#if phone}} | <a href="tel:{{phone}}">{{phone}}</a>{{/if}}
-              {{#if user.email}} | <a href="mailto:{{user.email}}">{{user.email}}</a>{{/if}}
-            </div>
-            <div class="links">
-               {{#if linkedin}}
-                 <a href="{{linkedin}}" target="_blank">LinkedIn</a>
-               {{/if}}
-               {{#if github}}
-                 {{#if linkedin}} | {{/if}}
-                 <a href="{{github}}" target="_blank">GitHub</a>
-               {{/if}}
-               {{#if portfolio}}
-                 {{#if linkedin}} | {{else}}{{#if github}} | {{/if}}{{/if}}
-                 <a href="{{portfolio}}" target="_blank">Portfolio</a>
-               {{/if}}
-            </div>
-          </div>
-          
-          <div class="section">
-            <div class="section-title">Profile Summary</div>
-            <div class="summary">{{summary}}</div>
-          </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @page {
+        size: A4;
+        margin: 12mm 15mm;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10.5px;
+        color: #000;
+        line-height: 1.45;
+        margin: 0;
+        padding: 0;
+      }
 
-          {{#if experiences.length}}
-          <div class="section">
-            <div class="section-title">Professional Experience</div>
-            {{#each experiences}}
-            <div class="item">
-              <div class="item-header">
-                <span>
-                  {{#if companyWebsite}}
-                    <a href="{{companyWebsite}}" target="_blank">{{companyName}}</a>
-                  {{else}}
-                    {{companyName}}
-                  {{/if}}
-                  – {{jobTitle}}
-                </span>
-                <span>{{startDate}} – {{#if isCurrentJob}}Present{{else}}{{endDate}}{{/if}}</span>
-              </div>
-              <div class="description">
-                <ul>
-                  <li>{{description}}</li>
-                </ul>
-              </div>
-            </div>
-            {{/each}}
-          </div>
-          {{/if}}
+      /* ── HEADER ─────────────────────────────── */
+      .hdr { text-align: center; margin-bottom: 8px; }
+      .hdr-name {
+        font-size: 20px;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 2px;
+      }
+      .hdr-row { font-size: 10.5px; margin-top: 3px; }
 
-          {{#if groupedSkills.length}}
-          <div class="section">
-            <div class="section-title">Technical Skills</div>
-            <div class="description">
-              <ul>
-              {{#each groupedSkills}}
-                <li class="skills-category"><b>{{name}}:</b> {{items}}.</li>
-              {{/each}}
-              </ul>
-            </div>
-          </div>
-          {{/if}}
+      /* ── LINKS ──────────────────────────────── */
+      a { color: #000; text-decoration: none; }
+      .ul { text-decoration: underline; color: #000; }
 
-          {{#if projects.length}}
-          <div class="section">
-            <div class="section-title">Project Experience</div>
-            {{#each projects}}
-            <div class="item">
-              <div class="item-header">
-                <span>
-                  {{#if projectUrl}}
-                    <a href="{{projectUrl}}" target="_blank">{{name}}</a>
-                  {{else}}
-                    {{name}}
-                  {{/if}}
-                </span>
-                <span>{{startDate}} – {{endDate}}</span>
-              </div>
-              <div class="description">
-                <ul>
-                  <li>{{description}}</li>
-                  <li><b>Technologies:</b> {{technologiesUsed}}</li>
-                </ul>
-              </div>
-            </div>
-            {{/each}}
-          </div>
-          {{/if}}
+      /* ── SECTION ────────────────────────────── */
+      .sec { margin-top: 10px; }
+      .sec-title {
+        font-size: 13px;
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+        padding-bottom: 1px;
+        margin-bottom: 6px;
+      }
 
-          {{#if educations.length}}
-          <div class="section">
-            <div class="section-title">Education</div>
-            {{#each educations}}
-            <div class="item">
-              <div class="item-header">
-                <span>{{institution}}</span>
-                <span>{{startDate}} – {{#if isCurrent}}Present{{else}}{{endDate}}{{/if}}</span>
-              </div>
-              <div class="item-sub">{{degree}} | {{title}}</div>
-              <div class="description">{{description}}</div>
-            </div>
-            {{/each}}
-          </div>
-          {{/if}}
+      /* ── SUMMARY ────────────────────────────── */
+      .summary { text-align: justify; }
 
-          {{#if certifications.length}}
-          <div class="section">
-            <div class="section-title">Licenses & Certifications</div>
-            <div class="description">
-              <ul>
-              {{#each certifications}}
-                <li style="display: flex; justify-content: space-between;">
-                  <span>
-                    {{#if credentialUrl}}
-                      <b><a href="{{credentialUrl}}" target="_blank">{{name}}</a></b>
-                    {{else}}
-                      <b>{{name}}</b>
-                    {{/if}}
-                    - {{issuingOrganization}} 
-                  </span>
-                  <span>{{issueDate}}</span>
-                </li>
-              {{/each}}
-              </ul>
-            </div>
+      /* ── EXPERIENCE / PROJECT ROW ───────────── */
+      .item { margin-bottom: 8px; }
+      .item-hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .item-left { font-weight: bold; flex: 1; }
+      .item-right {
+        white-space: nowrap;
+        margin-left: 8px;
+        font-weight: bold;
+      }
+
+      /* ── BULLETS ────────────────────────────── */
+      .bul {
+        margin: 2px 0 0 0;
+        padding-left: 28px;
+        list-style-type: disc;
+      }
+      .bul li {
+        margin-bottom: 2px;
+        text-align: justify;
+      }
+
+      /* ── SKILLS ─────────────────────────────── */
+      .sk-ul {
+        margin: 0;
+        padding-left: 20px;
+        list-style-type: disc;
+      }
+      .sk-ul li { margin-bottom: 3px; }
+
+      /* ── EDUCATION ──────────────────────────── */
+      .edu-sub { font-size: 10.5px; margin-top: 1px; }
+
+      /* ── CERTIFICATIONS ─────────────────────── */
+      .cert-ul {
+        margin: 0;
+        padding-left: 20px;
+        list-style-type: disc;
+      }
+      .cert-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 2px;
+      }
+      .cert-name { flex: 1; }
+      .cert-date {
+        white-space: nowrap;
+        margin-left: 10px;
+        min-width: 60px;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ══ HEADER ════════════════════════════════════════ -->
+    <div class="hdr">
+      <span class="hdr-name">{{user.firstName}} {{user.lastName}} &nbsp;&nbsp;({{user.headline}})</span>
+
+      <div class="hdr-row">
+        {{#if location}}{{location}}{{/if}}
+        {{#if phone}} | <a href="tel:{{phone}}">{{phone}}</a>{{/if}}
+        {{#if user.email}} | <a class="ul" href="mailto:{{user.email}}">{{user.email}}</a>{{/if}}
+      </div>
+
+      <div class="hdr-row">
+        {{#if linkedin}}<a class="ul" href="{{linkedin}}" target="_blank">{{linkedin}}</a>{{/if}}
+        {{#if github}} &nbsp;|&nbsp; <a class="ul" href="{{github}}" target="_blank">{{github}}</a>{{/if}}
+        {{#if portfolio}} &nbsp;|&nbsp; <a class="ul" href="{{portfolio}}" target="_blank">{{portfolio}}</a>{{/if}}
+      </div>
+    </div>
+
+    <!-- ══ PROFILE SUMMARY ═══════════════════════════════ -->
+    <div class="sec">
+      <div class="sec-title">Profile Summary</div>
+      <div class="summary">{{summary}}</div>
+    </div>
+
+    <!-- ══ PROFESSIONAL EXPERIENCE ══════════════════════ -->
+    {{#if experiences.length}}
+    <div class="sec">
+      <div class="sec-title">Professional Experience</div>
+
+      {{#each experiences}}
+      <div class="item">
+        <div class="item-hdr">
+          <span class="item-left">
+            &bull;&nbsp;
+            {{#if companyWebsite}}
+              <a class="ul" href="{{companyWebsite}}" target="_blank">{{companyName}}</a>
+            {{else}}
+              {{companyName}}
+            {{/if}}
+            &nbsp;&ndash;&nbsp;<i>{{jobTitle}}</i>
+            {{#if location}}&nbsp;|&nbsp;{{location}}{{/if}}
+          </span>
+          <span class="item-right">{{startDate}} &ndash; {{#if isCurrentJob}}Present{{else}}{{endDate}}{{/if}}</span>
+        </div>
+
+        {{#if bullets.length}}
+        <ul class="bul">
+          {{#each bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    <!-- ══ TECHNICAL SKILLS ══════════════════════════════ -->
+    {{#if groupedSkills.length}}
+    <div class="sec">
+      <div class="sec-title">Technical Skills</div>
+      <ul class="sk-ul">
+        {{#each groupedSkills}}
+        <li><b>{{name}}:</b> {{items}}.</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    <!-- ══ PROJECT EXPERIENCE ════════════════════════════ -->
+    {{#if projects.length}}
+    <div class="sec">
+      <div class="sec-title">Project Experience</div>
+
+      {{#each projects}}
+      <div class="item">
+        <div class="item-hdr">
+          <span class="item-left">
+            {{index}}.&nbsp;
+            {{#if projectUrl}}
+              <a class="ul" href="{{projectUrl}}" target="_blank"><u>{{name}}</u></a>
+            {{else}}
+              <u>{{name}}</u>
+            {{/if}}
+            {{#if location}}&nbsp;|&nbsp;{{location}}{{/if}}
+          </span>
+          <span class="item-right">
+            {{startDate}}
+            {{#if endDate}} &ndash; {{endDate}}{{else}} &ndash; Present{{/if}}
+          </span>
+        </div>
+
+        {{#if bullets.length}}
+        <ul class="bul">
+          {{#each bullets}}<li>{{this}}</li>{{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if technologiesUsed}}
+        <ul class="bul">
+          <li><b>Technologies:</b> {{technologiesUsed}}</li>
+        </ul>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    <!-- ══ EDUCATION ══════════════════════════════════════ -->
+    {{#if educations.length}}
+    <div class="sec">
+      <div class="sec-title">Education</div>
+
+      {{#each educations}}
+      <div class="item">
+        <div class="item-hdr">
+          <span class="item-left">{{fieldOfStudy}}</span>
+          <span class="item-right">{{startDate}} &ndash; {{#if isCurrent}}Present{{else}}{{endDate}}{{/if}}</span>
+        </div>
+        <div class="edu-sub">
+          {{institution}}{{#if location}} | {{location}}{{/if}}
+        </div>
+        {{#if description}}
+        <div class="edu-sub">{{description}}</div>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    <!-- ══ LICENSES & CERTIFICATIONS ════════════════════ -->
+    {{#if certifications.length}}
+    <div class="sec">
+      <div class="sec-title">Licenses &amp; Certifications</div>
+      <ul class="cert-ul">
+        {{#each certifications}}
+        <li>
+          <div class="cert-row">
+            <span class="cert-name">
+              {{#if credentialUrl}}
+                <a class="ul" href="{{credentialUrl}}" target="_blank">{{name}}</a>
+              {{else}}
+                {{name}}
+              {{/if}}
+              ({{issuingOrganization}})
+            </span>
+            <span class="cert-date">{{issueDate}}</span>
           </div>
-          {{/if}}
-        </body>
-      </html>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+  </body>
+</html>
     `;
   }
 }

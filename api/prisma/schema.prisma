@@ -80,6 +80,7 @@ model Cv {
   linkedin String?        @db.VarChar(250)
   github String?        @db.VarChar(250)
   phone String?        @db.VarChar(11)
+  location String?     @db.VarChar(255)
   isDefault Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -202,6 +203,7 @@ model Skill {
   cvId           String
   keywordId      String?
   name           String           @db.VarChar(100)
+  category       SkillCategory    @default(technical)
   proficiency    SkillProficiency @default(intermediate)
   yearsOfExperience Int?
   createdAt      DateTime         @default(now())

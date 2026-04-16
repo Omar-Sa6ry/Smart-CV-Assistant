@@ -18,6 +18,7 @@ import {
   Degree,
   Proficiency,
   SkillProficiency,
+  SkillCategory,
 } from '@prisma/client';
 import '../../experience/models/experience.model';
 import '../../education/models/education.model';
@@ -223,6 +224,10 @@ export class SkillNestedInput {
   @IsString()
   @MaxLength(100)
   name: string;
+
+  @Field(() => SkillCategory, { defaultValue: SkillCategory.technical })
+  @IsEnum(SkillCategory)
+  category: SkillCategory;
 
   @Field(() => SkillProficiency, { defaultValue: SkillProficiency.intermediate })
   @IsEnum(SkillProficiency)
