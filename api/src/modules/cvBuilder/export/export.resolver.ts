@@ -7,6 +7,7 @@ import { ExportCvResponse } from './dtos/exportCvResponse.dto';
 import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
 import { WordExportStrategy } from './strategies/word-export.strategy';
+import { ModernWordStrategy } from './strategies/modern-word.strategy';
 import { ICvExportStrategy } from './strategies/export-strategy.interface';
 
 @Resolver()
@@ -16,6 +17,7 @@ export class ExportResolver {
     private readonly classicStrategy: ClassicPdfStrategy,
     private readonly modernStrategy: ModernPdfStrategy,
     private readonly wordStrategy: WordExportStrategy,
+    private readonly modernWordStrategy: ModernWordStrategy,
   ) {}
 
   @Query(() => ExportCvResponse)
@@ -23,7 +25,7 @@ export class ExportResolver {
   async exportCv(
     @Args('id') id: string,
     @Args('format', { type: () => String, defaultValue: 'classic' })
-    format: 'classic' | 'modern' | 'word',
+    format: 'classic' | 'modern' | 'word' | 'modern_word',
   ): Promise<ExportCvResponse> {
     const cvResponse = await this.cvService.getById(id);
     if (!cvResponse.data) throw new NotFoundException('CV not found');
@@ -31,10 +33,11 @@ export class ExportResolver {
     let strategy: ICvExportStrategy;
     if (format === 'modern') strategy = this.modernStrategy;
     else if (format === 'word') strategy = this.wordStrategy;
+    else if (format === 'modern_word') strategy = this.modernWordStrategy;
     else strategy = this.classicStrategy;
 
     const buffer = await strategy.export(cvResponse.data);
-    const fileName = `CV_${id}.${format === 'word' ? 'docx' : 'pdf'}`;
+    const fileName = `CV_${id}.${(format === 'word' || format === 'modern_word') ? 'docx' : 'pdf'}`;
 
     return {
       fileContent: (buffer as Buffer).toString('base64'),

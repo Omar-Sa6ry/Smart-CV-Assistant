@@ -5,6 +5,7 @@ import { ExportController } from './export.controller';
 import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
 import { WordExportStrategy } from './strategies/word-export.strategy';
+import { ModernWordStrategy } from './strategies/modern-word.strategy';
 import { CvModule } from '../cv/cv.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { CvModule } from '../cv/cv.module';
     ClassicPdfStrategy,
     ModernPdfStrategy,
     WordExportStrategy,
+    ModernWordStrategy,
   ],
   exports: [ExportService],
 })

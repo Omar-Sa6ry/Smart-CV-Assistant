@@ -4,6 +4,7 @@ import { CvService } from '../cv/cv.service';
 import { ClassicPdfStrategy } from './strategies/classic-pdf.strategy';
 import { ModernPdfStrategy } from './strategies/modern-pdf.strategy';
 import { WordExportStrategy } from './strategies/word-export.strategy';
+import { ModernWordStrategy } from './strategies/modern-word.strategy';
 import { ICvExportStrategy } from './strategies/export-strategy.interface';
 
 @Controller('cv-export')
@@ -13,6 +14,7 @@ export class ExportController {
     private readonly classicStrategy: ClassicPdfStrategy,
     private readonly modernStrategy: ModernPdfStrategy,
     private readonly wordStrategy: WordExportStrategy,
+    private readonly modernWordStrategy: ModernWordStrategy,
   ) {}
 
   @Get(':id')
@@ -27,15 +29,16 @@ export class ExportController {
     let strategy: ICvExportStrategy;
     if (format === 'modern') strategy = this.modernStrategy;
     else if (format === 'word') strategy = this.wordStrategy;
+    else if (format === 'modern_word') strategy = this.modernWordStrategy;
     else strategy = this.classicStrategy;
 
     const buffer = await strategy.export(cvResponse.data);
 
-    const contentType = format === 'word' 
+    const contentType = (format === 'word' || format === 'modern_word')
       ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
       : 'application/pdf';
     
-    const extension = format === 'word' ? 'docx' : 'pdf';
+    const extension = (format === 'word' || format === 'modern_word') ? 'docx' : 'pdf';
     const fileName = `CV_${id}.${extension}`;
 
     res.set({
