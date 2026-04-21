@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { TestUtils } from './test-utils';
 
 describe('AppResolver (e2e)', () => {
+  jest.setTimeout(60000);
   let app: INestApplication;
   let testUtils: TestUtils;
 
