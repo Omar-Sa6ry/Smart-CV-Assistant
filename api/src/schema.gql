@@ -19,6 +19,7 @@ type User {
   firstName: String!
   lastName: String!
   headline: String!
+  role: String!
   email: String!
   lastLoginAt: DateTime
   createdAt: DateTime
