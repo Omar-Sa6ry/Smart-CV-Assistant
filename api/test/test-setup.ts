@@ -47,11 +47,16 @@ export default async () => {
   let retries = 10;
   while (retries > 0) {
     try {
+      const redisReady = await checkRedis();
+      if (!redisReady) {
+        throw new Error('Redis is not ready yet');
+      }
+
       execSync('npx prisma db push', {
         env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
         stdio: 'pipe',
       });
-      console.log('[E2E Setup] Database schema synchronized successfully.');
+      console.log('[E2E Setup] Database schema and Redis synchronized successfully.');
       break;
     } catch (error) {
       retries--;
