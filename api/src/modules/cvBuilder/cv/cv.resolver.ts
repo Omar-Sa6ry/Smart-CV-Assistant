@@ -30,11 +30,13 @@ import { LanguageLoader } from '../language/loaders/language.loader';
 import { Language } from '../language/models/language.model';
 import { SkillLoader } from '../skill/loaders/skill.loader';
 import { Skill } from '../skill/models/skill.model';
+import { CreateCvFascade } from './fascade/createCv.fascade';
 
 @Resolver(() => Cv)
 export class CvResolver {
   constructor(
     private readonly cvService: CvService,
+    private readonly createCvFascade: CreateCvFascade,
     private readonly experienceLoader: ExperienceLoader,
     private readonly educationLoader: EducationLoader,
     private readonly certificationLoader: CertificationLoader,
@@ -58,7 +60,7 @@ export class CvResolver {
     @CurrentUser() user: CurrentUserDto,
     @Args('data') data: CreateFullCvInput,
   ): Promise<CvResponse> {
-    return this.cvService.createFullCv(user.id, data);
+    return this.createCvFascade.createFullCv(user.id, data);
   }
 
   @Query(() => CvsResponse)

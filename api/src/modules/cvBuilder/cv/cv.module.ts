@@ -10,6 +10,7 @@ import { ProjectModule } from '../project/project.module';
 import { LanguageModule } from '../language/language.module';
 import { SkillModule } from '../skill/skill.module';
 import { RedisModule } from '@bts-soft/core';
+import { CreateCvFascade } from './fascade/createCv.fascade';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { RedisModule } from '@bts-soft/core';
     forwardRef(() => LanguageModule),
     forwardRef(() => SkillModule),
   ],
-  providers: [CvService, CvResolver, CvBuilderFactory],
+  providers: [CvService, CvResolver, CreateCvFascade, CvBuilderFactory],
   exports: [CvService],
 })
 export class CvModule {}
