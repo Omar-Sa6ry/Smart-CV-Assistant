@@ -15,9 +15,21 @@ export class TestUtils {
   }
 
   static async createTestApp(): Promise<INestApplication> {
+    const mockNotificationService = {
+      send: jest.fn().mockResolvedValue(true),
+      sendEmail: jest.fn().mockResolvedValue(true),
+      sendSMS: jest.fn().mockResolvedValue(true),
+      sendPushNotification: jest.fn().mockResolvedValue(true),
+    };
+    
+    const core = require('@bts-soft/core');
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(core.NotificationService)
+      .useValue(mockNotificationService)
+      .compile();
 
     const app = moduleFixture.createNestApplication();
     await app.init();
