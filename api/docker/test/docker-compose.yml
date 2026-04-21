@@ -1,0 +1,27 @@
+services:
+  test-postgres:
+    image: postgres:15
+    container_name: cv-assistant-postgres-test
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: cv_assistant_test
+    ports:
+      - "5433:5432"
+    networks:
+      - test_network
+
+  test-redis:
+    image: redis:alpine
+    container_name: cv-assistant-redis-test
+    ports:
+      - "6381:6379"
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    name: cv_assistant_test_network
+
+# docker-compose -f docker/test/docker-compose.yml up --build -d
+# num run start:test:e2e

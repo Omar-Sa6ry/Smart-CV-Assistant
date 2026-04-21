@@ -1,25 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { TestUtils } from './test-utils';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe('AppResolver (e2e)', () => {
+  let app: INestApplication;
+  let testUtils: TestUtils;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    app = await TestUtils.createTestApp();
+    testUtils = new TestUtils(app);
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await TestUtils.teardownApp(app);
+  });
+
+  it('sayHello (Query)', async () => {
+    const query = `
+      query {
+        sayHello
+      }
+    `;
+
+    const response = await testUtils.graphqlRequest(query);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.sayHello).toBe('Hello in Smart CV Assistant');
   });
 });
