@@ -28,14 +28,17 @@ export class CreateCvInput {
   phone: string;
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsUrl()
   linkedin?: string;
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsUrl()
   github?: string;
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsUrl()
   portfolio?: string;
 

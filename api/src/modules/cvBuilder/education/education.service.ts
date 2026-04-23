@@ -148,7 +148,7 @@ export class EducationService {
   ): Promise<EducationResponse> {
     await this.getEducationById(userId, id);
 
-    if (data.cvId) await this.cvService.getById(data.cvId);
+    if (data.cvId) await this.cvService.getById(data.cvId, userId);
 
     const updated = await this.prisma.education.update({
       where: { id },

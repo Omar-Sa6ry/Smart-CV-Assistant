@@ -32,6 +32,19 @@ export class TestUtils {
       .compile();
 
     const app = moduleFixture.createNestApplication();
+    
+    const { ValidationPipe } = require('@nestjs/common');
+    const { I18nValidationException } = require('nestjs-i18n');
+    
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        stopAtFirstError: true,
+        exceptionFactory: (errors) => new I18nValidationException(errors),
+      }),
+    );
+
     await app.init();
     return app;
   }

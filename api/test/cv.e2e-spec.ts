@@ -33,6 +33,12 @@ describe('CV (e2e)', () => {
 
   afterAll(async () => {
     if (prisma) {
+      await prisma.education.deleteMany({ where: { userId } });
+      await prisma.experience.deleteMany({ where: { userId } });
+      await prisma.certification.deleteMany({ where: { userId } });
+      await prisma.project.deleteMany({ where: { userId } });
+      await prisma.language.deleteMany({ where: { userId } });
+      await prisma.skill.deleteMany({ where: { userId } });
       await prisma.cv.deleteMany({ where: { userId } });
       await prisma.user.delete({ where: { id: userId } });
     }
@@ -57,8 +63,8 @@ describe('CV (e2e)', () => {
         data: {
           title: 'Basic CV',
           headline: 'Junior Developer',
-          summary: 'Eager to learn',
-          phone: '0123456789',
+          summary: 'Eager to learn and grow in a fast-paced environment with modern technologies.',
+          phone: '01012345678',
           location: 'Alexandria, Egypt',
         },
       };
@@ -93,8 +99,8 @@ describe('CV (e2e)', () => {
         data: {
           title: 'Full Stack CV',
           headline: 'Senior Full Stack Engineer',
-          summary: 'Expert in Node.js and React',
-          phone: '0111222333',
+          summary: 'Expert in Node.js and React with over 5 years of experience building scalable applications.',
+          phone: '01112223334',
           location: 'Giza, Egypt',
           experiences: [{
             jobTitle: 'Senior Dev',

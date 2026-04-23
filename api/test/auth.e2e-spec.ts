@@ -33,7 +33,10 @@ describe('AuthResolver (e2e)', () => {
     prisma = app.get(PrismaService);
     redisService = app.get(RedisService, { strict: false });
 
-    // Clean up test users
+    // Clean up test users and related records
+    await prisma.cv.deleteMany({
+      where: { user: { email: { contains: 'example.com' } } },
+    });
     await prisma.user.deleteMany({
       where: { email: { contains: 'example.com' } },
     });
@@ -51,6 +54,9 @@ describe('AuthResolver (e2e)', () => {
 
   afterAll(async () => {
     if (prisma) {
+      await prisma.cv.deleteMany({
+        where: { user: { email: { contains: 'example.com' } } },
+      });
       await prisma.user.deleteMany({
         where: { email: { contains: 'example.com' } },
       });
@@ -203,7 +209,7 @@ describe('AuthResolver (e2e)', () => {
         }
       `;
 
-      const newPassword = 'NewCoolPassword123!';
+      const newPassword = 'CoolPass123!';
       const response = await testUtils.graphqlRequest(changePasswordMutation, {
         input: {
           password: testUser.password,
