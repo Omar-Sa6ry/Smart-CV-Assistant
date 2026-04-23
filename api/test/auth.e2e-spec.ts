@@ -33,13 +33,16 @@ describe('AuthResolver (e2e)', () => {
     prisma = app.get(PrismaService);
     redisService = app.get(RedisService, { strict: false });
 
-    // Clean up test users and related records
-    await prisma.cv.deleteMany({
-      where: { user: { email: { contains: 'example.com' } } },
-    });
-    await prisma.user.deleteMany({
-      where: { email: { contains: 'example.com' } },
-    });
+    // Clean up test users and related records recursively
+    const userEmails = { contains: 'example.com' };
+    await prisma.certification.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.education.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.experience.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.language.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.project.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.skill.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.cv.deleteMany({ where: { user: { email: userEmails } } });
+    await prisma.user.deleteMany({ where: { email: userEmails } });
 
     // Create a first user to take the ADMIN role
     const registerMutation = `
@@ -54,12 +57,15 @@ describe('AuthResolver (e2e)', () => {
 
   afterAll(async () => {
     if (prisma) {
-      await prisma.cv.deleteMany({
-        where: { user: { email: { contains: 'example.com' } } },
-      });
-      await prisma.user.deleteMany({
-        where: { email: { contains: 'example.com' } },
-      });
+      const userEmails = { contains: 'example.com' };
+      await prisma.certification.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.education.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.experience.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.language.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.project.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.skill.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.cv.deleteMany({ where: { user: { email: userEmails } } });
+      await prisma.user.deleteMany({ where: { email: userEmails } });
     }
     await TestUtils.teardownApp(app);
   });

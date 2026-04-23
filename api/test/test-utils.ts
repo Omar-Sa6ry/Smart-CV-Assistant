@@ -59,7 +59,9 @@ export class TestUtils {
       // Ignore if injection token doesn't exist
     }
     
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   }
 
   async graphqlRequest(query: string, variables: any = {}, token?: string) {
