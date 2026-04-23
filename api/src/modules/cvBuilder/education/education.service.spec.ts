@@ -186,7 +186,7 @@ describe('EducationService', () => {
 
       await service.updateEducation('u1', 'e1', { title: 'New', cvId: 'cv2' });
 
-      expect(cvService.getById).toHaveBeenCalledWith('cv2');
+      expect(cvService.getById).toHaveBeenCalledWith('cv2', 'u1');
       expect(cvService.invalidateCache).toHaveBeenCalled();
     });
   });

@@ -15,7 +15,7 @@ describe('StandardExperienceBuilder', () => {
     const result = builder
       .setJobTitle('Software Engineer')
       .setCompanyName('Tech Corp')
-      .setCompanyWebsite('https://techcorp.com')
+      .setCompanyWebsite('https://omarsabry.netlify.app')
       .setLocation('Cairo, Egypt')
       .setStartDate(startDate)
       .setEndDate(endDate)
