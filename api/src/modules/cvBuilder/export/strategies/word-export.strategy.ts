@@ -143,11 +143,11 @@ export class WordExportStrategy implements ICvExportStrategy {
             spacing: { after: 200 },
           }),
 
-          // EXPERIENCE
-          ...(data.experiences?.length ? this.createExperienceSection(data.experiences) : []),
-
           // SKILLS
           ...(data.groupedSkills?.length ? this.createSkillsSection(data.groupedSkills) : []),
+
+          // EXPERIENCE
+          ...(data.experiences?.length ? this.createExperienceSection(data.experiences) : []),
 
           // PROJECTS
           ...(data.projects?.length ? this.createProjectSection(data.projects) : []),

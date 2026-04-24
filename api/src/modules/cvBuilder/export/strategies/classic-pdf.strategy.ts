@@ -314,6 +314,20 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
       <div class="summary">{{summary}}</div>
     </section>
 
+    <!-- SKILLS -->
+    {{#if groupedSkills.length}}
+    <section>
+      <h2>Technical Skills</h2>
+      <div class="sk-container">
+        {{#each groupedSkills}}
+        <div class="sk-item">
+          <b>{{name}}:</b> {{items}}
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
     <!-- EXPERIENCE -->
     {{#if experiences.length}}
     <section>
@@ -340,20 +354,6 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
         {{/if}}
       </div>
       {{/each}}
-    </section>
-    {{/if}}
-
-    <!-- SKILLS -->
-    {{#if groupedSkills.length}}
-    <section>
-      <h2>Technical Skills</h2>
-      <div class="sk-container">
-        {{#each groupedSkills}}
-        <div class="sk-item">
-          <b>{{name}}:</b> {{items}}
-        </div>
-        {{/each}}
-      </div>
     </section>
     {{/if}}
 

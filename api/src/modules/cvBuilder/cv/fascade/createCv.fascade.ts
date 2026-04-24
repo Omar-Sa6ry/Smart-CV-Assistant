@@ -27,26 +27,35 @@ export class CreateCvFascade {
     await this.validateUser(userId);
     const cvFields = this.buildCvFields(userId, data);
 
-    const cvWithRelations = await this.prisma.$transaction(async (tx) => {
-      await this.handleDefaultCvStatus(tx, userId, cvFields.isDefault || false);
+    const cvWithRelations = await this.prisma.$transaction(
+      async (tx) => {
+        await this.handleDefaultCvStatus(
+          tx,
+          userId,
+          cvFields.isDefault || false,
+        );
 
-      const createdCv = await tx.cv.create({
-        data: cvFields as any,
-      });
+        const createdCv = await tx.cv.create({
+          data: cvFields as any,
+        });
 
-      const cvId = createdCv.id;
+        const cvId = createdCv.id;
 
-      await Promise.all([
-        this.processExperiences(tx, userId, cvId, data.experiences),
-        this.processEducations(tx, userId, cvId, data.educations),
-        this.processSkills(tx, userId, cvId, data.skills),
-        this.processProjects(tx, userId, cvId, data.projects),
-        this.processCertifications(tx, userId, cvId, data.certifications),
-        this.processLanguages(tx, userId, cvId, data.languages),
-      ]);
+        await Promise.all([
+          this.processExperiences(tx, userId, cvId, data.experiences),
+          this.processEducations(tx, userId, cvId, data.educations),
+          this.processSkills(tx, userId, cvId, data.skills),
+          this.processProjects(tx, userId, cvId, data.projects),
+          this.processCertifications(tx, userId, cvId, data.certifications),
+          this.processLanguages(tx, userId, cvId, data.languages),
+        ]);
 
-      return this.fetchFullCv(tx, cvId);
-    });
+        return this.fetchFullCv(tx, cvId);
+      },
+      {
+        timeout: 20000,
+      },
+    );
 
     return this.finalizeCvResponse(cvWithRelations);
   }
@@ -183,37 +192,41 @@ export class CreateCvFascade {
       where: { name: { in: skillNames, mode: 'insensitive' } },
     });
 
-    for (const skillData of skills) {
-      let keyword = existingKeywords.find(
-        (k) => k.name.toLowerCase() === skillData.name.toLowerCase(),
-      );
+    const skillDataWithKeywords = await Promise.all(
+      skills.map(async (skillData) => {
+        let keyword = existingKeywords.find(
+          (k) => k.name.toLowerCase() === skillData.name.toLowerCase(),
+        );
 
-      if (keyword) {
-        keyword = await tx.skillKeyword.update({
-          where: { id: keyword.id },
-          data: { popularityScore: { increment: 1 } },
-        });
-      } else {
-        keyword = await tx.skillKeyword.create({
-          data: {
-            name: skillData.name,
-            isVerified: false,
-            popularityScore: 1,
-          },
-        });
-      }
+        if (keyword) {
+          keyword = await tx.skillKeyword.update({
+            where: { id: keyword.id },
+            data: { popularityScore: { increment: 1 } },
+          });
+        } else {
+          keyword = await tx.skillKeyword.create({
+            data: {
+              name: skillData.name,
+              isVerified: false,
+              popularityScore: 1,
+            },
+          });
+        }
 
-      await tx.skill.create({
-        data: {
+        return {
           name: skillData.name,
           category: skillData.category,
           proficiency: skillData.proficiency,
           userId,
           cvId,
           keywordId: keyword.id,
-        },
-      });
-    }
+        };
+      }),
+    );
+
+    await tx.skill.createMany({
+      data: skillDataWithKeywords,
+    });
   }
 
   private async fetchFullCv(tx: Prisma.TransactionClient, cvId: string) {
