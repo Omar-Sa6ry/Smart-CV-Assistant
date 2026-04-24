@@ -455,7 +455,7 @@ export class WordExportStrategy implements ICvExportStrategy {
       })),
       languages: (data.languages ?? []).map((lang: any) => ({
         ...lang,
-        proficiency: lang.proficiency ? lang.proficiency.charAt(0).toUpperCase() + lang.proficiency.slice(1) : '',
+        proficiency: lang.proficiency ? lang.proficiency.charAt(0).toUpperCase() + lang.proficiency.slice(1).toLowerCase() : '',
       })),
       groupedSkills: this.groupSkills(data.skills ?? [], categoryDisplayName),
     };

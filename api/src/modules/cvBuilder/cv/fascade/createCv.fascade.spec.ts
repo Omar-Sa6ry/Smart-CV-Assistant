@@ -252,7 +252,7 @@ describe('CreateCvFascade', () => {
           }),
         },
         skill: {
-          create: jest.fn().mockResolvedValue({ id: 'skill-1' }),
+          createMany: jest.fn().mockResolvedValue({ count: 1 }),
         },
       };
     });
@@ -305,7 +305,7 @@ describe('CreateCvFascade', () => {
       expect(mockTx.skillKeyword.create).toHaveBeenCalledWith({
         data: { name: 'NestJS', isVerified: false, popularityScore: 1 },
       });
-      expect(mockTx.skill.create).toHaveBeenCalledTimes(2);
+      expect(mockTx.skill.createMany).toHaveBeenCalled();
 
       expect(mockTx.cv.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
