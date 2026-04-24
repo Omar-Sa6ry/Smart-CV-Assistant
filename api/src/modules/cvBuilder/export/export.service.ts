@@ -14,18 +14,19 @@ export class ExportService {
   }
 
   async generatePdf(html: string): Promise<Buffer> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--font-render-hinting=none',
-      ],
-    });
-
+    let browser: puppeteer.Browser | null = null;
     try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--font-render-hinting=none',
+        ],
+      });
+
       const page = await browser.newPage();
       
       // Set content with a reasonable timeout
