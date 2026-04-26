@@ -23,30 +23,39 @@ export class ExportController {
     @Query('format') format: string = 'classic',
     @Res() res: express.Response,
   ) {
-    const cvResponse = await this.cvService.getById(id);
-    if (!cvResponse.data) throw new NotFoundException('CV not found');
+    try {
+      const cvResponse = await this.cvService.getById(id);
+      if (!cvResponse.data) throw new NotFoundException('CV not found');
 
-    let strategy: ICvExportStrategy;
-    if (format === 'modern') strategy = this.modernStrategy;
-    else if (format === 'word') strategy = this.wordStrategy;
-    else if (format === 'modern_word') strategy = this.modernWordStrategy;
-    else strategy = this.classicStrategy;
+      let strategy: ICvExportStrategy;
+      if (format === 'modern') strategy = this.modernStrategy;
+      else if (format === 'word') strategy = this.wordStrategy;
+      else if (format === 'modern_word') strategy = this.modernWordStrategy;
+      else strategy = this.classicStrategy;
 
-    const buffer = await strategy.export(cvResponse.data);
+      const buffer = await strategy.export(cvResponse.data);
 
-    const contentType = (format === 'word' || format === 'modern_word')
-      ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-      : 'application/pdf';
-    
-    const extension = (format === 'word' || format === 'modern_word') ? 'docx' : 'pdf';
-    const fileName = `CV_${id}.${extension}`;
+      const contentType = (format === 'word' || format === 'modern_word')
+        ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+        : 'application/pdf';
+      
+      const extension = (format === 'word' || format === 'modern_word') ? 'docx' : 'pdf';
+      const fileName = `CV_${id}.${extension}`;
 
-    res.set({
-      'Content-Type': contentType,
-      'Content-Disposition': `attachment; filename="${fileName}"`,
-      'Content-Length': (buffer as Buffer).length,
-    });
+      res.set({
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Length': (buffer as Buffer).length,
+      });
 
-    res.end(buffer);
+      res.end(buffer);
+    } catch (error) {
+      const status = error instanceof NotFoundException ? 404 : 500;
+      res.status(status).json({
+        success: false,
+        statusCode: status,
+        message: error.message || 'Internal server error',
+      });
+    }
   }
 }
