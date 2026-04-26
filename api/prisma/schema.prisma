@@ -29,6 +29,18 @@ enum Proficiency {
   native
 }
 
+enum AnalysisType {
+  ats_compatibility
+  content_quality
+  completeness
+}
+
+enum SuggestionPriority {
+  high
+  medium
+  low
+}
+
 enum SkillCategory {
   programming_language
   frontend
@@ -79,6 +91,8 @@ model User {
   projects        Project[]
   languages       Language[]
   skills          Skill[]
+  analysisResults CvAnalysisBase[]
+  analysisHistory AnalysisHistory[]
 }
 
 model Cv {
@@ -102,6 +116,8 @@ model Cv {
   projects       Project[]
   languages      Language[]
   skills         Skill[]
+  analysisResults CvAnalysisBase[]
+  analysisHistory AnalysisHistory[]
 
   @@map("CV")
 }
@@ -217,4 +233,124 @@ model Skill {
   user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   cv      Cv            @relation(fields: [cvId], references: [id], onDelete: Cascade)
   keyword SkillKeyword? @relation(fields: [keywordId], references: [id], onDelete: SetNull)
+}
+
+model CvAnalysisBase {
+  id              String       @id @default(uuid())
+  cvId            String
+  userId          String
+  analysisType    AnalysisType
+  overallScore    Decimal      @db.Decimal(5, 2)
+  feedbackSummary String?      @db.Text
+  strengths       String?      @db.Text
+  weaknesses      String?      @db.Text
+  suggestions     String?      @db.Text
+  createdAt       DateTime     @default(now())
+
+  cv                  Cv                              @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                User                            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  atsDetails          CvAnalysisAtsDetails?
+  contentDetails      CvAnalysisContentDetails?
+  completenessDetails CvAnalysisCompletenessDetails?
+  detailedSuggestions CvAnalysisSuggestion[]
+
+  @@unique([cvId, analysisType])
+  @@map("CV_Analysis_Base")
+}
+
+model CvAnalysisAtsDetails {
+  analysisId         String   @id
+  formattingScore    Decimal  @db.Decimal(5, 2)
+  compatibilityScore Decimal  @db.Decimal(5, 2)
+  keywordMatchScore  Decimal  @db.Decimal(5, 2)
+  structureScore     Decimal  @db.Decimal(5, 2)
+  keywordsFound      Int      @default(0)
+  keywordsMissing    Int      @default(0)
+  foundKeywordsList  String?  @db.Text
+  missingKeywordsList String? @db.Text
+  hasTables          Boolean  @default(false)
+  hasImages           Boolean  @default(false)
+  hasSpecialChars    Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_ATS_Details")
+}
+
+model CvAnalysisContentDetails {
+  analysisId               String   @id
+  languageScore            Decimal  @db.Decimal(5, 2)
+  achievementsScore        Decimal  @db.Decimal(5, 2)
+  clarityScore             Decimal  @db.Decimal(5, 2)
+  quantifiableResultsCount Int      @default(0)
+  spellingErrorsCount      Int      @default(0)
+  spellingErrorsList       String?  @db.Text
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_Content_Details")
+}
+
+model CvAnalysisSuggestion {
+  id            String             @id @default(uuid())
+  analysisId    String
+  sectionName   String             @db.VarChar(50)
+  priority      SuggestionPriority @default(medium)
+  message       String             @db.Text
+  originalText  String?            @db.Text
+  suggestedText String?            @db.Text
+  createdAt     DateTime           @default(now())
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("CV_Analysis_Suggestion")
+}
+
+model CvAnalysisCompletenessDetails {
+  analysisId            String   @id
+  requiredSectionsScore Decimal  @db.Decimal(5, 2)
+  optionalSectionsScore Decimal  @db.Decimal(5, 2)
+  detailsScore          Decimal  @db.Decimal(5, 2)
+  consistencyScore      Decimal  @db.Decimal(5, 2)
+  hasContactInfo        Boolean  @default(false)
+  hasExperience         Boolean  @default(false)
+  hasEducation          Boolean  @default(false)
+  hasSkills             Boolean  @default(false)
+  hasSummary            Boolean  @default(false)
+  hasCertifications     Boolean  @default(false)
+  hasProjects           Boolean  @default(false)
+  hasLanguages          Boolean  @default(false)
+  experiencesCount      Int      @default(0)
+  educationsCount       Int      @default(0)
+  skillsCount           Int      @default(0)
+  certificationsCount   Int      @default(0)
+  projectsCount         Int      @default(0)
+  languagesCount        Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_Completeness_Details")
+}
+
+model AnalysisHistory {
+  id                    String       @id @default(uuid())
+  cvId                  String
+  userId                String
+  analysisType          AnalysisType
+  previousScore         Decimal?     @db.Decimal(5, 2)
+  newScore              Decimal      @db.Decimal(5, 2)
+  improvementPercentage Decimal?     @db.Decimal(5, 2)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Analysis_History")
 }
