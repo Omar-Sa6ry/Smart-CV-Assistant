@@ -229,16 +229,19 @@ export class CreateCvFascade {
     });
   }
 
-  private async fetchFullCv(tx: Prisma.TransactionClient, cvId: string) {
+  async fetchFullCv(tx: Prisma.TransactionClient, cvId: string) {
+    const cachedCv = await this.redisService.get(`cv:${cvId}`);
+    if (cachedCv) return { data: cachedCv };
+
     const cv = await tx.cv.findUnique({
       where: { id: cvId },
       include: {
         user: true,
         experiences: true,
         educations: true,
-        certifications: true,
         projects: true,
         languages: true,
+        certifications: true,
         skills: {
           include: {
             keyword: true,
@@ -247,9 +250,9 @@ export class CreateCvFascade {
       },
     });
 
-    if (!cv) {
-      throw new NotFoundException(await this.i18n.t('cv.NOT_FOUND'));
-    }
+    if (!cv) throw new NotFoundException(await this.i18n.t('cv.NOT_FOUND'));
+
+    await this.redisService.set(`cv:${cvId}`, cv);
     return cv;
   }
 

@@ -11,14 +11,21 @@ import { AnalysisType } from '@prisma/client';
 import { I18nService } from 'nestjs-i18n';
 import { AnalysisResponse } from './dtos/analysis.response';
 import { AnalysisHistoryResponse } from './dtos/analysisHistory.response';
+import { RedisService } from '@bts-soft/core';
+import { CvService } from '../cvBuilder/cv/cv.service';
+import { FileUpload } from 'graphql-upload-ts';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class AnalysisService {
   private readonly analysisServiceUrl =
     process.env.ANALYSIS_SERVICE_URL || 'http://localhost:8000';
+  private readonly CACHE_TTL = 86400; // 24 Hours in seconds
 
   constructor(
     private readonly i18n: I18nService,
+    private readonly redisService: RedisService,
+    private readonly cvService: CvService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -26,47 +33,29 @@ export class AnalysisService {
     cvId: string,
     userId: string,
   ): Promise<AnalysisResponse> {
-    const cv = await this.prisma.cv.findUnique({
-      where: { id: cvId },
-      include: {
-        experiences: true,
-        educations: true,
-        skills: true,
-        projects: true,
-        languages: true,
-        certifications: true,
-      },
-    });
-
-    if (!cv || cv.userId !== userId)
+    const cvResponse = await this.cvService.getById(cvId, userId);
+    if (!cvResponse?.data || cvResponse.data.userId !== userId) {
       throw new NotFoundException(
         await this.i18n.t('analysis.CV_NOT_FOUND_OR_ACCESS_DENIED'),
       );
-
-    const hasContent = 
-      cv.summary || 
-      cv.experiences.length > 0 || 
-      cv.skills.length > 0 || 
-      cv.projects.length > 0;
-
-    if (!hasContent) {
-      throw new BadRequestException(
-        await this.i18n.t('analysis.CV_IS_EMPTY'),
-      );
     }
 
-    const lastAnalysis = await this.prisma.cvAnalysisBase.findFirst({
-      where: { cvId, userId },
-      include: {
-        atsDetails: true,
-        contentDetails: true,
-        completenessDetails: true,
-        detailedSuggestions: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const cv = cvResponse.data;
+    if (!this.isValidCv(cv)) {
+      throw new BadRequestException(await this.i18n.t('analysis.CV_IS_EMPTY'));
+    }
 
-    if (lastAnalysis && cv.updatedAt <= lastAnalysis.createdAt) {
+    let lastAnalysis = await this.safeCacheGet(this.getLatestKey(cvId));
+    if (!lastAnalysis) {
+      lastAnalysis = await this.fetchLatestFromDb(cvId, userId);
+      if (lastAnalysis)
+        await this.safeCacheSet(this.getLatestKey(cvId), lastAnalysis);
+    }
+
+    const lastAnalysisCreatedAt = lastAnalysis ? new Date(lastAnalysis.createdAt as any) : null;
+    const cvUpdatedAt = new Date(cv.updatedAt as any);
+
+    if (lastAnalysis && lastAnalysisCreatedAt && cvUpdatedAt <= lastAnalysisCreatedAt) {
       const data: AnalysisDto = this.mapAiResultToDto(
         { ...lastAnalysis, predictedRole: 'Software Engineer' },
         lastAnalysis,
@@ -78,30 +67,13 @@ export class AnalysisService {
       };
     }
 
-    const payload = {
-      cvId: cv.id,
-      title: cv.title,
-      summary: cv.summary,
-      experiences: cv.experiences,
-      educations: cv.educations,
-      skills: cv.skills,
-      projects: cv.projects,
-      languages: cv.languages,
-      certifications: cv.certifications,
-    };
-
+    // Call AI Service
     try {
       const response = await axios.post(
         `${this.analysisServiceUrl}/v1/analyze-cv`,
-        payload,
+        this.preparePayload(cv),
       );
-      const aiResult = response.data;
-
-      const data: AnalysisDto = await this.saveAndMapAnalysis(
-        cvId,
-        userId,
-        aiResult,
-      );
+      const data = await this.saveAndMapAnalysis(cvId, userId, response.data);
 
       return {
         data,
@@ -109,7 +81,6 @@ export class AnalysisService {
         message: await this.i18n.t('analysis.CV_ANALYZED_SUCCESSFULLY'),
       };
     } catch (error) {
-      console.error('Analysis failed:', error.message);
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );
@@ -117,20 +88,23 @@ export class AnalysisService {
   }
 
   async analyzeUploadedCv(
-    file: any,
+    file: FileUpload,
     userId: string,
   ): Promise<AnalysisResponse> {
-    const formData = new FormData();
-    const fileBlob = new Blob([file.buffer], { type: file.mimetype });
-    formData.append('file', fileBlob, file.originalname);
-
     try {
+      const { createReadStream, filename, mimetype } = await file;
+      const stream = createReadStream();
+
+      const formData = new (require('form-data'))();
+      formData.append('file', stream, { filename, contentType: mimetype });
+
       const response = await axios.post(
         `${this.analysisServiceUrl}/v1/analyze-file`,
         formData,
+        { headers: { ...formData.getHeaders() } },
       );
-      const aiResult = response.data;
-      const data: AnalysisDto = this.mapAiResultToDto(aiResult);
+
+      const data: AnalysisDto = this.mapAiResultToDto(response.data);
 
       return {
         data,
@@ -149,30 +123,23 @@ export class AnalysisService {
     cvId: string,
     userId: string,
   ): Promise<AnalysisResponse> {
-    const analysis = await this.prisma.cvAnalysisBase.findFirst({
-      where: { cvId, userId },
-      include: {
-        atsDetails: true,
-        contentDetails: true,
-        completenessDetails: true,
-        detailedSuggestions: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    let analysis = await this.safeCacheGet(this.getLatestKey(cvId));
 
     if (!analysis) {
+      analysis = await this.fetchLatestFromDb(cvId, userId);
+      if (analysis) await this.safeCacheSet(this.getLatestKey(cvId), analysis);
+    }
+
+    if (!analysis)
       throw new NotFoundException(
         await this.i18n.t('analysis.CV_NOT_FOUND_OR_ACCESS_DENIED'),
       );
-    }
 
-    // mock predictedRole for stored results since it's not in DB yet
-    const data: AnalysisDto = this.mapAiResultToDto(
-      { ...analysis, predictedRole: 'Software Engineer' },
-      analysis,
-    );
     return {
-      data,
+      data: this.mapAiResultToDto(
+        { ...analysis, predictedRole: 'Software Engineer' },
+        analysis,
+      ),
       statusCode: 200,
       message: await this.i18n.t('analysis.SUCCESSFULY_RETRIEVED'),
     };
@@ -182,10 +149,15 @@ export class AnalysisService {
     cvId: string,
     userId: string,
   ): Promise<AnalysisHistoryResponse> {
-    const history = await this.prisma.analysisHistory.findMany({
-      where: { cvId, userId },
-      orderBy: { createdAt: 'desc' },
-    });
+    let history = await this.safeCacheGet(this.getHistoryKey(cvId));
+
+    if (!history) {
+      history = await this.prisma.analysisHistory.findMany({
+        where: { cvId, userId },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (history) await this.safeCacheSet(this.getHistoryKey(cvId), history);
+    }
 
     return {
       data: history.map((h) => ({
@@ -203,16 +175,12 @@ export class AnalysisService {
     userId: string,
     aiResult: any,
   ): Promise<AnalysisDto> {
-    const lastAnalysis = await this.prisma.cvAnalysisBase.findFirst({
-      where: { cvId, userId },
-      orderBy: { createdAt: 'desc' },
-    });
-
+    const lastAnalysis = await this.fetchLatestFromDb(cvId, userId);
     const previousScore = lastAnalysis
       ? Number(lastAnalysis.overallScore)
       : null;
     const newScore = aiResult.overallScore;
-    const improvementPercentage = previousScore
+    const improvement = previousScore
       ? ((newScore - previousScore) / previousScore) * 100
       : 0;
 
@@ -257,14 +225,75 @@ export class AnalysisService {
           analysisType: AnalysisType.ats_compatibility,
           previousScore,
           newScore,
-          improvementPercentage,
+          improvementPercentage: improvement,
         },
       });
 
       return base;
     });
 
+    // 4. Atomic Cache Invalidation (Senior Practice)
+    await Promise.all([
+      this.safeCacheSet(this.getLatestKey(cvId), savedAnalysis),
+      this.redisService.del(this.getHistoryKey(cvId)), // Delete history so it's refetched next time
+    ]);
+
     return this.mapAiResultToDto(aiResult, savedAnalysis);
+  }
+
+  // --- Private Helpers ---
+
+  private isValidCv(cv: any): boolean {
+    return !!(
+      cv?.summary ||
+      cv?.experiences?.length > 0 ||
+      cv?.skills?.length > 0 ||
+      cv?.projects?.length > 0
+    );
+  }
+
+  private preparePayload(cv: any) {
+    return {
+      cvId: cv.id,
+      title: cv.title,
+      summary: cv.summary,
+      experiences: cv.experiences,
+      educations: cv.educations,
+      skills: cv.skills,
+      projects: cv.projects,
+      languages: cv.languages,
+      certifications: cv.certifications,
+    };
+  }
+
+  private async fetchLatestFromDb(cvId: string, userId: string) {
+    return this.prisma.cvAnalysisBase.findFirst({
+      where: { cvId, userId },
+      include: {
+        atsDetails: true,
+        contentDetails: true,
+        completenessDetails: true,
+        detailedSuggestions: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  private async safeCacheGet(key: string) {
+    try {
+      return await this.redisService.get(key);
+    } catch (e) {
+      console.error(`Redis Get Error [${key}]:`, e.message);
+      return null;
+    }
+  }
+
+  private async safeCacheSet(key: string, data: any) {
+    try {
+      await this.redisService.set(key, data, this.CACHE_TTL);
+    } catch (e) {
+      console.error(`Redis Set Error [${key}]:`, e.message);
+    }
   }
 
   private mapAiResultToDto(aiResult: any, savedData?: any): AnalysisDto {
@@ -305,5 +334,12 @@ export class AnalysisService {
         priority: s.priority.toLowerCase() as SuggestionPriority,
       })),
     };
+  }
+
+  private getLatestKey(cvId: string) {
+    return `cv_analysis:latest:${cvId}`;
+  }
+  private getHistoryKey(cvId: string) {
+    return `cv_analysis:history:${cvId}`;
   }
 }

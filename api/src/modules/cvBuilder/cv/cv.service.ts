@@ -108,9 +108,9 @@ export class CvService {
         user: true,
         experiences: true,
         educations: true,
-        certifications: true,
         projects: true,
         languages: true,
+        certifications: true,
         skills: {
           include: {
             keyword: true,
@@ -122,6 +122,7 @@ export class CvService {
     if (!cv || (userId && cv.userId !== userId))
       throw new NotFoundException(await this.i18n.t('cv.NOT_FOUND'));
 
+    await this.redisService.set(`cv:${cvId}`, cv);
     return { data: CvFactory.fromPrisma(cv) };
   }
 
