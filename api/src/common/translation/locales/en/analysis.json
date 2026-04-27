@@ -1,0 +1,8 @@
+{
+    "CV_NOT_FOUND_OR_ACCESS_DENIED": "CV not found or access denied",
+    "CV_ANALYZED_SUCCESSFULLY": "CV analyzed successfully",
+    "CV_FAILED_TO_ANALYZE": "CV failed to analyze",
+    "SUCCESSFULY_RETRIEVED": "Successfully retrieved",
+    "CV_IS_EMPTY": "CV is empty, please add some content before analysis",
+    "SUCCESSFULY_RETRIEVED_FROM_CACHE": "Successfully retrieved from cache"
+}

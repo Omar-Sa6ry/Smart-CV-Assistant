@@ -5,14 +5,14 @@ import { BaseResponse, PaginationInfo } from '@bts-soft/core';
 import { AnalysisDto } from '../models/analysis.model';
 
 @ObjectType()
-export class AnalysisDtoResponse extends BaseResponse {
+export class AnalysisResponse extends BaseResponse {
   @Field(() => AnalysisDto, { nullable: true })
   @Expose()
   data?: AnalysisDto | null;
 }
 
 @ObjectType()
-export class AnalysisDtosResponse extends BaseResponse {
+export class AnalysissResponse extends BaseResponse {
   @Field(() => [AnalysisDto], { nullable: true })
   items: AnalysisDto[];
 

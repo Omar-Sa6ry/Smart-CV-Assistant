@@ -12,14 +12,14 @@ import {
   GeneralResponseInterceptor,
   SqlInjectionInterceptor,
 } from '@bts-soft/core';
-// import { setupGraphqlUpload } from '@bts-soft/core';
+import { setupGraphqlUpload } from '@bts-soft/upload';
 
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
     app.enableCors();
 
-    // setupGraphqlUpload(app, 1000000, 1);
+    setupGraphqlUpload(app, 1000000, 1);
 
     app.useGlobalPipes(
       new ValidationPipe({

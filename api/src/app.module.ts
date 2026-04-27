@@ -18,6 +18,7 @@ import {
   ThrottlerModule,
   TranslationModule,
 } from '@bts-soft/core';
+import { AnalysisModule } from './modules/analysis/analysis.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import {
     UserModule,
     AuthModule,
     OAuthModule,
+
     CvModule,
     ExperienceModule,
     EducationModule,
@@ -37,6 +39,8 @@ import {
     LanguageModule,
     SkillModule,
     ExportModule,
+
+    AnalysisModule,
   ],
   providers: [AppService, AppResolver],
 })

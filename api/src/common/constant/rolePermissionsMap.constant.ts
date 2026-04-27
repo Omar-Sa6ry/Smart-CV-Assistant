@@ -12,6 +12,11 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.LOGOUT,
     Permission.VIEW_USER,
 
+    // Analysis
+    Permission.ANALYSIS_CV,
+    Permission.GET_LATEST_ANALYSIS,
+    Permission.GET_ANALYSIS_HISTORY,
+
     //CV
     Permission.CREATE_CV,
     Permission.GET_CV,
@@ -63,6 +68,11 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.CHANGE_PASSWORD,
     Permission.FORGOT_PASSWORD,
     Permission.LOGOUT,
+
+    // Analysis
+    Permission.ANALYSIS_CV,
+    Permission.GET_LATEST_ANALYSIS,
+    Permission.GET_ANALYSIS_HISTORY,
 
     //CV
     Permission.CREATE_CV,
