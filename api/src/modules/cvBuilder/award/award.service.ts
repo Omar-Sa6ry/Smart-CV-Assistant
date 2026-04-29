@@ -56,6 +56,10 @@ export class AwardService {
     });
 
     const cvData = await this.cvService.getById(data.cvId, userId, true);
+    await this.prisma.cv.update({
+      where: { id: data.cvId },
+      data: { updatedAt: new Date() },
+    });
     await this.cvService.invalidateCache(data.cvId, cvData.data);
 
     return {
@@ -159,6 +163,10 @@ export class AwardService {
     });
 
     const cvData = await this.cvService.getById(updated.cvId, userId, true);
+    await this.prisma.cv.update({
+      where: { id: updated.cvId },
+      data: { updatedAt: new Date() },
+    });
     await this.cvService.invalidateCache(updated.cvId, cvData.data);
 
     return {
@@ -176,6 +184,10 @@ export class AwardService {
 
     const cvId = (awardRes.data as any).cvId;
     const cvData = await this.cvService.getById(cvId, userId, true);
+    await this.prisma.cv.update({
+      where: { id: cvId },
+      data: { updatedAt: new Date() },
+    });
     await this.cvService.invalidateCache(cvId, cvData.data);
 
     return {

@@ -47,7 +47,13 @@ export class AnalysisRepository implements IAnalysisRepository {
           suggestions: aiResult.suggestions,
           atsDetails: { create: { ...aiResult.atsDetails } },
           contentDetails: { create: { ...aiResult.contentDetails } },
-          completenessDetails: { create: { ...aiResult.completenessDetails } },
+          completenessDetails: {
+            create: {
+              ...aiResult.completenessDetails,
+              hasAwards: !!aiResult.completenessDetails?.hasAwards,
+              awardsCount: aiResult.completenessDetails?.awardsCount || 0,
+            },
+          },
           detailedSuggestions: {
             createMany: {
               data: aiResult.detailedSuggestions.map((s: any) => ({

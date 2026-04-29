@@ -15,10 +15,6 @@ import { AnalysisMapper } from './mapper/analysis.mapper';
 import { AnalysisCacheManager } from './cache/analysis.cache-manager';
 import {
   IAnalysisService,
-  IAnalysisRepository,
-  IAiBridgeService,
-  IAnalysisMapper,
-  IAnalysisCacheManager,
 } from './interfaces';
 
 @Injectable()
@@ -176,7 +172,8 @@ export class AnalysisService implements IAnalysisService {
       cv?.summary ||
       cv?.experiences?.length > 0 ||
       cv?.skills?.length > 0 ||
-      cv?.projects?.length > 0
+      cv?.projects?.length > 0 ||
+      cv?.awards?.length > 0
     );
   }
 }

@@ -15,6 +15,7 @@ export class AnalysisMapper implements IAnalysisMapper {
       projects: cv.projects,
       languages: cv.languages,
       certifications: cv.certifications,
+      awards: cv.awards,
     };
   }
 
@@ -50,6 +51,7 @@ export class AnalysisMapper implements IAnalysisMapper {
         ),
         detailsScore: Number(data.completenessDetails.detailsScore),
         consistencyScore: Number(data.completenessDetails.consistencyScore),
+        hasAwards: !!data.completenessDetails.hasAwards,
       } as any,
       detailedSuggestions: data.detailedSuggestions.map((s: any) => ({
         ...s,

@@ -102,6 +102,9 @@ export class CompletenessDetails {
 
   @Field()
   hasLanguages: boolean;
+
+  @Field()
+  hasAwards: boolean;
 }
 
 @ObjectType()

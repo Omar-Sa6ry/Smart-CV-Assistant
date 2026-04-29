@@ -326,12 +326,14 @@ model CvAnalysisCompletenessDetails {
   hasCertifications     Boolean  @default(false)
   hasProjects           Boolean  @default(false)
   hasLanguages          Boolean  @default(false)
+  hasAwards             Boolean  @default(false)
   experiencesCount      Int      @default(0)
   educationsCount       Int      @default(0)
   skillsCount           Int      @default(0)
   certificationsCount   Int      @default(0)
   projectsCount         Int      @default(0)
   languagesCount        Int      @default(0)
+  awardsCount           Int      @default(0)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
