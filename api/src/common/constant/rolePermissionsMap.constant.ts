@@ -59,6 +59,12 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.CREATE_SKILL,
     Permission.DELETE_SKILL,
     Permission.UPDATE_SKILL,
+
+    // Award
+    Permission.CREATE_AWARD,
+    Permission.GET_AWARD,
+    Permission.UPDATE_AWARD,
+    Permission.DELETE_AWARD,
   ],
 
   [Role.USER]: [
@@ -116,5 +122,11 @@ export const rolePermissionsMap: Record<Role, Permission[]> = {
     Permission.CREATE_SKILL,
     Permission.DELETE_SKILL,
     Permission.UPDATE_SKILL,
+
+    // Award
+    Permission.CREATE_AWARD,
+    Permission.GET_AWARD,
+    Permission.UPDATE_AWARD,
+    Permission.DELETE_AWARD,
   ],
 };

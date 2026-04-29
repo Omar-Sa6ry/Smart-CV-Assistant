@@ -11,6 +11,7 @@ import { EducationModule } from './modules/cvBuilder/education/education.module'
 import { ProjectModule } from './modules/cvBuilder/project/project.module';
 import { LanguageModule } from './modules/cvBuilder/language/language.module';
 import { SkillModule } from './modules/cvBuilder/skill/skill.module';
+import { AwardModule } from './modules/cvBuilder/award/award.module';
 import { ExportModule } from './modules/cvBuilder/export/export.module';
 import {
   ConfigModule,
@@ -38,6 +39,7 @@ import { AnalysisModule } from './modules/analysis/analysis.module';
     ProjectModule,
     LanguageModule,
     SkillModule,
+    AwardModule,
     ExportModule,
 
     AnalysisModule,

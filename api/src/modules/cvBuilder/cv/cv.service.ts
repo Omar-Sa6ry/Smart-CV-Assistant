@@ -111,6 +111,7 @@ export class CvService {
         projects: true,
         languages: true,
         certifications: true,
+        awards: true,
         skills: {
           include: {
             keyword: true,

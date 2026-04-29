@@ -9,6 +9,7 @@ import { CertificationModule } from '../certification/certification.module';
 import { ProjectModule } from '../project/project.module';
 import { LanguageModule } from '../language/language.module';
 import { SkillModule } from '../skill/skill.module';
+import { AwardModule } from '../award/award.module';
 import { RedisModule } from '@bts-soft/core';
 import { CreateCvFascade } from './fascade/createCv.fascade';
 
@@ -22,6 +23,7 @@ import { CreateCvFascade } from './fascade/createCv.fascade';
     forwardRef(() => ProjectModule),
     forwardRef(() => LanguageModule),
     forwardRef(() => SkillModule),
+    forwardRef(() => AwardModule),
   ],
   providers: [CvService, CvResolver, CreateCvFascade, CvBuilderFactory],
   exports: [CvService],

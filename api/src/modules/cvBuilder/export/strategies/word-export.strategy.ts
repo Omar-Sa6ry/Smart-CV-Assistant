@@ -160,6 +160,9 @@ export class WordExportStrategy implements ICvExportStrategy {
 
           // CERTIFICATIONS
           ...(data.certifications?.length ? this.createCertificationSection(data.certifications) : []),
+
+          // AWARDS
+          ...(data.awards?.length ? this.createAwardSection(data.awards) : []),
         ],
       }],
     });
@@ -324,6 +327,26 @@ export class WordExportStrategy implements ICvExportStrategy {
     return children;
   }
 
+  private createAwardSection(awards: any[]): Paragraph[] {
+    const children: Paragraph[] = [...this.createSectionTitle("Awards & Honors")];
+    awards.forEach(award => {
+      children.push(
+        new Paragraph({
+          tabStops: [{ type: TabStopType.RIGHT, position: 10205 }],
+          children: [
+            new TextRun({ text: award.title, bold: true, color: "000000" }),
+            new TextRun({ text: ` (${award.issuer})`, bold: true, color: "000000" }),
+            new TextRun({ text: "\t", bold: true }),
+            new TextRun({ text: award.issueDate, bold: true, color: "000000" }),
+          ],
+          spacing: { after: 40 }
+        }),
+        ...(award.description ? [new Paragraph({ text: award.description, spacing: { after: 80 } })] : [])
+      );
+    });
+    return children;
+  }
+
   private formatData(data: any): any {
     const formatDate = (date: any) => {
       if (!date) return '';
@@ -456,6 +479,10 @@ export class WordExportStrategy implements ICvExportStrategy {
       languages: (data.languages ?? []).map((lang: any) => ({
         ...lang,
         proficiency: lang.proficiency ? lang.proficiency.charAt(0).toUpperCase() + lang.proficiency.slice(1).toLowerCase() : '',
+      })),
+      awards: (data.awards ?? []).map((award: any) => ({
+        ...award,
+        issueDate: formatDate(award.issueDate),
       })),
       groupedSkills: this.groupSkills(data.skills ?? [], categoryDisplayName),
     };

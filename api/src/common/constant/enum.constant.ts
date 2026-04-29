@@ -65,6 +65,12 @@ export enum Permission {
   GET_SKILL = 'GET_SKILL',
   UPDATE_SKILL = 'UPDATE_SKILL',
   DELETE_SKILL = 'DELETE_SKILL',
+  
+  // Award
+  CREATE_AWARD = 'CREATE_AWARD',
+  GET_AWARD = 'GET_AWARD',
+  UPDATE_AWARD = 'UPDATE_AWARD',
+  DELETE_AWARD = 'DELETE_AWARD',
 }
 
 registerEnumType(Permission, {

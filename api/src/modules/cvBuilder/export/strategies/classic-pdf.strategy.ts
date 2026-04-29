@@ -145,6 +145,10 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
         ...lang,
         proficiency: lang.proficiency ? lang.proficiency.charAt(0).toUpperCase() + lang.proficiency.slice(1).toLowerCase() : '',
       })),
+      awards: (data.awards ?? []).map((award: any) => ({
+        ...award,
+        issueDate: formatDate(award.issueDate),
+      })),
       groupedSkills: this.groupSkills(data.skills ?? [], categoryDisplayName),
     };
   }
@@ -428,6 +432,23 @@ export class ClassicPdfStrategy implements ICvExportStrategy {
           ({{issuingOrganization}})
         </span>
         <span class="dates">{{issueDate}}</span>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{#if awards.length}}
+    <section>
+      <h2>Awards &amp; Honors</h2>
+      {{#each awards}}
+      <div class="list-row">
+        <span style="padding-right: 100px; display: block;">
+          <b>{{title}}</b> ({{issuer}})
+        </span>
+        <span class="dates">{{issueDate}}</span>
+        {{#if description}}
+        <div style="margin-top:2px;">{{description}}</div>
+        {{/if}}
       </div>
       {{/each}}
     </section>

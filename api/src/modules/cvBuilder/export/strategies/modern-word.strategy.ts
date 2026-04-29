@@ -449,6 +449,60 @@ export class ModernWordStrategy implements ICvExportStrategy {
       });
     }
 
+    // Awards & Honors
+    if (data.awards?.length) {
+      children.push(this.createMainHeader('AWARDS & HONORS', sizes.h2Size));
+
+      data.awards.forEach((award: any) => {
+        children.push(
+          new Paragraph({
+            tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+            children: [
+              new TextRun({
+                text: award.title,
+                bold: true,
+                size: sizes.h3Size,
+                color: '1A252F',
+              }),
+              new TextRun({ text: '\t' }),
+              new TextRun({
+                text: award.issueDate,
+                bold: true,
+                color: '3498DB',
+              }),
+            ],
+            spacing: { before: 100 },
+          }),
+        );
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: award.issuer,
+                color: '7F8C8D',
+                size: sizes.baseSize,
+              }),
+            ],
+            spacing: { after: 40 },
+          }),
+        );
+        if (award.description) {
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: award.description,
+                  size: sizes.baseSize,
+                  color: '333333',
+                }),
+              ],
+              spacing: { after: 80 },
+            }),
+          );
+        }
+      });
+    }
+
     return children;
   }
 
@@ -608,6 +662,10 @@ export class ModernWordStrategy implements ICvExportStrategy {
       certifications: (data.certifications ?? []).map((cert: any) => ({
         ...cert,
         issueDate: formatDate(cert.issueDate),
+      })),
+      awards: (data.awards ?? []).map((award: any) => ({
+        ...award,
+        issueDate: formatDate(award.issueDate),
       })),
       languages: (data.languages ?? []).map((lang: any) => ({
         ...lang,

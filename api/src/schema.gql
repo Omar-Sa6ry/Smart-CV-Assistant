@@ -212,6 +212,18 @@ enum SkillProficiency {
   expert
 }
 
+type Award {
+  id: String!
+  title: String!
+  issuer: String!
+  issueDate: DateTime!
+  description: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+  cv: Cv
+}
+
 type Cv {
   id: String!
   title: String!
@@ -230,6 +242,7 @@ type Cv {
   projects: [Project!]
   languages: [Language!]
   skills: [Skill!]
+  awards: [Award!]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -361,6 +374,23 @@ type SkillKeywordsResponse {
   items: [SkillKeyword!]
 }
 
+type AwardResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  data: Award
+}
+
+type AwardsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Float
+  items: [Award!]
+  pagination: PaginationInfo
+}
+
 type ExportCvData {
   fileContent: String
   fileName: String
@@ -489,6 +519,9 @@ type Query {
   getSkillsByCvId(cvId: String!): SkillsResponse!
   getSkillById(id: String!): SkillResponse!
   searchSkillKeywords(data: SearchSkillKeywordInput!, pagination: PaginationInput): SkillKeywordsResponse!
+  getAwardsByUserId(pagination: PaginationInput): AwardsResponse!
+  getAwardsByCvId(cvId: String!, pagination: PaginationInput): AwardsResponse!
+  getAwardById(id: String!): AwardResponse!
   exportCv(id: String!, format: String! = "classic"): ExportCvResponse!
   getLatestCvAnalysis(cvId: String!): AnalysisResponse!
   getCvAnalysisHistory(cvId: String!): AnalysisHistoryResponse!
@@ -538,6 +571,9 @@ type Mutation {
   createSkill(data: CreateSkillInput!): SkillResponse!
   updateSkill(id: String!, data: UpdateSkillInput!): SkillResponse!
   deleteSkill(id: String!): SkillResponse
+  createAward(data: CreateAwardInput!): AwardResponse!
+  updateAward(id: String!, data: UpdateAwardInput!): AwardResponse!
+  deleteAward(id: String!): AwardResponse
   analyzeCv(cvId: String!): AnalysisResponse!
   analyzeUploadedCv(file: Upload): AnalysisResponse!
 }
@@ -598,6 +634,7 @@ input CreateFullCvInput {
   certifications: [CreateCertificationNestedInput!]
   languages: [CreateLanguageNestedInput!]
   skills: [CreateSkillNestedInput!]
+  awards: [CreateAwardNestedInput!]
 }
 
 input CreateExperienceNestedInput {
@@ -649,6 +686,13 @@ input CreateSkillNestedInput {
   name: String!
   category: SkillCategory! = technical
   proficiency: SkillProficiency! = intermediate
+}
+
+input CreateAwardNestedInput {
+  title: String!
+  issuer: String!
+  issueDate: DateTime!
+  description: String
 }
 
 input UpdateCvInput {
@@ -774,6 +818,21 @@ input UpdateSkillInput {
   name: String
   category: SkillCategory = technical
   proficiency: SkillProficiency = intermediate
+}
+
+input CreateAwardInput {
+  cvId: String!
+  title: String!
+  issuer: String!
+  issueDate: DateTime!
+  description: String
+}
+
+input UpdateAwardInput {
+  title: String
+  issuer: String
+  issueDate: DateTime
+  description: String
 }
 
 """The `Upload` scalar type represents a file upload."""

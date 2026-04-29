@@ -127,6 +127,10 @@ export class ModernPdfStrategy implements ICvExportStrategy {
             lang.proficiency.slice(1).toLowerCase()
           : '',
       })),
+      awards: (data.awards ?? []).map((award: any) => ({
+        ...award,
+        issueDate: formatDate(award.issueDate),
+      })),
       groupedSkills: this.groupSkills(data.skills ?? [], categoryDisplayName),
       // Dynamic CSS variables passed to template
       baseFontSize,
@@ -501,6 +505,24 @@ export class ModernPdfStrategy implements ICvExportStrategy {
                     <span class="item-dates">{{issueDate}}</span>
                 </div>
                 <div class="item-meta">{{issuingOrganization}}</div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if awards.length}}
+        <div>
+            <h2>Awards &amp; Honors</h2>
+            {{#each awards}}
+            <div class="main-item">
+                <div class="item-header" style="padding-right: 100px;">
+                    <h3>{{title}}</h3>
+                    <span class="item-dates">{{issueDate}}</span>
+                </div>
+                <div class="item-meta">{{issuer}}</div>
+                {{#if description}}
+                <div style="margin-top:2px; font-size: calc({{baseFontSize}} - 0.5pt); color: #34495e;">{{description}}</div>
+                {{/if}}
             </div>
             {{/each}}
         </div>

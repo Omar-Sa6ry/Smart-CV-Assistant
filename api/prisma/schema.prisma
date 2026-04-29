@@ -93,6 +93,7 @@ model User {
   skills          Skill[]
   analysisResults CvAnalysisBase[]
   analysisHistory AnalysisHistory[]
+  awards          Award[]
 }
 
 model Cv {
@@ -118,7 +119,8 @@ model Cv {
   skills         Skill[]
   analysisResults CvAnalysisBase[]
   analysisHistory AnalysisHistory[]
-
+  awards          Award[]
+ 
   @@map("CV")
 }
 
@@ -353,4 +355,19 @@ model AnalysisHistory {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("Analysis_History")
+}
+
+model Award {
+  id          String   @id @default(uuid())
+  userId      String
+  cvId        String
+  title       String   @db.VarChar(255)
+  issuer      String   @db.VarChar(255)
+  issueDate   DateTime
+  description String?  @db.VarChar(2000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
 }

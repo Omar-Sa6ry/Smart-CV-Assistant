@@ -48,6 +48,7 @@ export class CreateCvFascade {
           this.processProjects(tx, userId, cvId, data.projects),
           this.processCertifications(tx, userId, cvId, data.certifications),
           this.processLanguages(tx, userId, cvId, data.languages),
+          this.processAwards(tx, userId, cvId, data.awards),
         ]);
 
         return this.fetchFullCv(tx, cvId);
@@ -179,6 +180,22 @@ export class CreateCvFascade {
     });
   }
 
+  private async processAwards(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    cvId: string,
+    awards?: any[],
+  ) {
+    if (!awards?.length) return;
+    await tx.award.createMany({
+      data: awards.map((award) => ({
+        ...award,
+        userId,
+        cvId,
+      })),
+    });
+  }
+
   private async processSkills(
     tx: Prisma.TransactionClient,
     userId: string,
@@ -242,6 +259,7 @@ export class CreateCvFascade {
         projects: true,
         languages: true,
         certifications: true,
+        awards: true,
         skills: {
           include: {
             keyword: true,
