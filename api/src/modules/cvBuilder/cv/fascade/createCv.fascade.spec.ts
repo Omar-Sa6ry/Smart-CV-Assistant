@@ -69,6 +69,7 @@ describe('CreateCvFascade', () => {
           provide: RedisService,
           useValue: {
             set: jest.fn(),
+            get: jest.fn(),
           },
         },
       ],
