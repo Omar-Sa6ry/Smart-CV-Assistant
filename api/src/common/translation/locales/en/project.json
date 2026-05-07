@@ -1,0 +1,7 @@
+{
+  "CREATED": "Project record created successfully",
+  "UPDATED": "Project record updated successfully",
+  "DELETED": "Project record deleted successfully",
+  "NOT_FOUND": "Project record not found",
+  "NOT_FOUNDS": "Project records not found"
+}

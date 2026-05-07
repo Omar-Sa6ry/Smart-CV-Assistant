@@ -1,0 +1,201 @@
+mutation {
+  createExperience(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      jobTitle: "Backend Developer"
+      companyName: "tamooh"
+      companyWebsite: "https://tamooh.cloud/"
+      location: "Portaid, Egypt"
+      startDate: "2025-10-01"
+      isCurrentJob: true
+      employmentType: full_time
+      description: "Led the development of microservices.\nManaged a team of 5 developers.\nImplemented GraphQL DataLoaders."
+    }
+  ) {
+    statusCode
+    message
+    success
+    timeStamp
+    data {
+      id
+      jobTitle
+      companyName
+      description
+      descriptionBullets
+      startDate
+      endDate
+      employmentType
+      achievements
+      companyWebsite
+      location
+      isCurrentJob
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        summary
+        isDefault
+      }
+    }
+  }
+}
+
+query {
+  getExperienceById(id: "53258873-75be-4db7-8b16-fa2e8a76701d") {
+    statusCode
+    message
+    success
+    timeStamp
+    data {
+      id
+      jobTitle
+      companyName
+      description
+      descriptionBullets
+      startDate
+      endDate
+      employmentType
+      achievements
+      companyWebsite
+      location
+      isCurrentJob
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+        isDefault
+      }
+    }
+  }
+}
+
+query {
+  getExperiencesByUserId(pagination: { page: 1, limit: 10 }) {
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    statusCode
+    message
+    success
+    timeStamp
+    items {
+      id
+      jobTitle
+      companyName
+      description
+      descriptionBullets
+      startDate
+      endDate
+      employmentType
+      achievements
+      companyWebsite
+      location
+      isCurrentJob
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+        isDefault
+      }
+    }
+  }
+}
+
+query {
+  getExperiencesByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    statusCode
+    message
+    success
+    timeStamp
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      jobTitle
+      companyName
+      description
+      descriptionBullets
+      startDate
+      endDate
+      employmentType
+      achievements
+      companyWebsite
+      location
+      isCurrentJob
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+        isDefault
+      }
+    }
+  }
+}
+
+mutation {
+  updateExperience(
+    data: { startDate: "2025-7-01" }
+    id: "53258873-75be-4db7-8b16-fa2e8a76701d"
+  ) {
+    statusCode
+    message
+    success
+    timeStamp
+    data {
+      id
+      jobTitle
+      companyName
+      description
+      descriptionBullets
+      startDate
+      endDate
+      employmentType
+      achievements
+      companyWebsite
+      location
+      isCurrentJob
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        summary
+        isDefault
+      }
+    }
+  }
+}
+
+mutation {
+  deleteExperience(id: "b74f99ba-141d-4a03-b3f2-f813199d9b8a") {
+    message
+    timeStamp
+    statusCode
+    success
+  }
+}

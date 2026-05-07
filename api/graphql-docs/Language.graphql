@@ -1,0 +1,132 @@
+mutation {
+  createLanguage(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      proficiency: professional
+      name: "Arabicc"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      proficiency
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getLanguageById(id: "ff3f1e5a-224d-4ac5-8c3a-4ec18cba4930") {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      proficiency
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getLanguagesByUserId {
+    message
+    success
+    timeStamp
+    statusCode
+    items {
+      id
+      name
+      proficiency
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getLanguagesByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    message
+    success
+    timeStamp
+    statusCode
+    items {
+      id
+      name
+      proficiency
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  updateLanguage(
+    id: "ff3f1e5a-224d-4ac5-8c3a-4ec18cba4930"
+    data: { proficiency: native, name: "Enghlish" }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      proficiency
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  deleteLanguage(id: "80bd7a2e-9b50-4602-9bb0-ca1528b06b52") {
+    message
+    success
+    timeStamp
+    statusCode
+  }
+}

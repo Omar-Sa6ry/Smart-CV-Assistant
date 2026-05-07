@@ -1,0 +1,7 @@
+{
+  "CREATED": "Education record created successfully",
+  "UPDATED": "Education record updated successfully",
+  "DELETED": "Education record deleted successfully",
+  "NOT_FOUND": "Education record not found",
+  "NOT_FOUNDS": "Education records not found"
+}

@@ -1,0 +1,18 @@
+{
+  "NOT_FOUND": "User not found",
+  "NOT_FOUNDS": "Users not found",
+  "EMAIL_EXISTED": "Email already exists",
+  "DELETED": "User deleted successfully",
+  "UPDATED": "User updated successfully",
+  "LOGIN": "Login successful",
+  "OLD_IS_EQUAL_NEW": "Incorrect current password",
+  "NOT_ADMIN": "Access denied. Only admins and legitimate users allowed",
+  "SEND_MSG": "Password reset link sent successfully",
+  "UPDATE_PASSWORD": "Password updated successfully",
+  "LOGISANE_PASSWORD": "New password must be different from the old one",
+  "EMAIL_WRONG": "Email is incorrect",
+  "NO_TOKEN": "Authentication token is missing",
+  "INSUFFICIENT_PERMISSIONS": "You do not have permission to perform this action",
+  "INVALID_TOKEN": "Invalid or expired token",
+  "INVALID_CREDENTIALS": "Invalid credentials"
+}

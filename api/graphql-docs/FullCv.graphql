@@ -1,0 +1,150 @@
+mutation {
+  createFullCv(
+    data: {
+      title: "Backend Developer"
+      headline: "Backend Developer"
+      location: "Damietta, Egypt"
+      phone: "+201091854368"
+      linkedin: "https://www.linkedin.com/in/omarsa6ry/"
+      github: "https://github.com/Omar-Sa6ry"
+      portfolio: "https://omarsabry.netlify.app/"
+      summary: "Backend Developer with 2+ years of experience architecting high-performance web applications using Node.js, NestJS, Go and PostgreSQL. Engineered scalable microservices and GraphQL APIs that accommodate 10k+ concurrent users, while reducing query latency by 40% utilizing Redis and BullMQ. Delivered secure, ACID-compliant databases and real-time WebSocket integrations, strictly adhering to Clean Architecture guidelines for production-ready solutions."
+      isDefault: true
+      awards: [
+        {
+          title: "kkkkkk"
+          issuer: "njgkm"
+          description: "hgjfvnbgfdkmmifj"
+          issueDate: "5-10-2025"
+        }
+      ]
+      experiences: [
+        {
+          jobTitle: "Full Stack Engineer"
+          companyName: "TAM OOH Company"
+          companyWebsite: "https://tamooh.com"
+          location: "Remote"
+          employmentType: freelance
+          startDate: "2025-09-01T00:00:00Z"
+          isCurrentJob: true
+          description: "- Architected and launched an end-to-end educational platform from scratch, integrating a high-availability NestJS backend ecosystem that accommodates 10k+ concurrent users with 99.9% uptime.\n- Accelerated throughput using in-memory data stores and pioneered a custom Vanilla JS frontend, reducing bundle size by 35% for a fluid 60FPS interface."
+        }
+        {
+          jobTitle: "Intern Full Stack Developer with Python"
+          companyName: "Information Technology Institute (ITI)"
+          companyWebsite: "https://iti.gov.eg"
+          location: "Egypt"
+          employmentType: internship
+          startDate: "2025-07-01T00:00:00Z"
+          endDate: "2025-08-31T00:00:00Z"
+          description: "- Developed a fully functional web application utilizing Django and JavaScript, successfully meeting 100% of agile sprint objectives during the intensive ITI program."
+        }
+        {
+          jobTitle: "Intern Backend Developer with Node.js & NestJS"
+          companyName: "Baianat Company"
+          companyWebsite: "https://baianat.com"
+          location: "Egypt"
+          employmentType: internship
+          startDate: "2024-12-01T00:00:00Z"
+          endDate: "2025-05-31T00:00:00Z"
+          description: "- Engineered and maintained a suite of 5+ scalable GraphQL APIs using NestJS, supporting core application features and improving data fetching efficiency for client applications.\n- Integrated PostgreSQL with TypeORM and Sequelize across 3 different services, standardizing data access and reducing future database migration time by an estimated 20%."
+        }
+      ]
+      projects: [
+        {
+          name: "Real-time Bidding Platform (Event-Driven Microservices)"
+          description: "- Constructed polyglot microservices system (Go, NestJS), utilizing gRPC with Protocol Buffers to reduce inter-service latency by 45%.\n- Orchestrated an Event-Driven Architecture via NATS Stream for real-time bid updates, handling 2,000+ events/minute and established a GraphQL Federation API Gateway for unified service discovery.\n- Leveraged MongoDB and PostgreSQL for optimized data storage, and integrated Gemini AI to provide predictive, real-time auction analytics.\n- Ensured 99% system reliability through comprehensive Unit/E2E testing (Jest, Go Testing) and streamlined deployments using Docker, Kubernetes, and Skaffold."
+          projectUrl: "https://github.com/Omar-Sa6ry/realtime-bidding-microservices"
+          startDate: "2026-03-01T00:00:00Z"
+          endDate: "2026-04-01T00:00:00Z"
+        }
+        {
+          name: "Udemy Clone – Microservices Backend"
+          description: "- Designed and deployed a scalable 10-service microservices platform using Docker, Kubernetes, NGINX Ingress and Skaffold, with asynchronous communication via NATS.\n- Structured the data layer with PostgreSQL (9 services) and MongoDB (1 service) for optimal data modeling and integrity.\n- Integrated Redis caching across critical endpoints, reducing average API response times by ~40% and improving system scalability."
+          projectUrl: "https://github.com/Omar-Sa6ry/udemy-clone"
+          startDate: "2025-11-01T00:00:00Z"
+          endDate: "2025-12-01T00:00:00Z"
+        }
+        {
+          name: "@bts-soft/core (NPM Package) – Enterprise NestJS Framework"
+          description: "- Engineered a production-ready NestJS meta-framework consolidating 5 core modules, eliminating microservices boilerplate and ensuring a highly extensible ecosystem.\n- Implemented a high-availability multi-channel notification engine utilizing BullMQ and Redis.\n- Devised a 'Security-First' infrastructure with global SQL Injection interceptors and decoupled storage providers."
+          projectUrl: "https://npmjs.com/package/@bts-soft/core"
+          startDate: "2025-09-01T00:00:00Z"
+          endDate: "2025-10-01T00:00:00Z"
+        }
+      ]
+      skills: [
+        {
+          name: "JavaScript"
+          category: programming_language
+          proficiency: expert
+        }
+        {
+          name: "TypeScript"
+          category: programming_language
+          proficiency: expert
+        }
+        { name: "Go", category: programming_language, proficiency: advanced }
+        { name: "Node.js", category: backend, proficiency: expert }
+        { name: "NestJS", category: backend, proficiency: expert }
+        { name: "PostgreSQL", category: backend, proficiency: advanced }
+        {
+          name: "Docker"
+          category: devops_infrastructure
+          proficiency: advanced
+        }
+        {
+          name: "Kubernetes"
+          category: devops_infrastructure
+          proficiency: advanced
+        }
+        { name: "GraphQL", category: testing_qa, proficiency: advanced }
+        { name: "gRPC", category: testing_qa, proficiency: advanced }
+      ]
+      educations: [
+        {
+          institution: "Damietta University"
+          title: "Bachelor of Computer Science and Artificial Intelligence"
+          location: "Damietta, Egypt"
+          degree: bachelor
+          startDate: "2022-09-01T00:00:00Z"
+          endDate: "2026-07-01T00:00:00Z"
+          isCurrent: true
+          description: "Focusing on Distributed Systems and Software Architecture."
+        }
+      ]
+      certifications: [
+        {
+          name: "gRPC [Golang] Master Class"
+          issuingOrganization: "Udemy"
+          credentialUrl: "https://udemy.com"
+          issueDate: "2026-03-01T00:00:00Z"
+        }
+        {
+          name: "Go - The Complete Guide"
+          issuingOrganization: "Udemy"
+          credentialUrl: "https://udemy.com"
+          issueDate: "2026-02-01T00:00:00Z"
+        }
+        {
+          name: "Microservices with Node JS"
+          issuingOrganization: "Udemy"
+          credentialUrl: "https://udemy.com"
+          issueDate: "2025-10-01T00:00:00Z"
+        }
+      ]
+    }
+  ) {
+    statusCode
+
+    message
+    data {
+      id
+      title
+      experiences {
+        jobTitle
+        companyName
+      }
+    }
+  }
+}

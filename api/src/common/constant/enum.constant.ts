@@ -1,0 +1,84 @@
+import { registerEnumType } from '@nestjs/graphql';
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+export const AllRoles: Role[] = Object.values(Role);
+
+export enum Permission {
+  // User
+  UPDATE_USER = 'update_user',
+  DELETE_USER = 'delete_user',
+  EDIT_USER_ROLE = 'edit_user_role',
+  VIEW_USER = 'view_user',
+
+  RESET_PASSWORD = 'RESET_PASSWORD',
+  CHANGE_PASSWORD = 'CHANGE_PASSWORD',
+  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+  LOGOUT = 'LOGOUT',
+
+  // Analysis
+  ANALYSIS_CV = 'ANALYSIS_CV',
+  GET_LATEST_ANALYSIS = 'GET_LATEST_ANALYSIS',
+  GET_ANALYSIS_HISTORY = 'GET_ANALYSIS_HISTORY',
+  
+  // CV
+  CREATE_CV = 'CREATE_CV',
+  GET_USERS_CV = 'GET_USERS_CV',
+  GET_CV = 'GET_CV',
+  UPDATE_CV = 'UPDATE_CV',
+  DELETE_CV = 'DELETE_CV',
+
+  // Experience
+  CREATE_EXPERIENCE = 'CREATE_EXPERIENCE',
+  GET_EXPERIENCE = 'GET_EXPERIENCE',
+  UPDATE_EXPERIENCE = 'UPDATE_EXPERIENCE',
+  DELETE_EXPERIENCE = 'DELETE_EXPERIENCE',
+  
+  // Education
+  CREATE_EDUCATION = 'CREATE_EDUCATION',
+  GET_EDUCATION = 'GET_EDUCATION',
+  UPDATE_EDUCATION = 'UPDATE_EDUCATION',
+  DELETE_EDUCATION = 'DELETE_EDUCATION',
+  
+  // Certification
+  CREATE_CERTIFICATION = 'CREATE_CERTIFICATION',
+  GET_CERTIFICATION = 'GET_CERTIFICATION',
+  UPDATE_CERTIFICATION = 'UPDATE_CERTIFICATION',
+  DELETE_CERTIFICATION = 'DELETE_CERTIFICATION',
+
+  // Project
+  CREATE_PROJECT = 'CREATE_PROJECT',
+  GET_PROJECT = 'GET_PROJECT',
+  UPDATE_PROJECT = 'UPDATE_PROJECT',
+  DELETE_PROJECT = 'DELETE_PROJECT',
+
+  // Language
+  CREATE_LANGUAGE = 'CREATE_LANGUAGE',
+  GET_LANGUAGE = 'GET_LANGUAGE',
+  UPDATE_LANGUAGE = 'UPDATE_LANGUAGE',
+  DELETE_LANGUAGE = 'DELETE_LANGUAGE',
+
+  // Skill
+  CREATE_SKILL = 'CREATE_SKILL',
+  GET_SKILL = 'GET_SKILL',
+  UPDATE_SKILL = 'UPDATE_SKILL',
+  DELETE_SKILL = 'DELETE_SKILL',
+  
+  // Award
+  CREATE_AWARD = 'CREATE_AWARD',
+  GET_AWARD = 'GET_AWARD',
+  UPDATE_AWARD = 'UPDATE_AWARD',
+  DELETE_AWARD = 'DELETE_AWARD',
+}
+
+registerEnumType(Permission, {
+  name: 'Permission',
+  description: 'Detailed permissions in the system',
+});
+
+registerEnumType(Role, {
+  name: 'Role',
+  description: 'User roles in the system',
+});

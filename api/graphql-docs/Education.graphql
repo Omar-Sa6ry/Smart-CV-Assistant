@@ -1,0 +1,178 @@
+mutation {
+  createEducation(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      institution: "Damietta unversity"
+      title: "Bachelor of Computer Science and Artificial Intelligence"
+      location: "Damieta, university"
+      description: "Bachelor of Computer Science and Artificial Intelligence"
+      degree: bachelor
+      isCurrent: true
+      startDate: "1-10-2022"
+      gpa: 3.5
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      isCurrent
+      institution
+      title
+      description
+      degree
+      gpa
+      startDate
+      endDate
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  updateEducation(
+    data: { cvId: "0f77856f-74d8-41fd-91da-29e6644eefba" }
+    id: "c3acdbfe-c35d-4e66-8b8b-7d91771f309c"
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      isCurrent
+      institution
+      title
+      description
+      degree
+      gpa
+      startDate
+      endDate
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  deleteEducation(id: "1e417f36-4c2d-411e-8d0a-10350896aaac") {
+    message
+    success
+    timeStamp
+    statusCode
+  }
+}
+
+query {
+  getEducationById(id: "2b502f00-1f7b-405b-9c71-6334046b67ef") {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      isCurrent
+      institution
+      title
+      description
+      degree
+      gpa
+      startDate
+      endDate
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getEducationsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      isCurrent
+      institution
+      title
+      description
+      degree
+      gpa
+      startDate
+      endDate
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getEducationsByUserId {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      isCurrent
+      institution
+      title
+      description
+      degree
+      gpa
+      startDate
+      endDate
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}

@@ -1,0 +1,150 @@
+mutation {
+  createAward(
+    data: {
+      title: "kkkkkk"
+      issuer: "njgkm"
+      description: "hgjfvnbgfdkmmifj"
+      cvId: "4228dc18-cb6e-41a5-8eee-88b172a5aa1b"
+      issueDate: "5-10-2025"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      title
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+mutation {
+  updateAward(
+    id: "89179e88-78f2-4b9a-b2c8-81f5c7a793a2"
+
+    data: { title: "oooo" }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      title
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+mutation {
+  deleteCertification(id: "14a19863-d36a-459c-959d-a8f31272e338") {
+    message
+    success
+    timeStamp
+    statusCode
+  }
+}
+
+query {
+  getAwardById(id: "89179e88-78f2-4b9a-b2c8-81f5c7a793a2") {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      title
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+query {
+  getAwardsByUserId {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      title
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+query {
+  getAwardsByCvId(cvId: "4228dc18-cb6e-41a5-8eee-88b172a5aa1b") {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      title
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
