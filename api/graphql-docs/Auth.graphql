@@ -1,0 +1,92 @@
+mutation {
+  register(
+    createUserDto: {
+      firstName: "Omar"
+      lastName: "sabry"
+      password: "O9nnni8r5+M04"
+      email: "omaddbfry@gmail.com"
+      headline: "Backend"
+    }
+  ) {
+    data {
+      token
+      user {
+        id
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+}
+
+mutation {
+  login(loginDto: { password: "O9nnni8r5+M04", email: "omaddbry@gmail.com" }) {
+    statusCode
+    message
+    data {
+      token
+      user {
+        id
+        firstName
+        lastName
+        createdAt
+        email
+      }
+    }
+  }
+}
+
+mutation {
+  changePassword(
+    changePasswordDto: {
+      password: "O9nnni8r5+M04"
+      newPassword: "O12345hgtehight-"
+    }
+  ) {
+    success
+    message
+    data {
+      id
+      firstName
+      email
+    }
+  }
+}
+
+mutation {
+  forgotPassword {
+    statusCode
+    message
+  }
+}
+
+mutation {
+  resetPassword(
+    resetPasswordDto: {
+      token: "31a68f136bf4de00617d17908565018a82053362dd88b0244abd5936ac12a923"
+      password: "O12345hgtehight-"
+    }
+  ) {
+    message
+  }
+}
+
+mutation {
+  loginAsAdmin(
+    loginDto: { email: "omaddbfry@gmail.com", password: "O9nnni8r5+M04" }
+  ) {
+    statusCode
+    message
+    data {
+      token
+      user {
+        id
+        firstName
+        lastName
+        createdAt
+        email
+      }
+    }
+  }
+}

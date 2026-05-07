@@ -1,0 +1,107 @@
+mutation {
+  createCv(
+    data: {
+      title: "Omar"
+      isDefault: true
+      summary: "Backend Developer with 2+ years of experience architecting high-performance web applications using Node.js, NestJS, Goand PostgreSQL. Engineered scalable microservices and GraphQL APIs that accommodate 10k+ concurrent users, while reducing query latency by 40% utilizing Redis and BullMQ. Delivered secure, ACID-compliant databases and real-time WebSocket integrations, strictly adhering to Clean Architecture guidelines for production-ready solutions"
+    }
+  ) {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      title
+      isDefault
+      summary
+      user {
+        firstName
+      }
+    }
+  }
+}
+
+query {
+  getCvById(id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f") {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      title
+      isDefault
+      summary
+      user {
+        firstName
+      }
+    }
+  }
+}
+
+query {
+  getUserCvs(pagination: { page: 1, limit: 100 }) {
+    message
+    success
+    statusCode
+    timeStamp
+    items {
+      id
+      title
+      isDefault
+      summary
+      user {
+        firstName
+      }
+    }
+  }
+}
+
+query {
+  getUserCvs {
+    message
+    success
+    statusCode
+    timeStamp
+    items {
+      id
+      title
+      isDefault
+      summary
+      user {
+        firstName
+      }
+    }
+  }
+}
+
+mutation {
+  updateCv(
+    id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f"
+    data: { title: "backend" }
+  ) {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      title
+      isDefault
+      summary
+      user {
+        firstName
+      }
+    }
+  }
+}
+
+mutation {
+  deleteCv(id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f") {
+    message
+    timeStamp
+    statusCode
+    success
+  }
+}

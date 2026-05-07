@@ -1,0 +1,65 @@
+import { Field, InputType } from '@nestjs/graphql';
+import { EmploymentType } from '@prisma/client';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDate,
+  IsUrl,
+} from 'class-validator';
+
+@InputType()
+export class CreateExperienceInput {
+  @Field(() => String)
+  @IsString()
+  cvId: string;
+
+  @Field(() => String)
+  @IsString()
+  @MinLength(3)
+  @MaxLength(75)
+  jobTitle: string;
+
+  @Field(() => String)
+  @IsString()
+  @MinLength(2)
+  @MaxLength(150)
+  companyName: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsUrl()
+  @MaxLength(250)
+  companyWebsite: string;
+
+  @Field(() => String)
+  @IsString()
+  @MaxLength(255)
+  location: string;
+
+  @Field(() => Date)
+  @IsDate()
+  startDate: Date;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  endDate?: Date;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isCurrentJob?: boolean;
+
+  @Field(() => String)
+  @IsString()
+  @MaxLength(2000)
+  description: string;
+
+  @Field(() => EmploymentType)
+  @IsEnum(EmploymentType)
+  employmentType: EmploymentType;
+}

@@ -1,0 +1,7 @@
+{
+  "CREATED": "Certification record created successfully",
+  "UPDATED": "Certification record updated successfully",
+  "DELETED": "Certification record deleted successfully",
+  "NOT_FOUND": "Certification record not found",
+  "NOT_FOUNDS": "Certification records not found"
+}

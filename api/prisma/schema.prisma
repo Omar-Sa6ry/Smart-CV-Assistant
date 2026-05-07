@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EmploymentType {
+  full_time
+  part_time
+  contract
+  internship
+  freelance
+}
+
+enum Degree {
+  diploma
+  bachelor
+  master
+  ungraduated
+}
+
+enum Proficiency {
+  basic
+  conversational
+  professional
+  fluent
+  native
+}
+
+enum AnalysisType {
+  ats_compatibility
+  content_quality
+  completeness
+}
+
+enum SuggestionPriority {
+  high
+  medium
+  low
+}
+
+enum SkillCategory {
+  programming_language
+  frontend
+  backend
+  mobile
+  game_development
+  embedded_systems
+  technical
+  database_storage
+  data_science_analytics
+  ai_machine_learning
+  cloud_computing
+  devops_infrastructure
+  networking
+  testing_qa
+  architecture_design
+  security
+  software_tools
+  methodology
+  soft_skills
+  domain_knowledge
+}
+
+enum SkillProficiency {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique @db.VarChar(100)
+  password         String?
+  role             String    @default("USER")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  firstName        String?   @db.VarChar(100)
+  googleId         String?   @unique
+  lastLoginAt      DateTime?
+  lastName         String?   @db.VarChar(100)
+  resetToken       String?
+  resetTokenExpiry DateTime? @db.Timestamp(6)
+  cvs              Cv[]
+  experiences      Experience[]
+  educations       Education[]
+  certifications  Certification[]
+  projects        Project[]
+  languages       Language[]
+  skills          Skill[]
+  analysisResults CvAnalysisBase[]
+  analysisHistory AnalysisHistory[]
+  awards          Award[]
+}
+
+model Cv {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String   @db.VarChar(100)
+  headline    String   @db.VarChar(100)
+  summary     String   @db.VarChar(2000)
+  portfolio   String?  @db.VarChar(500)
+  linkedin    String?  @db.VarChar(500)
+  github      String?  @db.VarChar(500)
+  phone       String   @db.VarChar(20)
+  location    String   @db.VarChar(255)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+  experiences Experience[]
+  educations  Education[]
+  certifications Certification[]
+  projects       Project[]
+  languages      Language[]
+  skills         Skill[]
+  analysisResults CvAnalysisBase[]
+  analysisHistory AnalysisHistory[]
+  awards          Award[]
+ 
+  @@map("CV")
+}
+
+model Experience {
+  id             String         @id @default(uuid())
+  userId         String
+  cvId           String
+  jobTitle       String         @db.VarChar(75)
+  companyName    String         @db.VarChar(150)
+  companyWebsite String        @db.VarChar(250)
+  location       String        @db.VarChar(255)
+  startDate      DateTime
+  endDate        DateTime?
+  isCurrentJob   Boolean        @default(false)
+  description    String        @db.VarChar(2000)
+  employmentType EmploymentType @default(full_time)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id             String         @id @default(uuid())
+  userId         String
+  cvId           String
+  institution       String         @db.VarChar(75)
+  title    String         @db.VarChar(150)
+  location       String?        @db.VarChar(255)
+  startDate      DateTime
+  endDate        DateTime?
+  isCurrent      Boolean        @default(false)
+  gpa            Decimal?       @db.Decimal(3, 2)
+  description    String         @db.VarChar(1000)
+  degree         Degree 
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Certification {
+  id                  String   @id @default(uuid())
+  userId              String
+  cvId                String
+  name                String   @db.VarChar(255)
+  issuingOrganization String   @db.VarChar(255)
+  credentialId        String?  @db.VarChar(100)
+  credentialUrl       String  @db.VarChar(250)
+  issueDate           DateTime
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id               String    @id @default(uuid())
+  userId           String
+  cvId             String
+  name             String    @db.VarChar(150)
+  description      String   @db.VarChar(2000)
+  projectUrl       String   @db.VarChar(500)
+  startDate        DateTime?
+  endDate          DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+
+
+model Language {
+  id          String      @id @default(uuid())
+  userId      String
+  cvId        String
+  name        String      @db.VarChar(100)
+  proficiency Proficiency @default(professional)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model SkillKeyword {
+  id              String        @id @default(uuid())
+  name            String        @unique @db.VarChar(100)
+  category        SkillCategory @default(technical)
+  popularityScore Int           @default(0)
+  isVerified      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  skills          Skill[]
+}
+
+model Skill {
+  id             String           @id @default(uuid())
+  userId         String
+  cvId           String
+  keywordId      String?
+  name           String           @db.VarChar(100)
+  category       SkillCategory    @default(technical)
+  proficiency    SkillProficiency @default(intermediate)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cv      Cv            @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  keyword SkillKeyword? @relation(fields: [keywordId], references: [id], onDelete: SetNull)
+}
+
+model CvAnalysisBase {
+  id              String       @id @default(uuid())
+  cvId            String
+  userId          String
+  analysisType    AnalysisType
+  overallScore    Decimal      @db.Decimal(5, 2)
+  feedbackSummary String?      @db.Text
+  strengths       String?      @db.Text
+  weaknesses      String?      @db.Text
+  suggestions     String?      @db.Text
+  createdAt       DateTime     @default(now())
+
+  cv                  Cv                              @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                User                            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  atsDetails          CvAnalysisAtsDetails?
+  contentDetails      CvAnalysisContentDetails?
+  completenessDetails CvAnalysisCompletenessDetails?
+  detailedSuggestions CvAnalysisSuggestion[]
+
+  @@unique([cvId, analysisType])
+  @@map("CV_Analysis_Base")
+}
+
+model CvAnalysisAtsDetails {
+  analysisId         String   @id
+  formattingScore    Decimal  @db.Decimal(5, 2)
+  compatibilityScore Decimal  @db.Decimal(5, 2)
+  keywordMatchScore  Decimal  @db.Decimal(5, 2)
+  structureScore     Decimal  @db.Decimal(5, 2)
+  keywordsFound      Int      @default(0)
+  keywordsMissing    Int      @default(0)
+  foundKeywordsList  String?  @db.Text
+  missingKeywordsList String? @db.Text
+  hasTables          Boolean  @default(false)
+  hasImages           Boolean  @default(false)
+  hasSpecialChars    Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_ATS_Details")
+}
+
+model CvAnalysisContentDetails {
+  analysisId               String   @id
+  languageScore            Decimal  @db.Decimal(5, 2)
+  achievementsScore        Decimal  @db.Decimal(5, 2)
+  clarityScore             Decimal  @db.Decimal(5, 2)
+  quantifiableResultsCount Int      @default(0)
+  spellingErrorsCount      Int      @default(0)
+  spellingErrorsList       String?  @db.Text
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_Content_Details")
+}
+
+model CvAnalysisSuggestion {
+  id            String             @id @default(uuid())
+  analysisId    String
+  sectionName   String             @db.VarChar(50)
+  priority      SuggestionPriority @default(medium)
+  message       String             @db.Text
+  originalText  String?            @db.Text
+  suggestedText String?            @db.Text
+  createdAt     DateTime           @default(now())
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("CV_Analysis_Suggestion")
+}
+
+model CvAnalysisCompletenessDetails {
+  analysisId            String   @id
+  requiredSectionsScore Decimal  @db.Decimal(5, 2)
+  optionalSectionsScore Decimal  @db.Decimal(5, 2)
+  detailsScore          Decimal  @db.Decimal(5, 2)
+  consistencyScore      Decimal  @db.Decimal(5, 2)
+  hasContactInfo        Boolean  @default(false)
+  hasExperience         Boolean  @default(false)
+  hasEducation          Boolean  @default(false)
+  hasSkills             Boolean  @default(false)
+  hasSummary            Boolean  @default(false)
+  hasCertifications     Boolean  @default(false)
+  hasProjects           Boolean  @default(false)
+  hasLanguages          Boolean  @default(false)
+  hasAwards             Boolean  @default(false)
+  experiencesCount      Int      @default(0)
+  educationsCount       Int      @default(0)
+  skillsCount           Int      @default(0)
+  certificationsCount   Int      @default(0)
+  projectsCount         Int      @default(0)
+  languagesCount        Int      @default(0)
+  awardsCount           Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  analysis CvAnalysisBase @relation(fields: [analysisId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("CV_Analysis_Completeness_Details")
+}
+
+model AnalysisHistory {
+  id                    String       @id @default(uuid())
+  cvId                  String
+  userId                String
+  analysisType          AnalysisType
+  previousScore         Decimal?     @db.Decimal(5, 2)
+  newScore              Decimal      @db.Decimal(5, 2)
+  improvementPercentage Decimal?     @db.Decimal(5, 2)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Analysis_History")
+}
+
+model Award {
+  id          String   @id @default(uuid())
+  userId      String
+  cvId        String
+  title       String   @db.VarChar(255)
+  issuer      String   @db.VarChar(255)
+  issueDate   DateTime
+  description String?  @db.VarChar(2000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}

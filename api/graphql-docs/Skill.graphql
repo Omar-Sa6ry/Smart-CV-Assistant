@@ -1,0 +1,188 @@
+mutation {
+  createSkill(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      name: "node.js"
+      proficiency: intermediate
+      yearsOfExperience: 2
+    }
+  ) {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      name
+      proficiency
+      yearsOfExperience
+      createdAt
+      keyword {
+        id
+        name
+        category
+        isVerified
+        popularityScore
+        createdAt
+      }
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        id
+      }
+    }
+  }
+}
+
+mutation {
+  deleteSkill(id: "37b6fcf2-bdf3-4e80-bd61-62839959c5de") {
+    message
+    success
+    statusCode
+    timeStamp
+  }
+}
+
+mutation {
+  updateSkill(
+    id: "60fc7da6-4832-415d-b06a-4be63da8d32e"
+    data: { name: "nestjs", yearsOfExperience: 1 }
+  ) {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      name
+      proficiency
+      yearsOfExperience
+      createdAt
+      keyword {
+        id
+        name
+        category
+        isVerified
+        popularityScore
+        createdAt
+      }
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        id
+      }
+    }
+  }
+}
+
+query {
+  getSkillById(id: "60fc7da6-4832-415d-b06a-4be63da8d32e") {
+    message
+    success
+    statusCode
+    timeStamp
+    data {
+      id
+      name
+      proficiency
+      yearsOfExperience
+      createdAt
+      keyword {
+        id
+        name
+        category
+        isVerified
+        popularityScore
+        createdAt
+      }
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        id
+      }
+    }
+  }
+}
+
+query {
+  getSkillsByUserId {
+    message
+    success
+    statusCode
+    timeStamp
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      proficiency
+      yearsOfExperience
+      createdAt
+      keyword {
+        id
+        name
+        category
+        isVerified
+        popularityScore
+        createdAt
+      }
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        id
+      }
+    }
+  }
+}
+
+query {
+  getSkillsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    message
+    success
+    statusCode
+    timeStamp
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      proficiency
+      yearsOfExperience
+      createdAt
+      keyword {
+        id
+        name
+        category
+        isVerified
+        popularityScore
+        createdAt
+      }
+      user {
+        firstName
+        email
+      }
+      cv {
+        title
+        id
+      }
+    }
+  }
+}

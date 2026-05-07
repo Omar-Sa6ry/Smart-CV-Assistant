@@ -1,0 +1,168 @@
+mutation {
+  createCertification(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      name: "gRPC [Golang] Master Class: Build Modern API & Microservices"
+      issuingOrganization: "udemy"
+      credentialId: "klkjhjuio"
+      credentialUrl: "https://tamooh.cloud/"
+      issueDate: "5-10-2025"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      issuingOrganization
+      credentialId
+      credentialUrl
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+mutation {
+  updateCertification(
+    id: "4868aec5-6a0b-4b60-8dcb-304a1e327887"
+
+    data: {
+      credentialUrl: "https://www.udemy.com/certificate/UC-d5cabed8-8092-4aca-8a71-9e3efd009be4/"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      issuingOrganization
+      credentialId
+      credentialUrl
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+mutation {
+  deleteCertification(id: "4868aec5-6a0b-4b60-8dcb-304a1e327887") {
+    message
+    success
+    timeStamp
+    statusCode
+  }
+}
+
+query {
+  getCertificationById(id: "0bfd6c4c-d5af-443e-8f53-489e0bf1c20d") {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      issuingOrganization
+      credentialId
+      credentialUrl
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+query {
+  getCertificationsByUserId {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      issuingOrganization
+      credentialId
+      credentialUrl
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}
+
+query {
+  getCertificationsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      issuingOrganization
+      credentialId
+      credentialUrl
+      issueDate
+      createdAt
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+        summary
+      }
+    }
+  }
+}

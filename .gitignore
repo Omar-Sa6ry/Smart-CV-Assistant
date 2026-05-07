@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.env*
+.vscode/
+.idea/
+.DS_Store
+coverage/
+*.log
+
+# Folders to exclude for API deployment
+/ui/
+/data_analysis/
+/ai_models/
+/analysis/
+.git/
+.trunk/

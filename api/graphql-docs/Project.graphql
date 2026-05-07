@@ -1,0 +1,193 @@
+mutation {
+  createProject(
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      name: "bidding"
+      description: ""
+      technologiesUsed: "nestjs microservice"
+      teamSize: 1
+      projectUrl: "https://tamooh.cloud/"
+      isTeamProject: false
+      isPersonalProject: true
+      startDate: "3-3-2025"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      description
+      descriptionBullets
+      technologiesUsed
+      projectUrl
+      isPersonalProject
+      isTeamProject
+      startDate
+      endDate
+      teamSize
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  deleteProject(id: "a371f088-3d17-469d-89b7-b9fb6e064d62") {
+    message
+    timeStamp
+    success
+    statusCode
+  }
+}
+
+mutation {
+  updateProject(
+    id: "003e76db-41d1-4aa9-9be1-836c04b35db7"
+    data: {
+      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      name: "bidding"
+      description: ""
+      technologiesUsed: "nestjs microservice go"
+      teamSize: 1
+      projectUrl: "https://tamooh.cloud/"
+      isTeamProject: false
+      isPersonalProject: true
+      startDate: "3-3-2025"
+    }
+  ) {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      description
+      descriptionBullets
+      technologiesUsed
+      projectUrl
+      isPersonalProject
+      isTeamProject
+      startDate
+      endDate
+      teamSize
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getProjectById(id: "003e76db-41d1-4aa9-9be1-836c04b35db7") {
+    message
+    success
+    timeStamp
+    statusCode
+    data {
+      id
+      name
+      description
+      descriptionBullets
+      technologiesUsed
+      projectUrl
+      isPersonalProject
+      isTeamProject
+      startDate
+      endDate
+      teamSize
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getProjectsByUserId(pagination: { limit: 5, page: 2 }) {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      description
+      descriptionBullets
+      technologiesUsed
+      projectUrl
+      isPersonalProject
+      isTeamProject
+      startDate
+      endDate
+      teamSize
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getProjectsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+    message
+    success
+    timeStamp
+    statusCode
+    pagination {
+      totalPages
+      currentPage
+      totalItems
+    }
+    items {
+      id
+      name
+      description
+      descriptionBullets
+      technologiesUsed
+      projectUrl
+      isPersonalProject
+      isTeamProject
+      startDate
+      endDate
+      teamSize
+      user {
+        firstName
+        email
+      }
+      cv {
+        id
+        title
+      }
+    }
+  }
+}
