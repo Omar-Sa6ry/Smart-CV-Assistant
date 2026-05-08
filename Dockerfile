@@ -7,11 +7,9 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-# تثبيت الاعتمادات في الـ Root وفي الـ API لضمان وجود كل شيء
 RUN npm install --legacy-peer-deps
 RUN cd api && npm install --legacy-peer-deps
 
-# تشغيل Prisma Generate و Build
 RUN cd api && npx prisma generate
 RUN cd api && npm run build
 
@@ -37,14 +35,12 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 WORKDIR /usr/src/app
 
-# نسخ الاعتمادات والملفات
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/api/node_modules ./api/node_modules
 COPY --from=builder /usr/src/app/api/dist ./api/dist
 COPY --from=builder /usr/src/app/api/prisma ./api/prisma
 COPY --from=builder /usr/src/app/api/package*.json ./api/
 
-# نسخ ملفات الترجمة والـ templates الضرورية
 COPY --from=builder /usr/src/app/api/src/common/translation/locales ./api/src/common/translation/locales
 
 EXPOSE 7860

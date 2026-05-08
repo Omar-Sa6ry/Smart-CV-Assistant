@@ -1,10 +1,9 @@
 mutation {
   createSkill(
     data: {
-      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
-      name: "node.js"
+      cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f"
+      name: "nest.js"
       proficiency: intermediate
-      yearsOfExperience: 2
     }
   ) {
     message
@@ -15,7 +14,6 @@ mutation {
       id
       name
       proficiency
-      yearsOfExperience
       createdAt
       keyword {
         id
@@ -38,7 +36,7 @@ mutation {
 }
 
 mutation {
-  deleteSkill(id: "37b6fcf2-bdf3-4e80-bd61-62839959c5de") {
+  deleteSkill(id: "96bfab5e-c792-4a7b-8588-7ec1a3017c2d") {
     message
     success
     statusCode
@@ -48,8 +46,8 @@ mutation {
 
 mutation {
   updateSkill(
-    id: "60fc7da6-4832-415d-b06a-4be63da8d32e"
-    data: { name: "nestjs", yearsOfExperience: 1 }
+    id: "fbe77ff8-d7a4-44cd-88d2-d7c915efe124"
+    data: { name: "nestjs" }
   ) {
     message
     success
@@ -59,7 +57,6 @@ mutation {
       id
       name
       proficiency
-      yearsOfExperience
       createdAt
       keyword {
         id
@@ -82,7 +79,7 @@ mutation {
 }
 
 query {
-  getSkillById(id: "60fc7da6-4832-415d-b06a-4be63da8d32e") {
+  getSkillById(id: "fbe77ff8-d7a4-44cd-88d2-d7c915efe124") {
     message
     success
     statusCode
@@ -91,7 +88,6 @@ query {
       id
       name
       proficiency
-      yearsOfExperience
       createdAt
       keyword {
         id
@@ -128,7 +124,6 @@ query {
       id
       name
       proficiency
-      yearsOfExperience
       createdAt
       keyword {
         id
@@ -151,7 +146,7 @@ query {
 }
 
 query {
-  getSkillsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+  getSkillsByCvId(cvId: "4eb8f743-1fa9-4c15-9170-70350793d299") {
     message
     success
     statusCode
@@ -165,7 +160,6 @@ query {
       id
       name
       proficiency
-      yearsOfExperience
       createdAt
       keyword {
         id

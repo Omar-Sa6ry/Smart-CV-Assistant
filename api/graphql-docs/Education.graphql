@@ -1,7 +1,7 @@
 mutation {
   createEducation(
     data: {
-      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f"
       institution: "Damietta unversity"
       title: "Bachelor of Computer Science and Artificial Intelligence"
       location: "Damieta, university"
@@ -41,8 +41,8 @@ mutation {
 
 mutation {
   updateEducation(
-    data: { cvId: "0f77856f-74d8-41fd-91da-29e6644eefba" }
-    id: "c3acdbfe-c35d-4e66-8b8b-7d91771f309c"
+    data: { startDate: "1-9-2022" }
+    id: "7f26086c-e58e-41e8-8c29-64867fe944bd"
   ) {
     message
     success
@@ -72,7 +72,7 @@ mutation {
 }
 
 mutation {
-  deleteEducation(id: "1e417f36-4c2d-411e-8d0a-10350896aaac") {
+  deleteEducation(id: "387072b1-7e81-404d-a62b-be5e31d4d21b") {
     message
     success
     timeStamp
@@ -81,7 +81,7 @@ mutation {
 }
 
 query {
-  getEducationById(id: "2b502f00-1f7b-405b-9c71-6334046b67ef") {
+  getEducationById(id: "7f26086c-e58e-41e8-8c29-64867fe944bd") {
     message
     success
     timeStamp
@@ -110,7 +110,7 @@ query {
 }
 
 query {
-  getEducationsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+  getEducationsByCvId(cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f") {
     message
     success
     timeStamp

@@ -1,9 +1,9 @@
 mutation {
   createLanguage(
     data: {
-      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f"
       proficiency: professional
-      name: "Arabicc"
+      name: "English"
     }
   ) {
     message
@@ -28,7 +28,7 @@ mutation {
 }
 
 query {
-  getLanguageById(id: "ff3f1e5a-224d-4ac5-8c3a-4ec18cba4930") {
+  getLanguageById(id: "e4b063c4-c7a2-4ef1-bd3d-2718145e777e") {
     message
     success
     timeStamp
@@ -74,7 +74,7 @@ query {
 }
 
 query {
-  getLanguagesByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+  getLanguagesByCvId(cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f") {
     message
     success
     timeStamp
@@ -98,8 +98,8 @@ query {
 
 mutation {
   updateLanguage(
-    id: "ff3f1e5a-224d-4ac5-8c3a-4ec18cba4930"
-    data: { proficiency: native, name: "Enghlish" }
+    id: "2d3728ec-b381-43d5-8620-b957ba2b5368"
+    data: { proficiency: native }
   ) {
     message
     success
@@ -123,7 +123,7 @@ mutation {
 }
 
 mutation {
-  deleteLanguage(id: "80bd7a2e-9b50-4602-9bb0-ca1528b06b52") {
+  deleteLanguage(id: "760d2cea-7134-489e-9465-d76c1afadbb3") {
     message
     success
     timeStamp

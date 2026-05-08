@@ -3,6 +3,9 @@ mutation {
     data: {
       title: "Omar"
       isDefault: true
+      location: "Damietta, Egypt"
+      headline: "Backend Developer"
+      phone: "01091854368"
       summary: "Backend Developer with 2+ years of experience architecting high-performance web applications using Node.js, NestJS, Goand PostgreSQL. Engineered scalable microservices and GraphQL APIs that accommodate 10k+ concurrent users, while reducing query latency by 40% utilizing Redis and BullMQ. Delivered secure, ACID-compliant databases and real-time WebSocket integrations, strictly adhering to Clean Architecture guidelines for production-ready solutions"
     }
   ) {
@@ -16,14 +19,17 @@ mutation {
       isDefault
       summary
       user {
+        id
         firstName
+        lastName
+        email
       }
     }
   }
 }
 
 query {
-  getCvById(id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f") {
+  getCvById(id: "eddb4d01-7c09-4968-b174-8bc9e21ee97f") {
     message
     success
     statusCode
@@ -34,7 +40,10 @@ query {
       isDefault
       summary
       user {
+        id
         firstName
+        lastName
+        email
       }
     }
   }
@@ -46,13 +55,21 @@ query {
     success
     statusCode
     timeStamp
+    pagination {
+      totalPages
+      totalItems
+      currentPage
+    }
     items {
       id
       title
       isDefault
       summary
       user {
+        id
         firstName
+        lastName
+        email
       }
     }
   }
@@ -64,6 +81,11 @@ query {
     success
     statusCode
     timeStamp
+    pagination {
+      totalPages
+      totalItems
+      currentPage
+    }
     items {
       id
       title
@@ -78,8 +100,8 @@ query {
 
 mutation {
   updateCv(
-    id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f"
-    data: { title: "backend" }
+    id: "eddb4d01-7c09-4968-b174-8bc9e21ee97f"
+    data: { title: "Backend Engineer" }
   ) {
     message
     success
@@ -98,7 +120,7 @@ mutation {
 }
 
 mutation {
-  deleteCv(id: "6ffb57fb-256b-4985-8f2c-7ca0f0cad72f") {
+  deleteCv(id: "cff19896-b4fb-425b-b825-12613fa2d498") {
     message
     timeStamp
     statusCode
