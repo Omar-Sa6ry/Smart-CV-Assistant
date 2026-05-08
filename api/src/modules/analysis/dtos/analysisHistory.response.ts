@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BaseResponse } from '@bts-soft/core';
+import { GraphqlBaseResponse } from '@bts-soft/core';
 
 @ObjectType()
 export class AnalysisHistoryItem {
@@ -14,7 +14,7 @@ export class AnalysisHistoryItem {
 }
 
 @ObjectType()
-export class AnalysisHistoryResponse extends BaseResponse {
+export class AnalysisHistoryResponse extends GraphqlBaseResponse {
   @Field(() => [AnalysisHistoryItem], { nullable: true })
   data: AnalysisHistoryItem[];
 }

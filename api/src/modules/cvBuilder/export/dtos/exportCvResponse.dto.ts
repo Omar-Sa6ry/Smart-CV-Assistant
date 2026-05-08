@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
-import { BaseResponse } from '@bts-soft/core';
+import { GraphqlBaseResponse } from '@bts-soft/core';
 
 @ObjectType()
 export class ExportCvData {
@@ -15,7 +15,7 @@ export class ExportCvData {
 }
 
 @ObjectType()
-export class ExportCvResponse extends BaseResponse {
+export class ExportCvResponse extends GraphqlBaseResponse {
   @Field(() => ExportCvData, { nullable: true })
   @Expose()
   data?: ExportCvData;

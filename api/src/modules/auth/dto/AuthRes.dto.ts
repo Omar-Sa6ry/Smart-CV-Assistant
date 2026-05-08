@@ -1,4 +1,4 @@
-import { BaseResponse } from '@bts-soft/core';
+import { GraphqlBaseResponse } from '@bts-soft/core';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
 import { User } from 'src/modules/users/entity/user.entity';
@@ -15,7 +15,7 @@ export class AuthOutPut {
 }
 
 @ObjectType()
-export class AuthResponse extends BaseResponse {
+export class AuthResponse extends GraphqlBaseResponse {
   @Field(() => AuthOutPut, { nullable: true })
   @Expose()
   data?: AuthOutPut | null;
