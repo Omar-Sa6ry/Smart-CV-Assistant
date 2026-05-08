@@ -24,7 +24,7 @@
     "@apollo/server": "^5.5.0",
     "@as-integrations/express5": "^1.1.2",
     "@as-integrations/fastify": "^3.1.0",
-    "@bts-soft/core": "^2.5.7",
+    "@bts-soft/core": "^2.5.8",
     "@nestjs/apollo": "^13.2.5",
     "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^11.1.18",
