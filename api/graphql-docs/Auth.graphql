@@ -4,8 +4,7 @@ mutation {
       firstName: "Omar"
       lastName: "sabry"
       password: "O9nnni8r5+M04"
-      email: "omaddbfry@gmail.com"
-      headline: "Backend"
+      email: "omarsabry@gmail.com"
     }
   ) {
     data {
@@ -21,16 +20,13 @@ mutation {
 }
 
 mutation {
-  login(loginDto: { password: "O9nnni8r5+M04", email: "omaddbry@gmail.com" }) {
-    statusCode
-    message
+  login(loginDto: { password: "O9nnni8r5+M04", email: "omarsabry@gmail.com" }) {
     data {
       token
       user {
         id
         firstName
         lastName
-        createdAt
         email
       }
     }
@@ -44,8 +40,6 @@ mutation {
       newPassword: "O12345hgtehight-"
     }
   ) {
-    success
-    message
     data {
       id
       firstName
@@ -56,8 +50,9 @@ mutation {
 
 mutation {
   forgotPassword {
-    statusCode
-    message
+    data {
+      token
+    }
   }
 }
 
@@ -76,17 +71,18 @@ mutation {
   loginAsAdmin(
     loginDto: { email: "omaddbfry@gmail.com", password: "O9nnni8r5+M04" }
   ) {
-    statusCode
-    message
     data {
       token
       user {
         id
         firstName
         lastName
-        createdAt
+
         email
       }
     }
   }
 }
+
+
+http://localhost:4003/auth/google
