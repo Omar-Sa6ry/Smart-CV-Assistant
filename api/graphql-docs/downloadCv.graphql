@@ -1,0 +1,61 @@
+# query{
+#   exportCv(id: "4eb8f743-1fa9-4c15-9170-70350793d299" format:"classic"){
+#     message
+#     success
+#     timeStamp
+#      statusCode
+#     data{
+#            downloadUrl
+#   fileContent
+#       fileName
+#     }
+#   }
+# }
+
+# query{
+#   exportCv(id: "4eb8f743-1fa9-4c15-9170-70350793d299" format:"classic_word"){
+#     message
+#     success
+#     timeStamp
+#      statusCode
+#     data{
+#            downloadUrl
+#   fileContent
+#       fileName
+#     }
+#   }
+# }
+
+# query{
+#   exportCv(id: "4eb8f743-1fa9-4c15-9170-70350793d299" format:"modern"){
+#     message
+#     success
+#     timeStamp
+#      statusCode
+#     data{
+#            downloadUrl
+#   fileContent
+#       fileName
+#     }
+#   }
+# }
+
+# query{
+#   exportCv(id: "4eb8f743-1fa9-4c15-9170-70350793d299" format:"modern_word"){
+#     message
+#     success
+#     timeStamp
+#      statusCode
+#     data{
+#            downloadUrl
+#   fileContent
+#       fileName
+#     }
+#   }
+# }
+
+
+# To Download Cv use this
+# https://omarsa6ry-cv.hf.space/{{downloadLink}}
+
+# you can use this to download without export https://omarsa6ry-cv.hf.space/cv-export/{{cvId}}?format={classic_word , classic , modern or moder_word}
