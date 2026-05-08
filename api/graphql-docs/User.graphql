@@ -1,8 +1,9 @@
 query {
-  getUserById(id: "fb740acc-d07a-4d03-82bf-5a2d1d74b9ff") {
+  getUserById(id: "e06d91cb-db73-4c70-a980-942326d1b95d") {
     success
     statusCode
     message
+
     data {
       id
       firstName
@@ -13,7 +14,7 @@ query {
 }
 
 query {
-  getUserByEmail(email: { email: "omaddbfrys@gmail.com" }) {
+  getUserByEmail(email: { email: "omarsabryq@gmail.com" }) {
     success
     statusCode
     message
@@ -30,6 +31,11 @@ query {
   getUsers {
     success
     message
+    pagination {
+      totalPages
+      totalItems
+      currentPage
+    }
     items {
       id
       firstName
@@ -70,7 +76,7 @@ mutation {
 }
 
 mutation {
-  UpdateUserRoleToAdmin(id: "67099476-f175-4871-9644-baca7569caed") {
+  UpdateUserRoleToAdmin(id: "e06d91cb-db73-4c70-a980-942326d1b95d") {
     success
     statusCode
     message
@@ -84,7 +90,7 @@ mutation {
 }
 
 query {
-  deleteUser(id: "fb740acc-d07a-4d03-82bf-5a2d1d74b9ff") {
+  deleteUser(id: "e06d91cb-db73-4c70-a980-942326d1b95d") {
     success
     statusCode
     message

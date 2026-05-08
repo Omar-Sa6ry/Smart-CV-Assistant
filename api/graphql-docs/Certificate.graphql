@@ -1,7 +1,7 @@
 mutation {
   createCertification(
     data: {
-      cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8"
+      cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f"
       name: "gRPC [Golang] Master Class: Build Modern API & Microservices"
       issuingOrganization: "udemy"
       credentialId: "klkjhjuio"
@@ -36,8 +36,7 @@ mutation {
 
 mutation {
   updateCertification(
-    id: "4868aec5-6a0b-4b60-8dcb-304a1e327887"
-
+    id: "a984155e-0c3e-4b9c-9be7-2083bbbeebe9"
     data: {
       credentialUrl: "https://www.udemy.com/certificate/UC-d5cabed8-8092-4aca-8a71-9e3efd009be4/"
     }
@@ -68,7 +67,7 @@ mutation {
 }
 
 mutation {
-  deleteCertification(id: "4868aec5-6a0b-4b60-8dcb-304a1e327887") {
+  deleteCertification(id: "1083281f-edd0-47cd-a4f9-9f1618419291") {
     message
     success
     timeStamp
@@ -77,7 +76,7 @@ mutation {
 }
 
 query {
-  getCertificationById(id: "0bfd6c4c-d5af-443e-8f53-489e0bf1c20d") {
+  getCertificationById(id: "a984155e-0c3e-4b9c-9be7-2083bbbeebe9") {
     message
     success
     timeStamp
@@ -136,7 +135,7 @@ query {
 }
 
 query {
-  getCertificationsByCvId(cvId: "4db5de61-da92-42e8-9d55-d1d93377ced8") {
+  getCertificationsByCvId(cvId: "eddb4d01-7c09-4968-b174-8bc9e21ee97f") {
     message
     success
     timeStamp
