@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
 import { IsOptional } from 'class-validator';
-import { BaseResponse, PaginationInfo } from '@bts-soft/core';
+import { GraphqlBaseResponse, PaginationInfo } from '@bts-soft/core';
 import { Skill } from '../models/skill.model';
 
 @ObjectType()
-export class SkillResponse extends BaseResponse {
+export class SkillResponse extends GraphqlBaseResponse {
   @Field(() => Skill, { nullable: true })
   @Expose()
   data?: Skill | null;
 }
 
 @ObjectType()
-export class SkillsResponse extends BaseResponse {
+export class SkillsResponse extends GraphqlBaseResponse {
   @Field(() => [Skill], { nullable: true })
   items: Skill[];
 

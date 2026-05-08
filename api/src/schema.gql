@@ -37,14 +37,26 @@ type AuthOutPut {
 }
 
 type AuthResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: AuthOutPut
 }
 
 type UserResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: User
 }
 
 type UsersResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [User!]
   pagination: PaginationInfo
 }
@@ -236,77 +248,145 @@ type Cv {
 }
 
 type CvResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Cv
 }
 
 type CvsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Cv!]
   pagination: PaginationInfo
 }
 
 type ExperienceResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Experience
 }
 
 type ExperiencesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Experience!]
   pagination: PaginationInfo
 }
 
 type EducationResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Education
 }
 
 type EducationsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Education!]
   pagination: PaginationInfo
 }
 
 type CertificationResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Certification
 }
 
 type CertificationsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Certification!]
   pagination: PaginationInfo
 }
 
 type ProjectResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Project
 }
 
 type ProjectsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Project!]
   pagination: PaginationInfo
 }
 
 type LanguageResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Language
 }
 
 type LanguagesResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Language!]
   pagination: PaginationInfo
 }
 
 type SkillResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Skill
 }
 
 type SkillsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Skill!]
   pagination: PaginationInfo
 }
 
 type SkillKeywordsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [SkillKeyword!]
 }
 
 type AwardResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: Award
 }
 
 type AwardsResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   items: [Award!]
   pagination: PaginationInfo
 }
@@ -318,6 +398,10 @@ type ExportCvData {
 }
 
 type ExportCvResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: ExportCvData
 }
 
@@ -388,6 +472,10 @@ type AnalysisDto {
 }
 
 type AnalysisResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: AnalysisDto
 }
 
@@ -398,6 +486,10 @@ type AnalysisHistoryItem {
 }
 
 type AnalysisHistoryResponse {
+  message: String
+  success: Boolean
+  timeStamp: String
+  statusCode: Int
   data: [AnalysisHistoryItem!]
 }
 

@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Expose } from 'class-transformer';
 import { IsOptional } from 'class-validator';
-import { BaseResponse, PaginationInfo } from '@bts-soft/core';
+import { GraphqlBaseResponse, PaginationInfo } from '@bts-soft/core';
 import { Award } from '../models/award.model';
 
 @ObjectType()
-export class AwardResponse extends BaseResponse {
+export class AwardResponse extends GraphqlBaseResponse {
   @Field(() => Award, { nullable: true })
   @Expose()
   data?: Award | null;
 }
 
 @ObjectType()
-export class AwardsResponse extends BaseResponse {
+export class AwardsResponse extends GraphqlBaseResponse {
   @Field(() => [Award], { nullable: true })
   items: Award[];
 
