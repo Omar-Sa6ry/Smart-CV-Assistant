@@ -35,6 +35,11 @@ export class AnalysisRepository implements IAnalysisRepository {
     previousScore: number | null,
   ) {
     return this.prisma.$transaction(async (tx) => {
+      // 1. Clear old analysis to avoid unique constraint violation [cvId, analysisType]
+      await tx.cvAnalysisBase.deleteMany({
+        where: { cvId, analysisType: AnalysisType.ats_compatibility }
+      });
+
       const base = await tx.cvAnalysisBase.create({
         data: {
           cvId,
@@ -58,7 +63,7 @@ export class AnalysisRepository implements IAnalysisRepository {
             createMany: {
               data: aiResult.detailedSuggestions.map((s: any) => ({
                 sectionName: s.sectionName,
-                priority: s.priority.toUpperCase() as any,
+                priority: s.priority.toLowerCase() as any, // Enum is lowercase in Prisma
                 message: s.message,
                 originalText: s.originalText,
                 suggestedText: s.suggestedText,
