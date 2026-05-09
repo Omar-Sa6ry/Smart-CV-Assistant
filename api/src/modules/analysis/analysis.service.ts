@@ -33,7 +33,7 @@ export class AnalysisService implements IAnalysisService {
     userId: string,
   ): Promise<AnalysisResponse> {
     // Get CV & Validate
-    const cvResponse = await this.cvService.getById(cvId, userId);
+    const cvResponse = await this.cvService.getById(cvId, userId, true);
     const cv = cvResponse?.data;
     if (!cv || cv.userId !== userId)
       throw new NotFoundException(
