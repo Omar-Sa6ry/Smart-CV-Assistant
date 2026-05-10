@@ -1,110 +1,11 @@
-mutation {
-  analyzeCv(cvId: "4eb8f743-1fa9-4c15-9170-70350793d299") {
-    message
-    success
-    timeStamp
-    statusCode
-    data {
-      overallScore
-      feedbackSummary
-      predictedRole
-      strengths
-      weaknesses
-      suggestions
-      atsDetails {
-        formattingScore
-        compatibilityScore
-        keywordMatchScore
-        structureScore
-        keywordsFound
-        foundKeywordsList
-        missingKeywordsList
-        hasTables
-        hasImages
-        hasSpecialChars
-      }
-      contentDetails {
-        languageScore
-        achievementsScore
-        clarityScore
-        quantifiableResultsCount
-        spellingErrorsCount
-        spellingErrorsList
-      }
-      completenessDetails {
-        requiredSectionsScore
-        optionalSectionsScore
-        detailsScore
-        consistencyScore
-        consistencyScore
-        hasContactInfo
-        hasContactInfo
-        hasExperience
-        hasEducation
-        hasSkills
-        hasSummary
-        hasCertifications
-        hasProjects
-        hasLanguages
-        hasAwards
-      }
-    }
+{
+  "query": "mutation($file: Upload) { analyzeUploadedCv(file: $file) { message success timeStamp statusCode data { overallScore feedbackSummary predictedRole strengths weaknesses suggestions atsDetails { formattingScore compatibilityScore keywordMatchScore structureScore keywordsFound foundKeywordsList missingKeywordsList hasTables hasImages hasSpecialChars } contentDetails { languageScore achievementsScore clarityScore quantifiableResultsCount spellingErrorsCount spellingErrorsList } completenessDetails { requiredSectionsScore optionalSectionsScore detailsScore consistencyScore hasContactInfo hasExperience hasEducation hasSkills hasSummary hasCertifications hasProjects hasLanguages hasAwards } } } }",
+  "variables": {
+    "file": null
   }
 }
 
-mutation {
-  analyzeUploadedCv {
-    message
-    success
-    timeStamp
-    statusCode
-    data {
-      overallScore
-      feedbackSummary
-      predictedRole
-      strengths
-      weaknesses
-      suggestions
-      atsDetails {
-        formattingScore
-        compatibilityScore
-        keywordMatchScore
-        structureScore
-        keywordsFound
-        foundKeywordsList
-        missingKeywordsList
-        hasTables
-        hasImages
-        hasSpecialChars
-      }
-      contentDetails {
-        languageScore
-        achievementsScore
-        clarityScore
-        quantifiableResultsCount
-        spellingErrorsCount
-        spellingErrorsList
-      }
-      completenessDetails {
-        requiredSectionsScore
-        optionalSectionsScore
-        detailsScore
-        consistencyScore
-        consistencyScore
-        hasContactInfo
-        hasContactInfo
-        hasExperience
-        hasEducation
-        hasSkills
-        hasSummary
-        hasCertifications
-        hasProjects
-        hasLanguages
-        hasAwards
-      }
-    }
-  }
-}
+
 
 query {
   getLatestCvAnalysis(cvId: "4eb8f743-1fa9-4c15-9170-70350793d299") {
