@@ -8,8 +8,9 @@ import { I18nService } from 'nestjs-i18n';
 import { AnalysisResponse } from './dtos/analysis.response';
 import { AnalysisHistoryResponse } from './dtos/analysisHistory.response';
 import { CvService } from '../cvBuilder/cv/cv.service';
-import { FileUpload } from 'graphql-upload-ts';
+import * as UploadMinimal from 'graphql-upload-minimal';
 import { AnalysisRepository } from './repository/analysis.repository';
+
 import { AiBridgeService } from './bridge/ai-bridge.service';
 import { AnalysisMapper } from './mapper/analysis.mapper';
 import { AnalysisCacheManager } from './cache/analysis.cache-manager';
@@ -43,10 +44,10 @@ export class AnalysisService implements IAnalysisService {
       throw new BadRequestException(await this.i18n.t('analysis.CV_IS_EMPTY'));
 
     // Cache Check
-    let lastAnalysis = await this.cache.getLatest(cvId);
+    let lastAnalysis = await this.cache.getLatest(userId);
     if (!lastAnalysis) {
-      lastAnalysis = await this.repository.findLatest(cvId, userId);
-      if (lastAnalysis) await this.cache.setLatest(cvId, lastAnalysis);
+      lastAnalysis = await this.repository.findLatest( userId);
+      if (lastAnalysis) await this.cache.setLatest(userId, lastAnalysis);
     }
 
     if (
@@ -91,6 +92,7 @@ export class AnalysisService implements IAnalysisService {
         message: await this.i18n.t('analysis.CV_ANALYZED_SUCCESSFULLY'),
       };
     } catch (error) {
+      console.error('Trigger Analysis Error:', error);
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );
@@ -98,73 +100,115 @@ export class AnalysisService implements IAnalysisService {
   }
 
   async analyzeUploadedCv(
-    file: FileUpload,
+    file: UploadMinimal.FileUpload,
     userId: string,
   ): Promise<AnalysisResponse> {
     try {
-      const { createReadStream, filename, mimetype } = await file;
+      const { createReadStream, filename, mimetype } = await (file as any);
       const aiResult = await this.aiBridge.analyzeFile(
         createReadStream(),
         filename,
         mimetype,
       );
 
+      // Check last score for improvement calculation
+      let lastAnalysis = await this.cache.getLatest(userId);
+      if (!lastAnalysis) {
+        lastAnalysis = await this.repository.findLatest(userId);
+      }
+
+      const previousScore = lastAnalysis ? Number(lastAnalysis.overallScore) : null;
+      const improvement = previousScore
+        ? ((aiResult.overallScore - previousScore) / previousScore) * 100
+        : 0;
+
+      // Save to database with null cvId
+      const savedData = await this.repository.saveFullAnalysis(
+        null,
+        userId,
+        aiResult,
+        improvement,
+        previousScore,
+      );
+
+      // Save to cache
+      await this.cache.setLatest(userId, savedData);
+
       return {
-        data: this.mapper.mapToDto(aiResult),
+        data: this.mapper.mapToDto(aiResult, savedData),
         statusCode: 200,
+        success: true,
         message: await this.i18n.t('analysis.CV_ANALYZED_SUCCESSFULLY'),
       };
     } catch (error) {
+      console.error('Analyze Uploaded Cv Error:', error);
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );
     }
   }
 
-  async getLatestAnalysis(
-    cvId: string,
-    userId: string,
-  ): Promise<AnalysisResponse> {
-    let analysis = await this.cache.getLatest(cvId);
-    if (!analysis) {
-      analysis = await this.repository.findLatest(cvId, userId);
-      if (analysis) await this.cache.setLatest(cvId, analysis);
-    }
+  async getLatestAnalysis(userId: string): Promise<AnalysisResponse> {
+    try {
+      let lastAnalysis = await this.cache.getLatest(userId);
+      if (!lastAnalysis) {
+        lastAnalysis = await this.repository.findLatest(userId);
+        if (lastAnalysis) await this.cache.setLatest(userId, lastAnalysis);
+      }
 
-    if (!analysis)
-      throw new NotFoundException(
-        await this.i18n.t('analysis.CV_NOT_FOUND_OR_ACCESS_DENIED'),
+      if (!lastAnalysis) {
+        return {
+          data: null,
+          statusCode: 404,
+          success: false,
+          message: await this.i18n.t('analysis.CV_ANALYSIS_NOT_FOUND', {
+            defaultValue: 'CV analysis not found',
+          }),
+        } as unknown as AnalysisResponse;
+      }
+
+      return {
+        data: this.mapper.mapToDto(lastAnalysis, lastAnalysis),
+        statusCode: 200,
+        success: true,
+        message: await this.i18n.t('analysis.SUCCESSFULY_RETRIEVED', {
+          defaultValue: 'Analysis retrieved successfully',
+        }),
+      };
+    } catch (error) {
+      console.error('Get Latest Analysis Error:', error);
+      throw new InternalServerErrorException(
+        await this.i18n.t('analysis.FAILED_TO_RETRIEVE', {
+          defaultValue: 'Failed to retrieve analysis',
+        }),
       );
-
-    return {
-      data: this.mapper.mapToDto(
-        { ...analysis, predictedRole: 'Software Engineer' },
-        analysis,
-      ),
-      statusCode: 200,
-      message: await this.i18n.t('analysis.SUCCESSFULY_RETRIEVED'),
-    };
+    }
   }
 
-  async getAnalysisHistory(
-    cvId: string,
-    userId: string,
-  ): Promise<AnalysisHistoryResponse> {
-    let history = await this.cache.getHistory(cvId);
-    if (!history) {
-      history = await this.repository.findHistory(cvId, userId);
-      if (history) await this.cache.setHistory(cvId, history);
-    }
+  async getAnalysisHistory(userId: string): Promise<AnalysisHistoryResponse> {
+    try {
+      const history = await this.repository.findHistory(userId);
 
-    return {
-      data: history.map((h: any) => ({
-        overallScore: Number(h.newScore),
-        improvement: Number(h.improvementPercentage),
-        createdAt: h.createdAt,
-      })),
-      statusCode: 200,
-      message: await this.i18n.t('analysis.SUCCESSFULY_RETRIEVED'),
-    };
+      return {
+        data: history.map((item) => ({
+          overallScore: Number(item.newScore),
+          improvement: Number(item.improvementPercentage),
+          createdAt: item.createdAt as unknown as Date,
+        })),
+        statusCode: 200,
+        success: true,
+        message: await this.i18n.t('analysis.SUCCESSFULY_RETRIEVED', {
+          defaultValue: 'Analysis history retrieved successfully',
+        }),
+      };
+    } catch (error) {
+      console.error('Get Analysis History Error:', error);
+      throw new InternalServerErrorException(
+        await this.i18n.t('analysis.FAILED_TO_RETRIEVE', {
+          defaultValue: 'Failed to retrieve analysis history',
+        }),
+      );
+    }
   }
 
   private isValidCv(cv: any) {

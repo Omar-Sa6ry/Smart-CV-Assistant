@@ -49,11 +49,11 @@ export class ATSDetails {
   @Field()
   keywordsMissing: number;
 
-  @Field({ nullable: true })
-  foundKeywordsList?: string;
+  @Field(() => [String], { nullable: true })
+  foundKeywordsList?: string[];
 
-  @Field({ nullable: true })
-  missingKeywordsList?: string;
+  @Field(() => [String], { nullable: true })
+  missingKeywordsList?: string[];
 
   @Field()
   hasTables: boolean;
@@ -124,8 +124,8 @@ export class ContentDetails {
   @Field()
   spellingErrorsCount: number;
 
-  @Field({ nullable: true })
-  spellingErrorsList?: string;
+  @Field(() => [String], { nullable: true })
+  spellingErrorsList?: string[];
 }
 
 @ObjectType()
@@ -139,14 +139,14 @@ export class AnalysisDto {
   @Field()
   predictedRole: string;
 
-  @Field()
-  strengths: string;
+  @Field(() => [String])
+  strengths: string[];
 
-  @Field()
-  weaknesses: string;
+  @Field(() => [String])
+  weaknesses: string[];
 
-  @Field()
-  suggestions: string;
+  @Field(() => [String])
+  suggestions: string[];
 
   @Field(() => ATSDetails)
   atsDetails: ATSDetails;

@@ -8,23 +8,11 @@ export class AnalysisCacheManager implements IAnalysisCacheManager {
 
   constructor(private readonly redisService: RedisService) {}
 
-  private getLatestKey(cvId: string) { return `cv_analysis:latest:${cvId}`; }
-  private getHistoryKey(cvId: string) { return `cv_analysis:history:${cvId}`; }
-
-  async getLatest(cvId: string) {
-    try { return await this.redisService.get(this.getLatestKey(cvId)); } catch { return null; }
+  private getLatestKey(cvId: string) {
+    return `cv_analysis:latest:${cvId}`;
   }
-
-  async setLatest(cvId: string, data: any) {
-    try { await this.redisService.set(this.getLatestKey(cvId), data, this.CACHE_TTL); } catch {}
-  }
-
-  async getHistory(cvId: string) {
-    try { return await this.redisService.get(this.getHistoryKey(cvId)); } catch { return null; }
-  }
-
-  async setHistory(cvId: string, data: any) {
-    try { await this.redisService.set(this.getHistoryKey(cvId), data, this.CACHE_TTL); } catch {}
+  private getHistoryKey(cvId: string) {
+    return `cv_analysis:history:${cvId}`;
   }
 
   async invalidateAll(cvId: string) {
@@ -33,6 +21,44 @@ export class AnalysisCacheManager implements IAnalysisCacheManager {
         this.redisService.del(this.getLatestKey(cvId)),
         this.redisService.del(this.getHistoryKey(cvId)),
       ]);
+    } catch {}
+  }
+
+  async getLatest(key: string): Promise<any> {
+    try {
+      const data = await this.redisService.get(this.getLatestKey(key));
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async setLatest(key: string, data: any): Promise<void> {
+    try {
+      await this.redisService.set(
+        this.getLatestKey(key),
+        JSON.stringify(data),
+        this.CACHE_TTL,
+      );
+    } catch {}
+  }
+
+  async getHistory(key: string): Promise<any> {
+    try {
+      const data = await this.redisService.get(this.getHistoryKey(key));
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async setHistory(key: string, data: any): Promise<void> {
+    try {
+      await this.redisService.set(
+        this.getHistoryKey(key),
+        JSON.stringify(data),
+        this.CACHE_TTL,
+      );
     } catch {}
   }
 }

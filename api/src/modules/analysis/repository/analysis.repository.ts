@@ -7,9 +7,9 @@ import { IAnalysisRepository } from '../interfaces';
 export class AnalysisRepository implements IAnalysisRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findLatest(cvId: string, userId: string) {
+  async findLatest(userId: string) {
     return this.prisma.cvAnalysisBase.findFirst({
-      where: { cvId, userId },
+      where: { userId },
       include: {
         atsDetails: true,
         contentDetails: true,
@@ -20,15 +20,15 @@ export class AnalysisRepository implements IAnalysisRepository {
     });
   }
 
-  async findHistory(cvId: string, userId: string) {
+  async findHistory(userId: string) {
     return this.prisma.analysisHistory.findMany({
-      where: { cvId, userId },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
   }
 
   async saveFullAnalysis(
-    cvId: string,
+    cvId: string | null,
     userId: string,
     aiResult: any,
     improvement: number,
@@ -36,9 +36,11 @@ export class AnalysisRepository implements IAnalysisRepository {
   ) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Clear old analysis to avoid unique constraint violation [cvId, analysisType]
-      await tx.cvAnalysisBase.deleteMany({
-        where: { cvId, analysisType: AnalysisType.ats_compatibility }
-      });
+      if (cvId) {
+        await tx.cvAnalysisBase.deleteMany({
+          where: { cvId, analysisType: AnalysisType.ats_compatibility },
+        });
+      }
 
       const base = await tx.cvAnalysisBase.create({
         data: {

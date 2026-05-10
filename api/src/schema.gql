@@ -426,8 +426,8 @@ type ATSDetails {
   structureScore: Float!
   keywordsFound: Float!
   keywordsMissing: Float!
-  foundKeywordsList: String
-  missingKeywordsList: String
+  foundKeywordsList: [String!]
+  missingKeywordsList: [String!]
   hasTables: Boolean!
   hasImages: Boolean!
   hasSpecialChars: Boolean!
@@ -455,16 +455,16 @@ type ContentDetails {
   clarityScore: Float!
   quantifiableResultsCount: Float!
   spellingErrorsCount: Float!
-  spellingErrorsList: String
+  spellingErrorsList: [String!]
 }
 
 type AnalysisDto {
   overallScore: Float!
   feedbackSummary: String!
   predictedRole: String!
-  strengths: String!
-  weaknesses: String!
-  suggestions: String!
+  strengths: [String!]!
+  weaknesses: [String!]!
+  suggestions: [String!]!
   atsDetails: ATSDetails!
   contentDetails: ContentDetails!
   completenessDetails: CompletenessDetails!
@@ -524,8 +524,8 @@ type Query {
   getAwardsByCvId(cvId: String!, pagination: PaginationInput): AwardsResponse!
   getAwardById(id: String!): AwardResponse!
   exportCv(id: String!, format: String! = "classic"): ExportCvResponse!
-  getLatestCvAnalysis(cvId: String!): AnalysisResponse!
-  getCvAnalysisHistory(cvId: String!): AnalysisHistoryResponse!
+  getLatestCvAnalysis: AnalysisResponse!
+  getCvAnalysisHistory: AnalysisHistoryResponse!
 }
 
 input EmailInput {
@@ -575,7 +575,6 @@ type Mutation {
   createAward(data: CreateAwardInput!): AwardResponse!
   updateAward(id: String!, data: UpdateAwardInput!): AwardResponse!
   deleteAward(id: String!): AwardResponse
-  analyzeCv(cvId: String!): AnalysisResponse!
   analyzeUploadedCv(file: Upload): AnalysisResponse!
 }
 
