@@ -117,8 +117,6 @@ model Cv {
   projects       Project[]
   languages      Language[]
   skills         Skill[]
-  analysisResults CvAnalysisBase[]
-  analysisHistory AnalysisHistory[]
   awards          Award[]
  
   @@map("CV")
@@ -239,7 +237,6 @@ model Skill {
 
 model CvAnalysisBase {
   id              String       @id @default(uuid())
-  cvId            String
   userId          String
   analysisType    AnalysisType
   overallScore    Decimal      @db.Decimal(5, 2)
@@ -249,14 +246,12 @@ model CvAnalysisBase {
   suggestions     String?      @db.Text
   createdAt       DateTime     @default(now())
 
-  cv                  Cv                              @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user                User                            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   atsDetails          CvAnalysisAtsDetails?
   contentDetails      CvAnalysisContentDetails?
   completenessDetails CvAnalysisCompletenessDetails?
   detailedSuggestions CvAnalysisSuggestion[]
 
-  @@unique([cvId, analysisType])
   @@map("CV_Analysis_Base")
 }
 
@@ -344,7 +339,6 @@ model CvAnalysisCompletenessDetails {
 
 model AnalysisHistory {
   id                    String       @id @default(uuid())
-  cvId                  String
   userId                String
   analysisType          AnalysisType
   previousScore         Decimal?     @db.Decimal(5, 2)
@@ -353,7 +347,6 @@ model AnalysisHistory {
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 
-  cv   Cv   @relation(fields: [cvId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("Analysis_History")

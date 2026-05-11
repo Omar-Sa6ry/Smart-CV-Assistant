@@ -28,32 +28,34 @@ export class AnalysisRepository implements IAnalysisRepository {
   }
 
   async saveFullAnalysis(
-    cvId: string | null,
     userId: string,
     aiResult: any,
     improvement: number,
     previousScore: number | null,
   ) {
     return this.prisma.$transaction(async (tx) => {
-      // 1. Clear old analysis to avoid unique constraint violation [cvId, analysisType]
-      if (cvId) {
-        await tx.cvAnalysisBase.deleteMany({
-          where: { cvId, analysisType: AnalysisType.ats_compatibility },
-        });
-      }
-
       const base = await tx.cvAnalysisBase.create({
         data: {
-          cvId,
           userId,
           analysisType: AnalysisType.ats_compatibility,
           overallScore: aiResult.overallScore,
           feedbackSummary: aiResult.feedbackSummary,
-          strengths: aiResult.strengths,
-          weaknesses: aiResult.weaknesses,
-          suggestions: aiResult.suggestions,
-          atsDetails: { create: { ...aiResult.atsDetails } },
-          contentDetails: { create: { ...aiResult.contentDetails } },
+          strengths: aiResult.strengths ? JSON.stringify(aiResult.strengths) : null,
+          weaknesses: aiResult.weaknesses ? JSON.stringify(aiResult.weaknesses) : null,
+          suggestions: aiResult.suggestions ? JSON.stringify(aiResult.suggestions) : null,
+          atsDetails: { 
+            create: { 
+              ...aiResult.atsDetails,
+              foundKeywordsList: aiResult.atsDetails?.foundKeywordsList ? JSON.stringify(aiResult.atsDetails.foundKeywordsList) : null,
+              missingKeywordsList: aiResult.atsDetails?.missingKeywordsList ? JSON.stringify(aiResult.atsDetails.missingKeywordsList) : null,
+            } 
+          },
+          contentDetails: { 
+            create: { 
+              ...aiResult.contentDetails,
+              spellingErrorsList: aiResult.contentDetails?.spellingErrorsList ? JSON.stringify(aiResult.contentDetails.spellingErrorsList) : null,
+            } 
+          },
           completenessDetails: {
             create: {
               ...aiResult.completenessDetails,
@@ -83,7 +85,6 @@ export class AnalysisRepository implements IAnalysisRepository {
 
       await tx.analysisHistory.create({
         data: {
-          cvId,
           userId,
           analysisType: AnalysisType.ats_compatibility,
           previousScore,

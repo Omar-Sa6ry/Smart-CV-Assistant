@@ -1,7 +1,7 @@
 export interface IAnalysisCacheManager {
-  getLatest(cvId: string): Promise<any>;
-  setLatest(cvId: string, data: any): Promise<void>;
-  getHistory(cvId: string): Promise<any>;
-  setHistory(cvId: string, data: any): Promise<void>;
-  invalidateAll(cvId: string): Promise<void>;
+  getLatest(userId: string): Promise<any>;
+  setLatest(userId: string, data: any): Promise<void>;
+  getHistory(userId: string): Promise<any>;
+  setHistory(userId: string, data: any): Promise<void>;
+  invalidateAll(userId: string): Promise<void>;
 }
