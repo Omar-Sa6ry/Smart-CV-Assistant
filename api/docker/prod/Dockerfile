@@ -5,7 +5,11 @@ WORKDIR /usr/src/app
 COPY api/package*.json ./api/
 RUN cd api && npm install --legacy-peer-deps
 COPY api ./api
-RUN cd api && npx prisma generate && npm run build
+RUN cd api && \
+    rm -rf dist && \
+    npx prisma generate && \
+    npm run build && \
+    ls -la dist/src/main.js
 
 # Stage 2: Final Production Image
 FROM node:22.13.1-slim
