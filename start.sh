@@ -8,4 +8,4 @@ uvicorn main:app --host 0.0.0.0 --port 8000 &
 # Start the Node.js API
 echo "Starting Node.js API on port ${PORT:-7860}..."
 cd /usr/src/app/api
-node dist/main
+node dist/src/main
