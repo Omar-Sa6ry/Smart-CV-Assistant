@@ -16,7 +16,7 @@ RUN cd api && npm run build
 # Stage 2: Production
 FROM node:22.13.1-slim
 
-# Install dependencies, Chromium, and Python
+# Install dependencies, Chromium, Python and Curl
 RUN apt-get update && apt-get install -y \
     openssl \
     libssl-dev \
@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    curl \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
@@ -51,8 +52,9 @@ COPY --from=builder /usr/src/app/api/src/common/translation/locales ./api/src/co
 COPY --from=builder /usr/src/app/data_analysis ./data_analysis
 COPY --from=builder /usr/src/app/ai_models ./ai_models
 
-# Install Python requirements
-RUN pip3 install --no-cache-dir --break-system-packages -r data_analysis/requirements.txt
+# Create Virtual Environment and install Python requirements
+RUN python3 -m venv /usr/src/app/venv
+RUN /usr/src/app/venv/bin/pip install --no-cache-dir -r data_analysis/requirements.txt
 
 # Copy and setup start script
 COPY start.sh .
@@ -61,4 +63,5 @@ RUN chmod +x start.sh
 EXPOSE 7860
 
 CMD ["./start.sh"]
+
 
