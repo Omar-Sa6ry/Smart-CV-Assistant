@@ -46,7 +46,7 @@ COPY ai_models ./ai_models
 RUN pip3 install --no-cache-dir -r data_analysis/requirements.txt --break-system-packages
 
 # Copy and setup start script
-COPY api/docker/prod/start.sh ./start.sh
+COPY start.sh ./start.sh
 RUN chmod +x ./start.sh
 
 # Setup non-root user for Hugging Face
