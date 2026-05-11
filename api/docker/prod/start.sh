@@ -5,10 +5,14 @@ echo "Starting Python Analysis Engine on port 8000..."
 cd /usr/src/app/data_analysis
 uvicorn main:app --host 0.0.0.0 --port 8000 &
 
-# Check for DATABASE_URL
+# Check for DATABASE_URL and REDIS_HOST
 if [ -z "$DATABASE_URL" ]; then
-  echo "ERROR: DATABASE_URL is not set. Prisma migrations and API will fail."
+  echo "ERROR: DATABASE_URL is not set."
   exit 1
+fi
+
+if [ -z "$REDIS_HOST" ]; then
+  echo "WARNING: REDIS_HOST is not set. Defaulting to localhost (might fail)."
 fi
 
 # Run database migrations

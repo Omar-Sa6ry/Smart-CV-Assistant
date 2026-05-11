@@ -42,6 +42,9 @@ COPY --from=node-builder /usr/src/app/api/node_modules ./api/node_modules
 COPY --from=node-builder /usr/src/app/api/dist ./api/dist
 COPY --from=node-builder /usr/src/app/api/prisma ./api/prisma
 
+# Copy Translation locales (critical for nestjs-i18n)
+COPY --from=node-builder /usr/src/app/api/src/common/translation/locales ./api/src/common/translation/locales
+
 # Copy Python Analysis Engine and Models
 COPY data_analysis ./data_analysis
 COPY ai_models ./ai_models
