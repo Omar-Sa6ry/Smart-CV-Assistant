@@ -99,9 +99,8 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Trigger Analysis Error:', error);
-      throw new InternalServerErrorException(
-        await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
-      );
+      const errorMessage = error.response?.data?.detail || error.message || 'Unknown Error';
+      throw new InternalServerErrorException(`DEBUG_ERROR: ${errorMessage}`);
     }
   }
 
@@ -154,10 +153,9 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Analyze Uploaded Cv Error:', error);
-      if (error.response) console.error('AI Service Response Error:', error.response.data);
-      throw new InternalServerErrorException(
-        await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
-      );
+      // Temporarily return the actual error message to Postman for debugging
+      const errorMessage = error.response?.data?.detail || error.message || 'Unknown Error';
+      throw new InternalServerErrorException(`DEBUG_ERROR: ${errorMessage}`);
     }
   }
 
