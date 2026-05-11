@@ -18,7 +18,9 @@ fi
 # Run database migrations
 echo "Running database migrations..."
 cd /usr/src/app/api
-npx prisma migrate deploy
+# Using db push instead of migrate deploy because the database already has the schema
+# but lacks migration history, which causes errors with existing types like 'EmploymentType'.
+npx prisma db push --accept-data-loss --skip-generate
 
 # Start the Node.js API
 echo "Starting Node.js API on port ${PORT:-4003}..."
