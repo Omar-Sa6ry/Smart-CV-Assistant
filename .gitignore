@@ -10,8 +10,8 @@ coverage/
 
 # Folders to exclude for API deployment
 /ui/
-/data_analysis/
-/ai_models/
+# /data_analysis/
+# /ai_models/
 /analysis/
 .git/
 .trunk/
