@@ -37,7 +37,6 @@ COPY --from=node-builder /usr/src/app/api/package*.json ./api/
 COPY --from=node-builder /usr/src/app/api/node_modules ./api/node_modules
 COPY --from=node-builder /usr/src/app/api/dist ./api/dist
 COPY --from=node-builder /usr/src/app/api/prisma ./api/prisma
-COPY --from=node-builder /usr/src/app/api/src/common/translation/locales ./api/src/common/translation/locales
 
 # Copy Python Analysis Engine and Models
 COPY data_analysis ./data_analysis
@@ -50,9 +49,10 @@ RUN pip3 install --no-cache-dir -r data_analysis/requirements.txt --break-system
 COPY api/docker/prod/start.sh ./start.sh
 RUN chmod +x ./start.sh
 
-# Use existing node user (UID 1000) for Hugging Face
-RUN chown -R node:node /usr/src/app
-USER node
+# Setup non-root user for Hugging Face
+RUN useradd -m -u 1000 user
+RUN chown -R user:user /usr/src/app
+USER user
 
 ENV PORT=7860
 EXPOSE 7860

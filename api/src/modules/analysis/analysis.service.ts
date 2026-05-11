@@ -14,9 +14,7 @@ import { AnalysisRepository } from './repository/analysis.repository';
 import { AiBridgeService } from './bridge/ai-bridge.service';
 import { AnalysisMapper } from './mapper/analysis.mapper';
 import { AnalysisCacheManager } from './cache/analysis.cache-manager';
-import {
-  IAnalysisService,
-} from './interfaces';
+import { IAnalysisService } from './interfaces';
 
 @Injectable()
 export class AnalysisService implements IAnalysisService {
@@ -46,7 +44,7 @@ export class AnalysisService implements IAnalysisService {
     // Cache Check
     let lastAnalysis = await this.cache.getLatest(userId);
     if (!lastAnalysis) {
-      lastAnalysis = await this.repository.findLatest( userId);
+      lastAnalysis = await this.repository.findLatest(userId);
       if (lastAnalysis) await this.cache.setLatest(userId, lastAnalysis);
     }
 
@@ -70,16 +68,9 @@ export class AnalysisService implements IAnalysisService {
       const previousScore = lastAnalysis
         ? Number(lastAnalysis.overallScore)
         : null;
-      let improvement = 0;
-
-      if (previousScore && previousScore > 0) {
-        improvement = ((aiResult.overallScore - previousScore) / previousScore) * 100;
-      } else if (previousScore === 0) {
-        improvement = aiResult.overallScore > 0 ? 100 : 0;
-      }
-
-      // Ensure improvement is a finite number
-      if (!isFinite(improvement)) improvement = 0;
+      const improvement = previousScore
+        ? ((aiResult.overallScore - previousScore) / previousScore) * 100
+        : 0;
 
       const savedData = await this.repository.saveFullAnalysis(
         userId,
@@ -99,8 +90,9 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Trigger Analysis Error:', error);
-      const errorMessage = error.response?.data?.detail || error.message || 'Unknown Error';
-      throw new InternalServerErrorException(`DEBUG_ERROR: ${errorMessage}`);
+      throw new InternalServerErrorException(
+        await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
+      );
     }
   }
 
@@ -122,17 +114,12 @@ export class AnalysisService implements IAnalysisService {
         lastAnalysis = await this.repository.findLatest(userId);
       }
 
-      const previousScore = lastAnalysis ? Number(lastAnalysis.overallScore) : null;
-      let improvement = 0;
-      
-      if (previousScore && previousScore > 0) {
-        improvement = ((aiResult.overallScore - previousScore) / previousScore) * 100;
-      } else if (previousScore === 0) {
-        improvement = aiResult.overallScore > 0 ? 100 : 0;
-      }
-      
-      // Ensure improvement is a finite number
-      if (!isFinite(improvement)) improvement = 0;
+      const previousScore = lastAnalysis
+        ? Number(lastAnalysis.overallScore)
+        : null;
+      const improvement = previousScore
+        ? ((aiResult.overallScore - previousScore) / previousScore) * 100
+        : 0;
 
       // Save to database with null cvId
       const savedData = await this.repository.saveFullAnalysis(
@@ -153,9 +140,9 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Analyze Uploaded Cv Error:', error);
-      // Temporarily return the actual error message to Postman for debugging
-      const errorMessage = error.response?.data?.detail || error.message || 'Unknown Error';
-      throw new InternalServerErrorException(`DEBUG_ERROR: ${errorMessage}`);
+      throw new InternalServerErrorException(
+        await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
+      );
     }
   }
 

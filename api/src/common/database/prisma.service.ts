@@ -12,17 +12,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
     });
-    
+
     const adapter = new PrismaPg(pool);
     super({ adapter });
   }
 
   async onModuleInit() {
-    try {
-      await this.$connect();
-      console.log('[PrismaService] Successfully connected to Database');
-    } catch (error) {
-      console.error('[PrismaService] Failed to connect to Database:', error);
-    }
+    await this.$connect();
   }
 }

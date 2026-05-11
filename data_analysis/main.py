@@ -62,7 +62,7 @@ def verify_models():
         else:
             size = os.path.getsize(f)
             print(f"DEBUG: Found {f} - Size: {size} bytes")
-            if size < 100: # LFS pointers are very small
+            if size < 1000: # LFS pointers are usually < 1KB
                 print(f"WARNING: File {f} seems to be a Git LFS pointer, not the actual file!")
 
 verify_models()
@@ -255,20 +255,14 @@ async def analyze_file(file: UploadFile = File(...)):
     try:
         model, le = get_model()
         
-        # Save temp file locally to ensure permissions
-        temp_dir = os.path.join(os.getcwd(), "temp")
-        os.makedirs(temp_dir, exist_ok=True)
-        
-        with tempfile.NamedTemporaryFile(delete=False, dir=temp_dir, suffix=os.path.splitext(file.filename)[1]) as tmp:
+        # Save temp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
             shutil.copyfileobj(file.file, tmp)
             tmp_path = tmp.name
         
         # Extract Text
         full_text = extract_text(tmp_path)
-        
-        # Cleanup
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
+        os.unlink(tmp_path) # cleanup
         
         if not full_text:
             raise HTTPException(status_code=400, detail="Could not extract text from file")
