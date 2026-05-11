@@ -1,18 +1,18 @@
 # Stage 1: Build Node
-FROM node:22.13.1-slim AS node-builder
-RUN apt-get update && apt-get install -y openssl libssl-dev && rm -rf /var/lib/apt/lists/*
+FROM node:22 AS node-builder
 WORKDIR /usr/src/app
-COPY api/package*.json ./api/
-RUN cd api && npm install --legacy-peer-deps
-COPY api ./api
+
+# Copy the entire workspace to ensure shared dependencies are available
+COPY . .
+
+# Install and build the API
 RUN cd api && \
-    rm -rf dist && \
+    npm install --legacy-peer-deps && \
     npx prisma generate && \
-    npm run build && \
-    ls -la dist/src/main.js
+    npm run build
 
 # Stage 2: Final Production Image
-FROM node:22.13.1-slim
+FROM node:22-slim
 
 # Install system dependencies (OpenSSL, Python, and Puppeteer/Chromium deps)
 RUN apt-get update && apt-get install -y \
