@@ -3,7 +3,7 @@
 # Start the Python FastAPI engine in the background
 echo "Starting Python Analysis Engine on port 8000..."
 cd /usr/src/app/data_analysis
-uvicorn main:app --host 0.0.0.0 --port 8000 &
+uvicorn main:app --host 0.0.0.0 --port 8000 2>&1 &
 
 # Check for DATABASE_URL and REDIS_HOST
 if [ -z "$DATABASE_URL" ]; then
