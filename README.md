@@ -3,6 +3,7 @@ title: Smart CV Assistant API
 colorFrom: blue
 colorTo: indigo
 sdk: docker
+dockerfile: api/docker/prod/Dockerfile
 pinned: false
 ---
 
