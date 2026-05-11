@@ -18,8 +18,7 @@ fi
 # Run database migrations
 echo "Running database migrations..."
 cd /usr/src/app/api
-# db push is more resilient with the new prisma.config.ts in some environments
-npx prisma db push --accept-data-loss --skip-generate
+npx prisma migrate deploy
 
 # Start the Node.js API
 echo "Starting Node.js API on port ${PORT:-4003}..."
