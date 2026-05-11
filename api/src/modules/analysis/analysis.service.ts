@@ -70,9 +70,16 @@ export class AnalysisService implements IAnalysisService {
       const previousScore = lastAnalysis
         ? Number(lastAnalysis.overallScore)
         : null;
-      const improvement = previousScore
-        ? ((aiResult.overallScore - previousScore) / previousScore) * 100
-        : 0;
+      let improvement = 0;
+
+      if (previousScore && previousScore > 0) {
+        improvement = ((aiResult.overallScore - previousScore) / previousScore) * 100;
+      } else if (previousScore === 0) {
+        improvement = aiResult.overallScore > 0 ? 100 : 0;
+      }
+
+      // Ensure improvement is a finite number
+      if (!isFinite(improvement)) improvement = 0;
 
       const savedData = await this.repository.saveFullAnalysis(
         userId,
@@ -117,9 +124,16 @@ export class AnalysisService implements IAnalysisService {
       }
 
       const previousScore = lastAnalysis ? Number(lastAnalysis.overallScore) : null;
-      const improvement = previousScore
-        ? ((aiResult.overallScore - previousScore) / previousScore) * 100
-        : 0;
+      let improvement = 0;
+      
+      if (previousScore && previousScore > 0) {
+        improvement = ((aiResult.overallScore - previousScore) / previousScore) * 100;
+      } else if (previousScore === 0) {
+        improvement = aiResult.overallScore > 0 ? 100 : 0;
+      }
+      
+      // Ensure improvement is a finite number
+      if (!isFinite(improvement)) improvement = 0;
 
       // Save to database with null cvId
       const savedData = await this.repository.saveFullAnalysis(
@@ -140,6 +154,7 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Analyze Uploaded Cv Error:', error);
+      if (error.response) console.error('AI Service Response Error:', error.response.data);
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );
