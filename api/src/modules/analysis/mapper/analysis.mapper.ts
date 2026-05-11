@@ -4,6 +4,19 @@ import { IAnalysisMapper } from '../interfaces';
 
 @Injectable()
 export class AnalysisMapper implements IAnalysisMapper {
+  private safeParseArray(data: any): string[] {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  }
+
   prepareAiPayload(cv: any) {
     return {
       cvId: cv.id,
@@ -29,11 +42,13 @@ export class AnalysisMapper implements IAnalysisMapper {
       overallScore: Number(data.overallScore),
       feedbackSummary: data.feedbackSummary,
       predictedRole: aiResult.predictedRole || 'Developer',
-      strengths: data.strengths,
-      weaknesses: data.weaknesses,
-      suggestions: data.suggestions,
+      strengths: this.safeParseArray(data.strengths),
+      weaknesses: this.safeParseArray(data.weaknesses),
+      suggestions: this.safeParseArray(data.suggestions),
       atsDetails: {
         ...data.atsDetails,
+        foundKeywordsList: this.safeParseArray(data.atsDetails?.foundKeywordsList),
+        missingKeywordsList: this.safeParseArray(data.atsDetails?.missingKeywordsList),
         formattingScore: Number(data.atsDetails.formattingScore),
         compatibilityScore: Number(data.atsDetails.compatibilityScore),
         keywordMatchScore: Number(data.atsDetails.keywordMatchScore),
@@ -41,6 +56,7 @@ export class AnalysisMapper implements IAnalysisMapper {
       } as any,
       contentDetails: {
         ...data.contentDetails,
+        spellingErrorsList: this.safeParseArray(data.contentDetails?.spellingErrorsList),
         languageScore: Number(data.contentDetails.languageScore),
         achievementsScore: Number(data.contentDetails.achievementsScore),
         clarityScore: Number(data.contentDetails.clarityScore),

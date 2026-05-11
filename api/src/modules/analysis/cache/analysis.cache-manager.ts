@@ -8,18 +8,18 @@ export class AnalysisCacheManager implements IAnalysisCacheManager {
 
   constructor(private readonly redisService: RedisService) {}
 
-  private getLatestKey(cvId: string) {
-    return `cv_analysis:latest:${cvId}`;
+  private getLatestKey(userId: string) {
+    return `cv_analysis:latest:${userId}`;
   }
-  private getHistoryKey(cvId: string) {
-    return `cv_analysis:history:${cvId}`;
+  private getHistoryKey(userId: string) {
+    return `cv_analysis:history:${userId}`;
   }
 
-  async invalidateAll(cvId: string) {
+  async invalidateAll(userId: string) {
     try {
       await Promise.all([
-        this.redisService.del(this.getLatestKey(cvId)),
-        this.redisService.del(this.getHistoryKey(cvId)),
+        this.redisService.del(this.getLatestKey(userId)),
+        this.redisService.del(this.getHistoryKey(userId)),
       ]);
     } catch {}
   }

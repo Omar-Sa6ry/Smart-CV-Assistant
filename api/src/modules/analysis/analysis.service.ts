@@ -75,7 +75,6 @@ export class AnalysisService implements IAnalysisService {
         : 0;
 
       const savedData = await this.repository.saveFullAnalysis(
-        cvId,
         userId,
         aiResult,
         improvement,
@@ -83,8 +82,8 @@ export class AnalysisService implements IAnalysisService {
       );
 
       // Update Caches
-      await this.cache.invalidateAll(cvId);
-      await this.cache.setLatest(cvId, savedData);
+      await this.cache.invalidateAll(userId);
+      await this.cache.setLatest(userId, savedData);
 
       return {
         data: this.mapper.mapToDto(aiResult, savedData),
@@ -124,7 +123,6 @@ export class AnalysisService implements IAnalysisService {
 
       // Save to database with null cvId
       const savedData = await this.repository.saveFullAnalysis(
-        null,
         userId,
         aiResult,
         improvement,

@@ -8,7 +8,7 @@
 
 
 query {
-  getLatestCvAnalysis(cvId: "4eb8f743-1fa9-4c15-9170-70350793d299") {
+  getLatestCvAnalysis {
     message
     success
     timeStamp
@@ -62,7 +62,7 @@ query {
 }
 
 query {
-  getCvAnalysisHistory(cvId: "4eb8f743-1fa9-4c15-9170-70350793d299") {
+  getCvAnalysisHistory {
     message
     success
     timeStamp
