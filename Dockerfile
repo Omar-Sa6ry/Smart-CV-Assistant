@@ -37,10 +37,11 @@ RUN apt-get update && apt-get install -y \
 # Puppeteer environment variables
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV PORT=7860
 
 WORKDIR /usr/src/app
 
-# Copy node modules and built API
+# Copy built assets and modules
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/api/node_modules ./api/node_modules
 COPY --from=builder /usr/src/app/api/dist ./api/dist
@@ -63,5 +64,6 @@ RUN chmod +x start.sh
 EXPOSE 7860
 
 CMD ["./start.sh"]
+
 
 

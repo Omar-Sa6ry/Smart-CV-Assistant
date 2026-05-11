@@ -11,17 +11,28 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 
 # Import extraction logic from run_cv_analysis or local
+ENGINE_PATH = os.environ.get("ENGINE_PATH", os.path.abspath(os.path.join(os.getcwd(), "..", "ai_models", "analysis")))
+if "/usr/src/app" in os.getcwd() or os.path.exists("/usr/src/app/ai_models/analysis"):
+    ENGINE_PATH = "/usr/src/app/ai_models/analysis"
+
+print(f"DEBUG: Setting ENGINE_PATH to {ENGINE_PATH}")
+
+if ENGINE_PATH not in sys.path: 
+    sys.path.append(ENGINE_PATH)
+
 try:
     from engine import analyze_cv_engine
     from train_model_v2 import normalize_text, NORMALIZE_MAP
     from run_cv_analysis import extract_text
-except ImportError:
-    # Fallback paths
-    ENGINE_PATH = os.path.abspath(os.path.join(os.getcwd(), "..", "ai_models", "analysis"))
-    if ENGINE_PATH not in sys.path: sys.path.append(ENGINE_PATH)
-    from engine import analyze_cv_engine
-    from train_model_v2 import normalize_text, NORMALIZE_MAP
-    from run_cv_analysis import extract_text
+except ImportError as e:
+    print(f"ERROR: Failed to import dependencies from {ENGINE_PATH}: {e}")
+    # List files in ENGINE_PATH for debugging
+    if os.path.exists(ENGINE_PATH):
+        print(f"DEBUG: Files in {ENGINE_PATH}: {os.listdir(ENGINE_PATH)}")
+    else:
+        print(f"DEBUG: ENGINE_PATH does not exist!")
+    raise e
+
 
 app = FastAPI(title="Smart CV Analysis API")
 from starlette.middleware.base import BaseHTTPMiddleware
