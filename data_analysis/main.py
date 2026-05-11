@@ -62,7 +62,7 @@ def verify_models():
         else:
             size = os.path.getsize(f)
             print(f"DEBUG: Found {f} - Size: {size} bytes")
-            if size < 1000: # LFS pointers are usually < 1KB
+            if size < 100: # LFS pointers are very small
                 print(f"WARNING: File {f} seems to be a Git LFS pointer, not the actual file!")
 
 verify_models()
