@@ -41,28 +41,12 @@ MODEL_DIR = ENGINE_PATH
 MODEL_PATH = os.path.join(MODEL_DIR, 'resume_model_v2.pkl')
 ENCODER_PATH = os.path.join(MODEL_DIR, 'label_encoder_v2.pkl')
 
-print(f"DEBUG: ENGINE_PATH is {ENGINE_PATH}")
-print(f"DEBUG: Checking for MODEL_PATH at {MODEL_PATH}")
-print(f"DEBUG: Checking for ENCODER_PATH at {ENCODER_PATH}")
-
 def get_model():
     if not os.path.exists(MODEL_PATH):
-        print(f"ERROR: Model file not found at {MODEL_PATH}")
         raise RuntimeError(f"Model file not found at {MODEL_PATH}")
-    
-    try:
-        print(f"DEBUG: Loading model from {MODEL_PATH}...")
-        model = joblib.load(MODEL_PATH)
-        print(f"DEBUG: Loading encoder from {ENCODER_PATH}...")
-        le = joblib.load(ENCODER_PATH)
-        print("DEBUG: Model and encoder loaded successfully.")
-        return model, le
-    except Exception as e:
-        print(f"ERROR: Failed to load model or encoder: {e}")
-        import traceback
-        traceback.print_exc()
-        raise e
-
+    model = joblib.load(MODEL_PATH)
+    le = joblib.load(ENCODER_PATH)
+    return model, le
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
