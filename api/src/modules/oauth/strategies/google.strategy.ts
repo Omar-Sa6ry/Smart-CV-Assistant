@@ -7,9 +7,9 @@ import { GoogleUserData } from '../interface/google.interface';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: process.env.GOOGLE_CALLBACK!,
+      clientID: process.env.GOOGLE_CLIENT_ID || 'missing',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'missing',
+      callbackURL: process.env.GOOGLE_CALLBACK || 'http://localhost:5004/google/callback',
       scope: ['email', 'profile'],
       proxy: true,
       passReqToCallback: true,
