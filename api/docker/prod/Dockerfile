@@ -49,10 +49,9 @@ RUN pip3 install --no-cache-dir -r data_analysis/requirements.txt --break-system
 COPY api/docker/prod/start.sh ./start.sh
 RUN chmod +x ./start.sh
 
-# Setup non-root user for Hugging Face
-RUN useradd -m -u 1000 user
-RUN chown -R user:user /usr/src/app
-USER user
+# Use the existing 'node' user provided by the base image
+RUN chown -R node:node /usr/src/app
+USER node
 
 ENV PORT=7860
 EXPOSE 7860
