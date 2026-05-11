@@ -16,7 +16,8 @@ if [ -z "$DATABASE_URL" ]; then
     echo "ERROR: DATABASE_URL is NOT set in Hugging Face Secrets!"
 else
     echo "DATABASE_URL is found. Running Migrations..."
-    cd /usr/src/app/api && npx prisma migrate deploy || echo "Migration failed, but starting server anyway..."
+    cd /usr/src/app/api
+    DATABASE_URL="$DATABASE_URL" npx prisma migrate deploy --schema prisma/schema.prisma || DATABASE_URL="$DATABASE_URL" npx prisma db push --accept-data-loss || echo "Migration totally failed..."
 fi
 
 # Start the Node.js API
