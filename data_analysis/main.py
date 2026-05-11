@@ -10,14 +10,19 @@ from fastapi import FastAPI, HTTPException, Body, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 
-# Import extraction logic from run_cv_analysis or local
+# Fix paths for Docker environment
+ENGINE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ai_models", "analysis"))
+if ENGINE_PATH not in sys.path:
+    sys.path.append(ENGINE_PATH)
+
 try:
     from engine import analyze_cv_engine
     from train_model_v2 import normalize_text, NORMALIZE_MAP
     from run_cv_analysis import extract_text
-except ImportError:
-    # Fallback paths
-    ENGINE_PATH = os.path.abspath(os.path.join(os.getcwd(), "..", "ai_models", "analysis"))
+except ImportError as e:
+    print(f"CRITICAL IMPORT ERROR: {e}")
+    # Try one more fallback if running from root
+    ENGINE_PATH = os.path.abspath(os.path.join(os.getcwd(), "ai_models", "analysis"))
     if ENGINE_PATH not in sys.path: sys.path.append(ENGINE_PATH)
     from engine import analyze_cv_engine
     from train_model_v2 import normalize_text, NORMALIZE_MAP
@@ -41,12 +46,37 @@ MODEL_DIR = ENGINE_PATH
 MODEL_PATH = os.path.join(MODEL_DIR, 'resume_model_v2.pkl')
 ENCODER_PATH = os.path.join(MODEL_DIR, 'label_encoder_v2.pkl')
 
+# --- Startup Validation ---
+def verify_models():
+    print(f"DEBUG: Working Directory: {os.getcwd()}")
+    print(f"DEBUG: Engine Path: {ENGINE_PATH}")
+    if os.path.exists(ENGINE_PATH):
+        print(f"DEBUG: Files in engine path: {os.listdir(ENGINE_PATH)}")
+    else:
+        print(f"ERROR: Engine Path does not exist!")
+
+    required_files = [MODEL_PATH, ENCODER_PATH]
+    for f in required_files:
+        if not os.path.exists(f):
+            print(f"ERROR: Missing required file: {f}")
+        else:
+            size = os.path.getsize(f)
+            print(f"DEBUG: Found {f} - Size: {size} bytes")
+            if size < 1000: # LFS pointers are usually < 1KB
+                print(f"WARNING: File {f} seems to be a Git LFS pointer, not the actual file!")
+
+verify_models()
+
 def get_model():
-    if not os.path.exists(MODEL_PATH):
-        raise RuntimeError(f"Model file not found at {MODEL_PATH}")
-    model = joblib.load(MODEL_PATH)
-    le = joblib.load(ENCODER_PATH)
-    return model, le
+    try:
+        if not os.path.exists(MODEL_PATH):
+            raise RuntimeError(f"Model file not found at {MODEL_PATH}")
+        model = joblib.load(MODEL_PATH)
+        le = joblib.load(ENCODER_PATH)
+        return model, le
+    except Exception as e:
+        print(f"ERROR LOADING MODELS: {str(e)}")
+        raise e
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
@@ -225,14 +255,20 @@ async def analyze_file(file: UploadFile = File(...)):
     try:
         model, le = get_model()
         
-        # Save temp file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
+        # Save temp file locally to ensure permissions
+        temp_dir = os.path.join(os.getcwd(), "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        with tempfile.NamedTemporaryFile(delete=False, dir=temp_dir, suffix=os.path.splitext(file.filename)[1]) as tmp:
             shutil.copyfileobj(file.file, tmp)
             tmp_path = tmp.name
         
         # Extract Text
         full_text = extract_text(tmp_path)
-        os.unlink(tmp_path) # cleanup
+        
+        # Cleanup
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
         
         if not full_text:
             raise HTTPException(status_code=400, detail="Could not extract text from file")

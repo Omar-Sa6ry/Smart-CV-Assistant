@@ -46,8 +46,8 @@ COPY ai_models ./ai_models
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r data_analysis/requirements.txt --break-system-packages
 
-# Copy and setup start script
-COPY start.sh ./start.sh
+# Copy and setup start script (from prod folder)
+COPY api/docker/prod/start.sh ./start.sh
 RUN chmod +x ./start.sh
 
 # Use existing node user (UID 1000) for Hugging Face
