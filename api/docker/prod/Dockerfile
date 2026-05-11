@@ -1,66 +1,61 @@
-# Stage 1: Build
-FROM node:22.13.1-slim AS builder
-
+# Stage 1: Build Node
+FROM node:22.13.1-slim AS node-builder
 RUN apt-get update && apt-get install -y openssl libssl-dev && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /usr/src/app
-
-COPY . .
-
-RUN npm install --legacy-peer-deps
+COPY api/package*.json ./api/
 RUN cd api && npm install --legacy-peer-deps
+COPY api ./api
+RUN cd api && npx prisma generate && npm run build
 
-RUN cd api && npx prisma generate
-RUN cd api && npm run build
-
-# Stage 2: Production
+# Stage 2: Final Production Image
 FROM node:22.13.1-slim
 
-# Install dependencies, Chromium, Python and Curl
+# Install system dependencies (OpenSSL, Python, and Puppeteer/Chromium deps)
 RUN apt-get update && apt-get install -y \
     openssl \
     libssl-dev \
-    chromium \
-    fonts-ipafont-gothic \
-    fonts-wqy-zenhei \
-    fonts-thai-tlwg \
-    fonts-kacst \
-    fonts-freefont-ttf \
-    libxss1 \
     python3 \
     python3-pip \
     python3-venv \
-    curl \
-    --no-install-recommends \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
     && rm -rf /var/lib/apt/lists/*
-
-# Puppeteer environment variables
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-ENV PORT=7860
 
 WORKDIR /usr/src/app
 
-# Copy built assets and modules
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/api/node_modules ./api/node_modules
-COPY --from=builder /usr/src/app/api/dist ./api/dist
-COPY --from=builder /usr/src/app/api/prisma ./api/prisma
-COPY --from=builder /usr/src/app/api/package*.json ./api/
-COPY --from=builder /usr/src/app/api/src/common/translation/locales ./api/src/common/translation/locales
+# Copy Node.js build artifacts
+COPY --from=node-builder /usr/src/app/api/package*.json ./api/
+COPY --from=node-builder /usr/src/app/api/node_modules ./api/node_modules
+COPY --from=node-builder /usr/src/app/api/dist ./api/dist
+COPY --from=node-builder /usr/src/app/api/prisma ./api/prisma
 
-# Copy Data Analysis and AI Models
-COPY --from=builder /usr/src/app/data_analysis ./data_analysis
-COPY --from=builder /usr/src/app/ai_models ./ai_models
+# Copy Python Analysis Engine and Models
+COPY data_analysis ./data_analysis
+COPY ai_models ./ai_models
 
-# Create Virtual Environment and install Python requirements
-RUN python3 -m venv /usr/src/app/venv
-RUN /usr/src/app/venv/bin/pip install --no-cache-dir -r data_analysis/requirements.txt
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r data_analysis/requirements.txt --break-system-packages
 
 # Copy and setup start script
-COPY start.sh .
-RUN chmod +x start.sh
+COPY api/docker/prod/start.sh ./start.sh
+RUN chmod +x ./start.sh
 
+# Setup non-root user for Hugging Face
+RUN useradd -m -u 1000 user
+RUN chown -R user:user /usr/src/app
+USER user
+
+ENV PORT=7860
 EXPOSE 7860
 
-CMD ["./start.sh"]
+# Use absolute path for start script
+CMD ["/usr/src/app/start.sh"]
