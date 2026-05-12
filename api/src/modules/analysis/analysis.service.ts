@@ -90,6 +90,11 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Trigger Analysis Error:', error);
+      if (error.response) {
+        console.error('AI Engine Error Response:', JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error('AI Engine Error Message:', error.message);
+      }
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );
@@ -140,6 +145,11 @@ export class AnalysisService implements IAnalysisService {
       };
     } catch (error) {
       console.error('Analyze Uploaded Cv Error:', error);
+      if (error.response) {
+        console.error('AI Engine Error Response:', JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error('AI Engine Error Message:', error.message);
+      }
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),
       );

@@ -67,16 +67,34 @@ def verify_models():
 
 verify_models()
 
+# --- Global Model Loading ---
+MODEL = None
+LABEL_ENCODER = None
+
 def get_model():
+    global MODEL, LABEL_ENCODER
     try:
+        if MODEL is not None:
+            return MODEL, LABEL_ENCODER
+            
+        print(f"INFO: Loading AI Model from {MODEL_PATH}...")
         if not os.path.exists(MODEL_PATH):
+            print(f"ERROR: Model file not found at {MODEL_PATH}")
             raise RuntimeError(f"Model file not found at {MODEL_PATH}")
-        model = joblib.load(MODEL_PATH)
-        le = joblib.load(ENCODER_PATH)
-        return model, le
+            
+        MODEL = joblib.load(MODEL_PATH)
+        LABEL_ENCODER = joblib.load(ENCODER_PATH)
+        print("INFO: AI Model loaded successfully!")
+        return MODEL, LABEL_ENCODER
     except Exception as e:
-        print(f"ERROR LOADING MODELS: {str(e)}")
+        print(f"CRITICAL ERROR LOADING MODELS: {str(e)}")
         raise e
+
+# Pre-load during startup
+try:
+    get_model()
+except:
+    pass
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
