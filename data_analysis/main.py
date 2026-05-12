@@ -90,11 +90,13 @@ def get_model():
         print(f"CRITICAL ERROR LOADING MODELS: {str(e)}")
         raise e
 
-# Pre-load during startup
+# Pre-load during startup with strict error reporting
+print("INFO: Initializing AI models for production...")
 try:
     get_model()
-except:
-    pass
+except Exception as e:
+    print(f"CRITICAL: Application started but AI models failed to load: {str(e)}")
+    print("WARNING: Analysis endpoints will return 500 until models are available.")
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
