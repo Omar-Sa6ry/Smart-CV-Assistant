@@ -20,7 +20,7 @@ async function bootstrap() {
     app.enableCors();
 
     // Increase upload limit to 10MB and max files to 10
-    setupGraphqlUpload(app, 1000000000, 10);
+    setupGraphqlUpload(app, 1000000000000000000000000000000, 10);
 
     app.useGlobalPipes(
       new ValidationPipe({
