@@ -24,7 +24,8 @@ export class AiBridgeService implements IAiBridgeService {
 
   async analyzeFile(stream: any, filename: string, mimetype: string) {
     try {
-      const formData = new (require('form-data'))();
+      const Form = require('form-data');
+      const formData = new Form();
       formData.append('file', stream, { filename, contentType: mimetype });
 
       console.log(`[AiBridge] Sending file analysis request to: ${this.analysisServiceUrl}/v1/analyze-file`);

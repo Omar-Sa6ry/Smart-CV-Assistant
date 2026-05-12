@@ -144,11 +144,13 @@ export class AnalysisService implements IAnalysisService {
         message: await this.i18n.t('analysis.CV_ANALYZED_SUCCESSFULLY'),
       };
     } catch (error) {
-      console.error('Analyze Uploaded Cv Error:', error);
+      console.error('[AnalysisService] Detailed Analysis Error:', error);
       if (error.response) {
-        console.error('AI Engine Error Response:', JSON.stringify(error.response.data, null, 2));
+        console.error('[AnalysisService] AI Engine Error Status:', error.response.status);
+        console.error('[AnalysisService] AI Engine Error Data:', JSON.stringify(error.response.data, null, 2));
       } else {
-        console.error('AI Engine Error Message:', error.message);
+        console.error('[AnalysisService] AI Engine Message:', error.message);
+        if (error.stack) console.error('[AnalysisService] Stack Trace:', error.stack);
       }
       throw new InternalServerErrorException(
         await this.i18n.t('analysis.CV_FAILED_TO_ANALYZE'),

@@ -19,8 +19,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.enableCors();
 
-    // Increase upload limit to 10MB and max files to 10
-    setupGraphqlUpload(app, 1000000000000000000000000000000, 10);
+    // Set reasonable upload limit (20MB)
+    setupGraphqlUpload(app, 20000000, 10);
 
     app.useGlobalPipes(
       new ValidationPipe({
